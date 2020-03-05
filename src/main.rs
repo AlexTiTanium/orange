@@ -1,5 +1,6 @@
 #[allow(dead_code)]
 mod resources;
+use render::create_window;
 use state::{create_store, Action, Store};
 
 fn main() {
@@ -9,6 +10,8 @@ fn main() {
     println!("{:?}", store.state().count);
     test(&mut store);
     //println!("{:?}", resources::SHADER_BUM_VERT);
+
+    create_window();
 }
 
 fn test(store: &mut Store) {
