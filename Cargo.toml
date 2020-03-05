@@ -8,8 +8,6 @@ edition = "2018"
 
 [dependencies]
 
-[dependencies.redux]
-path = 'crates/redux/'
-
 [dependencies.state]
 path = 'crates/state/'
+

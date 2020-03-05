@@ -1,6 +1,6 @@
 use crate::Action;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Game {
   pub count: i32,
 }
@@ -14,7 +14,6 @@ impl Game {
     match action {
       Action::Increment => Self::increment(state),
       Action::Decrement => Self::decrement(state),
-      _ => state.clone(),
     }
   }
 

@@ -4,17 +4,9 @@
 name = "orange"
 version = "0.1.0"
 dependencies = [
- "redux",
  "state",
 ]
 
 [[package]]
-name = "redux"
-version = "0.1.0"
-
-[[package]]
 name = "state"
 version = "0.1.0"
-dependencies = [
- "redux",
-]
