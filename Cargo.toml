@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 
 [dependencies.state]
-path = 'crates/state/'
+path = 'lib/state/'
 
 [dependencies.render]
-path = 'crates/render/'
+path = 'lib/render/'
