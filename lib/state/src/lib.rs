@@ -1,17 +1,22 @@
-mod store;
-use store::Store as ReduxStore;
-mod game;
-pub use game::Game;
 mod reducer;
-use reducer::Reducer;
+mod state;
+mod store;
+mod window;
 
-pub type Store = ReduxStore<Game, Action>;
+use reducer::Reducer;
+use state::State;
+use store::Store as ReduxStore;
+use window::Window;
+
+pub type Store = ReduxStore<State, Action>;
 
 pub fn create_store() -> Store {
-    return Store::new(Game::reducer, Game::default());
+    let window = Window::reducer;
+
+    let reducer = combine_reducers!(State, &Action, window);
+    return Store::new(reducer, State::default());
 }
 
 pub enum Action {
-    Increment,
-    Decrement,
+    WindowResize(u32, u32),
 }

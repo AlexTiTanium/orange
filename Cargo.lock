@@ -509,6 +509,8 @@ dependencies = [
 name = "orange"
 version = "0.1.0"
 dependencies = [
+ "gl",
+ "glutin",
  "render",
  "state",
 ]
@@ -606,6 +608,7 @@ version = "0.1.0"
 dependencies = [
  "gl",
  "glutin",
+ "state",
 ]
 
 [[package]]
