@@ -1,19 +1,13 @@
+use gl as GL;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
-use glutin::event_loop::{ControlFlow, EventLoop};
+use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
-
-use gl;
-use gl::gl::types::*;
-
 use std::ffi::CStr;
-use std::ffi::CString;
 
 pub fn create_window() {
   let event_loop = glutin::event_loop::EventLoop::new();
-
-  gl::debug();
 
   let wb = WindowBuilder::new()
     .with_title("Hello world!")
@@ -27,7 +21,7 @@ pub fn create_window() {
   let gl_window = unsafe { gl_window.make_current().unwrap() };
 
   // Load the OpenGL function pointers
-  gl::gl::load_with(|symbol| gl_window.get_proc_address(symbol));
+  let gl = GL::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
   event_loop.run(move |event, _, control_flow| {
     *control_flow = ControlFlow::Wait;
@@ -35,25 +29,23 @@ pub fn create_window() {
     match event {
       Event::LoopDestroyed => return,
       Event::WindowEvent { event, .. } => match event {
-        WindowEvent::Resized(_physical_size) => {
-          // gl_window.resize(physical_size)
-        }
+        WindowEvent::Resized(physical_size) => gl_window.resize(physical_size),
         WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
         _ => (),
       },
       Event::RedrawRequested(_) => {
         unsafe {
-          gl::gl::ClearColor(1.0, 0.0, 0.0, 0.0);
-          gl::gl::Clear(gl::gl::COLOR_BUFFER_BIT);
-          let x = gl::gl::GetString(gl::gl::VENDOR);
+          gl.ClearColor(1.0, 0.0, 0.0, 0.0);
+          gl.Clear(GL::COLOR_BUFFER_BIT);
+          let x = gl.GetString(GL::VENDOR);
           let s = CStr::from_ptr(x as *mut _);
           println!("{:?}", s);
 
-          let x = gl::gl::GetString(gl::gl::RENDERER);
+          let x = gl.GetString(GL::RENDERER);
           let s = CStr::from_ptr(x as *mut _);
           println!("{:?}", s);
 
-          let x = gl::gl::GetString(gl::gl::VERSION);
+          let x = gl.GetString(GL::VERSION);
           let s = CStr::from_ptr(x as *mut _);
           println!("{:?}", s);
         }

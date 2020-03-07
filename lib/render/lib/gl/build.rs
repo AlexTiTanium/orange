@@ -1,6 +1,7 @@
 extern crate gl_generator;
 
-use gl_generator::{Api, DebugStructGenerator, Fallbacks, GlobalGenerator, Profile, Registry};
+#[allow(dead_code)]
+use gl_generator::{Api, Fallbacks, Profile, Registry, StructGenerator};
 use std::env;
 use std::fs::File;
 use std::path::Path;
@@ -11,8 +12,7 @@ fn main() {
 
   // TODO: use debug || prod detection here
   Registry::new(Api::Gl, (4, 1), Profile::Core, Fallbacks::All, [])
-    //.write_bindings(StructGenerator, &mut file)
+    .write_bindings(StructGenerator, &mut file)
     //.write_bindings(DebugStructGenerator, &mut file)
-    .write_bindings(GlobalGenerator, &mut file)
     .unwrap();
 }
