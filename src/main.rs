@@ -20,9 +20,7 @@ fn main() {
         .with_title("Hello world!")
         .with_inner_size(LogicalSize::new(state.window.width, state.window.width));
 
-    let gl_window = ContextBuilder::new()
-        .build_windowed(wb, &event_loop)
-        .unwrap();
+    let gl_window = ContextBuilder::new().build_windowed(wb, &event_loop).unwrap();
 
     // It is essential to make the context current before calling `gl::load_with`.
     let gl_window = unsafe { gl_window.make_current().unwrap() };
@@ -31,7 +29,7 @@ fn main() {
     let gl = GL::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
     // Init game render
-    render::init(&store, &gl);
+    let target = render::create_target(&gl);
 
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
@@ -42,17 +40,14 @@ fn main() {
             Event::LoopDestroyed => return,
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::Resized(physical_size) => {
-                    store.dispatch(Action::WindowResize(
-                        physical_size.width,
-                        physical_size.height,
-                    ));
+                    store.dispatch(Action::WindowResize(physical_size.width, physical_size.height));
                     gl_window.resize(physical_size)
                 }
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 _ => (),
             },
             Event::RedrawRequested(_) => {
-                render::step(&store, &gl);
+                render::step(&gl, &target);
                 gl_window.swap_buffers().unwrap();
             }
             _ => (),
