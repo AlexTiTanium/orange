@@ -7,6 +7,7 @@ use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
 use state::{create_store, Action};
+use std::time::Instant;
 
 fn main() {
     let mut store = create_store();
@@ -20,16 +21,22 @@ fn main() {
         .with_title("Hello world!")
         .with_inner_size(LogicalSize::new(state.window.width, state.window.width));
 
-    let gl_window = ContextBuilder::new().build_windowed(wb, &event_loop).unwrap();
+    let windowed_context = ContextBuilder::new().build_windowed(wb, &event_loop).unwrap();
 
     // It is essential to make the context current before calling `gl::load_with`.
-    let gl_window = unsafe { gl_window.make_current().unwrap() };
+    let gl_window = unsafe { windowed_context.make_current().unwrap() };
 
     // Load the OpenGL function pointers
     let gl = GL::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
 
     // Init game render
     let target = render::create_target(&gl);
+
+    // Store monotonic clock time since start
+    let time = Instant::now();
+
+    // Delta time
+    let mut delta = Instant::now();
 
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
@@ -46,9 +53,17 @@ fn main() {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 _ => (),
             },
+            Event::MainEventsCleared => {
+                //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
+                //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
+                gl_window.window().request_redraw();
+            }
             Event::RedrawRequested(_) => {
-                render::step(&gl, &target);
+                render::step(&gl, &target, time);
                 gl_window.swap_buffers().unwrap();
+            }
+            Event::RedrawEventsCleared => {
+                delta = Instant::now();
             }
             _ => (),
         }

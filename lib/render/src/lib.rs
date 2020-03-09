@@ -2,9 +2,8 @@ mod shader;
 use gl as GL;
 use gl::types as GLT;
 use state::Store;
-use std::mem;
-use std::ptr;
-use std::str;
+use std::ffi::CString;
+use std::{mem, ptr, str, time::Instant};
 
 type VertexBufferObject = GLT::GLuint;
 type VertexArrayObject = GLT::GLuint;
@@ -15,6 +14,7 @@ pub struct RenderTarget {
   vao: VertexArrayObject,
   ebo: ElementBufferObject,
   program: shader::Program,
+  color_location: i32,
 }
 
 pub static SHADER_BASIC_VERT: &'static str = include_str!("../../../resources/shader_basic_vert.glsl");
@@ -82,21 +82,43 @@ pub fn create_target(gl: &GL::Gl) -> RenderTarget {
   }
 
   // Debug draw
-  unsafe {
-    gl.PolygonMode(GL::FRONT_AND_BACK, GL::LINE);
-  }
+  // unsafe {
+  //   gl.PolygonMode(GL::FRONT_AND_BACK, GL::LINE);
+  // }
 
   let vert_shader = shader::compile(&gl, shader::Type::Vertex, &SHADER_BASIC_VERT).unwrap();
   let frag_shader = shader::compile(&gl, shader::Type::Fragment, &SHADER_BASIC_FRAG).unwrap();
   let program = shader::create_program(&gl, vert_shader, frag_shader).unwrap();
 
-  RenderTarget { program, vao, vbo, ebo }
+  // Setup color uniform
+  let color_uniform_name = CString::new("u_Color").unwrap();
+  let color_location = unsafe { gl.GetUniformLocation(program, color_uniform_name.as_ptr()) };
+  // Handle location == -1
+  unsafe {
+    gl.UseProgram(program);
+    gl.Uniform4f(color_location, 0.1, 0.2, 0.3, 1.0);
+  }
+
+  RenderTarget {
+    program,
+    vao,
+    vbo,
+    ebo,
+    color_location,
+  }
 }
 
-pub fn step(gl: &GL::Gl, target: &RenderTarget) {
+pub fn step(gl: &GL::Gl, target: &RenderTarget, time: Instant) {
+  // println!("[Render] Elapsed time ms: {:?}", time.elapsed().as_millis());
+  // println!("[Render] Delta time ms: {:?}", Instant::now().duration_since(time).as_millis());
+
+  let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
+  let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
+
   unsafe {
     gl.UseProgram(target.program);
     gl.BindVertexArray(target.vao);
+    gl.Uniform4f(target.color_location, r, g, 0.5, 1.0);
     gl.DrawElements(GL::TRIANGLES, 6, GL::UNSIGNED_INT, ptr::null());
   }
 }
