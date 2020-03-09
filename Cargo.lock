@@ -213,6 +213,7 @@ name = "gl"
 version = "0.1.0"
 dependencies = [
  "gl_generator 0.14.0",
+ "thiserror",
 ]
 
 [[package]]
@@ -626,7 +627,6 @@ name = "render"
 version = "0.1.0"
 dependencies = [
  "gl",
- "glutin",
  "state",
  "thiserror",
 ]

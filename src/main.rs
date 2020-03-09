@@ -1,11 +1,12 @@
 #[allow(dead_code)]
 mod resources;
-use gl as GL;
+use gl::GL;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
+use render;
 use state::{create_store, Action};
 use std::time::Instant;
 

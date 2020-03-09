@@ -1,5 +1,9 @@
-use gl as GL;
-use gl::types as GLT;
+use crate::Gl;
+use crate::Program;
+use crate::Shader;
+use crate::GL;
+use crate::GLT;
+
 use std::ffi::CString;
 use std::ptr;
 use thiserror::Error;
@@ -24,10 +28,7 @@ pub enum Type {
   Fragment = GL::FRAGMENT_SHADER,
 }
 
-pub type Shader = GLT::GLuint;
-pub type Program = GLT::GLuint;
-
-pub fn compile(gl: &GL::Gl, shader_type: Type, source: &str) -> Result<Shader, ShaderError> {
+pub fn compile(gl: &Gl, shader_type: Type, source: &str) -> Result<Shader, ShaderError> {
   let id = unsafe { gl.CreateShader(shader_type as u32) };
   let cs_source = CString::new(source).expect("CString::new failed");
 
@@ -41,7 +42,7 @@ pub fn compile(gl: &GL::Gl, shader_type: Type, source: &str) -> Result<Shader, S
   Ok(id)
 }
 
-fn check_shader_errors(gl: &GL::Gl, id: Shader) -> Result<(), ShaderError> {
+fn check_shader_errors(gl: &Gl, id: Shader) -> Result<(), ShaderError> {
   let mut success: GLT::GLint = 1;
   let mut len: GLT::GLint = 0;
 
@@ -55,7 +56,7 @@ fn check_shader_errors(gl: &GL::Gl, id: Shader) -> Result<(), ShaderError> {
     }
 
     let mut buffer = Vec::with_capacity(len as usize);
-    let buf_ptr = buffer.as_mut_ptr() as *mut gl::types::GLchar;
+    let buf_ptr = buffer.as_mut_ptr() as *mut GLT::GLchar;
 
     unsafe {
       buffer.set_len(len as usize);
@@ -80,7 +81,7 @@ fn check_shader_errors(gl: &GL::Gl, id: Shader) -> Result<(), ShaderError> {
   Ok(())
 }
 
-pub fn create_program(gl: &GL::Gl, vertex: Shader, fragment: Shader) -> Result<Program, ProgramError> {
+pub fn create_program(gl: &Gl, vertex: Shader, fragment: Shader) -> Result<Program, ProgramError> {
   let program = unsafe { gl.CreateProgram() };
 
   unsafe {
@@ -99,7 +100,7 @@ pub fn create_program(gl: &GL::Gl, vertex: Shader, fragment: Shader) -> Result<P
   Ok(program)
 }
 
-fn check_program_errors(gl: &GL::Gl, id: Program) -> Result<(), ProgramError> {
+fn check_program_errors(gl: &Gl, id: Program) -> Result<(), ProgramError> {
   let mut success: GLT::GLint = 1;
   let mut len: GLT::GLint = 0;
 
@@ -113,7 +114,7 @@ fn check_program_errors(gl: &GL::Gl, id: Program) -> Result<(), ProgramError> {
     }
 
     let mut buffer = Vec::with_capacity(len as usize);
-    let buf_ptr = buffer.as_mut_ptr() as *mut gl::types::GLchar;
+    let buf_ptr = buffer.as_mut_ptr() as *mut GLT::GLchar;
 
     unsafe {
       buffer.set_len(len as usize);
