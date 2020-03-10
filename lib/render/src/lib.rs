@@ -6,28 +6,22 @@ pub use gl::RenderTarget;
 use gl::VertexArray;
 use gl::VertexBuffer;
 use gl::GL;
-use gl::GLT;
 
-use state::Store;
 use std::ffi::CString;
-use std::{mem, ptr, str, time::Instant};
-
-type VertexBufferObject = GLT::GLuint;
-type VertexArrayObject = GLT::GLuint;
-type ElementBufferObject = GLT::GLuint;
+use std::{str, time::Instant};
 
 pub static SHADER_BASIC_VERT: &'static str = include_str!("../../../resources/shader_basic_vert.glsl");
 pub static SHADER_BASIC_FRAG: &'static str = include_str!("../../../resources/shader_basic_frag.glsl");
 
 pub fn create_target(gl: &Gl) -> RenderTarget {
-  let vertices: Vec<f32> = vec![
+  let vertices: [f32; 2 * 4] = [
     -0.5, -0.5, // 0
     0.5, -0.5, //  1
     0.5, 0.5, //   2
     -0.5, 0.5, //  3
   ];
 
-  let indexes: Vec<usize> = vec![
+  let indexes: [u16; 2 * 3] = [
     0, 1, 2, // First triangle
     0, 2, 3, // Second triangle
   ];
@@ -35,10 +29,9 @@ pub fn create_target(gl: &Gl) -> RenderTarget {
   let vao = VertexArray::new(&gl);
   let vbo = VertexBuffer::new(&gl, &vertices);
   let mut layout = Layout::new();
-  layout.push::<f32>(2);
-
   let ibo = IndexBuffer::new(gl, &indexes, 6);
 
+  layout.push::<f32>(2);
   vao.add_buffer(&gl, &vbo, &layout);
 
   // Debug draw
@@ -65,9 +58,6 @@ pub fn create_target(gl: &Gl) -> RenderTarget {
 }
 
 pub fn step(gl: &GL::Gl, target: &RenderTarget, time: Instant) {
-  // println!("[Render] Elapsed time ms: {:?}", time.elapsed().as_millis());
-  // println!("[Render] Delta time ms: {:?}", Instant::now().duration_since(time).as_millis());
-
   let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
   let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
@@ -78,6 +68,6 @@ pub fn step(gl: &GL::Gl, target: &RenderTarget, time: Instant) {
     target.vao.bind(&gl);
     target.ibo.bind(&gl);
 
-    gl.DrawElements(GL::TRIANGLES, 6, GL::UNSIGNED_INT, ptr::null());
+    target.ibo.draw(&gl);
   }
 }

@@ -6,31 +6,33 @@ use std::ffi::c_void;
 
 pub struct VertexArray {
   id: RenderID,
+  gl: Gl,
 }
 
 impl VertexArray {
   pub fn new(gl: &Gl) -> Self {
     let mut id: RenderID = 0;
+    let gl = gl.clone();
 
     unsafe {
       gl.GenVertexArrays(1, &mut id);
     }
 
-    Self { id }
+    Self { id, gl }
   }
 
-  pub fn add_buffer(self: &Self, gl: &Gl, buffer: &VertexBuffer, layout: &Layout) {
-    self.bind(&gl);
-    buffer.bind(&gl);
+  pub fn add_buffer(self: &Self, buffer: &VertexBuffer, layout: &Layout) {
+    self.bind();
+    buffer.bind();
 
     unsafe {
-      gl.EnableVertexAttribArray(0); // this is "layout (location = 0)" in vertex shader
+      self.gl.EnableVertexAttribArray(0); // this is "layout (location = 0)" in vertex shader
     }
 
     let mut offset: usize = 0;
     for (index, element) in layout.elements.iter().enumerate() {
       unsafe {
-        gl.VertexAttribPointer(
+        self.gl.VertexAttribPointer(
           index as u32,            // index of the generic vertex attribute ("layout (location = 0)")
           element.count as i32,    // the number of components per generic vertex attribute
           element.element_type,    // data type
@@ -43,9 +45,9 @@ impl VertexArray {
     }
   }
 
-  pub fn bind(self: &Self, gl: &Gl) {
+  pub fn bind(self: &Self) {
     unsafe {
-      gl.BindVertexArray(self.id);
+      self.gl.BindVertexArray(self.id);
     }
   }
 }

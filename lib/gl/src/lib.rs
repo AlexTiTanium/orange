@@ -1,12 +1,6 @@
-pub mod OpenGL {
-  //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-  //include!("./bindings/gl-41-debug.rs");
-  include!("./bindings/gl-41-release.rs");
-}
-
-pub use crate::OpenGL as GL; // OpenGl constants
-pub use crate::OpenGL::types as GLT; // OpenGl Types
-pub use crate::OpenGL::Gl; // OpenGl instance
+pub use crate::bindings::Gl; // OpenGl instance
+pub use crate::bindings::GL; // OpenGl constants
+pub use crate::bindings::GLT; // OpenGl Types
 
 // OpenGl type mappings
 pub type RenderID = GLT::GLuint;
@@ -16,6 +10,7 @@ pub type Shader = GLT::GLuint;
 pub type Program = GLT::GLuint;
 
 // Modules imports here
+pub mod bindings;
 pub mod buffers;
 pub mod render;
 pub mod shader;
