@@ -3,11 +3,13 @@ use crate::Gl;
 use crate::RenderID;
 use crate::SizeIntPtr;
 use crate::GL;
-use std::{mem, ptr};
+use crate::GLT;
+use std::{any, mem, ptr};
 
 pub struct IndexBuffer {
   id: RenderID,
   gl: Gl,
+  indexes_type: GLT::GLenum,
   pub count: i32,
 }
 
@@ -20,10 +22,23 @@ impl IndexBuffer {
       gl.GenBuffers(1, &mut id);
     }
 
-    Self { id, count, gl }
+    Self {
+      id,
+      count: 0,
+      gl,
+      indexes_type: GL::UNSIGNED_SHORT,
+    }
   }
 
-  pub fn set_data(self: &Self, data: &[u16], count: i32) {
+  pub fn set_data<T>(&mut self, data: &[T], count: i32) {
+    self.count = count;
+
+    self.indexes_type = match any::type_name::<T>() {
+      "u32" => GL::UNSIGNED_INT,
+      "u16" => GL::UNSIGNED_SHORT,
+      _ => panic!("Unsupported ibo type"),
+    };
+
     unsafe {
       self.gl.BindBuffer(GL::ELEMENT_ARRAY_BUFFER, self.id);
       self.gl.BufferData(
@@ -35,19 +50,19 @@ impl IndexBuffer {
     }
   }
 
-  pub fn draw(self: &Self) {
+  pub fn draw(&self) {
     unsafe {
-      self.gl.DrawElements(GL::TRIANGLES, self.count, GL::UNSIGNED_SHORT, ptr::null());
+      self.gl.DrawElements(GL::TRIANGLES, self.count, self.indexes_type, ptr::null());
     }
   }
 
-  pub fn bind(self: &Self) {
+  pub fn bind(&self) {
     unsafe {
       self.gl.BindBuffer(GL::ELEMENT_ARRAY_BUFFER, self.id);
     }
   }
 
-  pub fn unbind(self: &Self) {
+  pub fn unbind(&self) {
     unsafe {
       self.gl.BindBuffer(GL::ELEMENT_ARRAY_BUFFER, 0);
     }

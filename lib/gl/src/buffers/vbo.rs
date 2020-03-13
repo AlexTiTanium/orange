@@ -22,7 +22,7 @@ impl VertexBuffer {
     Self { gl, id }
   }
 
-  pub fn set_data(self: &Self, data: &[f32]) {
+  pub fn set_data<T>(&self, data: &[T]) {
     self.bind();
 
     unsafe {
@@ -35,13 +35,13 @@ impl VertexBuffer {
     };
   }
 
-  pub fn bind(self: &Self) {
+  pub fn bind(&self) {
     unsafe {
       self.gl.BindBuffer(GL::ARRAY_BUFFER, self.id);
     }
   }
 
-  pub fn unbind(self: &Self) {
+  pub fn unbind(&self) {
     unsafe {
       self.gl.BindBuffer(GL::ARRAY_BUFFER, 0);
     }

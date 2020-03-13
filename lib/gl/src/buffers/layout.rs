@@ -20,7 +20,7 @@ impl Layout {
     Self { elements: vec![], stride: 0 }
   }
 
-  pub fn push<T>(self: &mut Self, count: usize) {
+  pub fn push<T>(&mut self, count: usize) {
     let el_type = match any::type_name::<T>() {
       "f32" => (GL::FLOAT, size_of::<GLT::GLfloat>(), GL::FALSE),
       "i32" => (GL::INT, size_of::<GLT::GLuint>(), GL::FALSE),

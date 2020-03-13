@@ -1,18 +1,18 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-pub mod bindings {
+pub mod OpenGl {
   //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-  include!("./bindings/gl-41-debug.rs");
-  //include!("./bindings/gl-41-release.rs");
+  include!("./gl-41-debug.rs");
+  //include!("./gl-41-release.rs");
 }
 
-pub use bindings as GL;
-pub use bindings::types as GLT;
+pub use OpenGl as GL;
+pub use OpenGl::types as GLT;
 
 #[derive(Clone)]
 pub struct Gl {
-  inner: Rc<bindings::Gl>,
+  inner: Rc<OpenGl::Gl>,
 }
 
 impl Gl {
@@ -21,15 +21,15 @@ impl Gl {
     F: FnMut(&'static str) -> *const GLT::GLvoid,
   {
     Gl {
-      inner: Rc::new(bindings::Gl::load_with(loadfn)),
+      inner: Rc::new(OpenGl::Gl::load_with(loadfn)),
     }
   }
 }
 
 impl Deref for Gl {
-  type Target = bindings::Gl;
+  type Target = OpenGl::Gl;
 
-  fn deref(&self) -> &bindings::Gl {
+  fn deref(&self) -> &OpenGl::Gl {
     &self.inner
   }
 }

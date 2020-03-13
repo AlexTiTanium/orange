@@ -21,7 +21,7 @@ impl VertexArray {
     Self { id, gl }
   }
 
-  pub fn add_buffer(self: &Self, buffer: &VertexBuffer, layout: &Layout) {
+  pub fn add_buffer(&self, buffer: &VertexBuffer, layout: &Layout) {
     self.bind();
     buffer.bind();
 
@@ -45,7 +45,7 @@ impl VertexArray {
     }
   }
 
-  pub fn bind(self: &Self) {
+  pub fn bind(&self) {
     unsafe {
       self.gl.BindVertexArray(self.id);
     }

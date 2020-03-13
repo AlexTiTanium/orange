@@ -1,34 +1,16 @@
+use crate::shaders::ProgramError;
+use crate::shaders::ShaderError;
+use crate::shaders::ShaderType;
 use crate::Gl;
-use crate::Program;
-use crate::Shader;
+use crate::ProgramID;
+use crate::ShaderID;
 use crate::GL;
 use crate::GLT;
 
 use std::ffi::CString;
 use std::ptr;
-use thiserror::Error;
 
-#[derive(Debug, Error)]
-pub enum ShaderError {
-  #[error("Can't compile shader")]
-  Compilation,
-}
-
-#[derive(Debug, Error)]
-pub enum ProgramError {
-  #[error("Can't link shader")]
-  Linking,
-}
-
-#[repr(u32)]
-#[derive(Clone, Debug)]
-#[allow(dead_code)]
-pub enum Type {
-  Vertex = GL::VERTEX_SHADER,
-  Fragment = GL::FRAGMENT_SHADER,
-}
-
-pub fn compile(gl: &Gl, shader_type: Type, source: &str) -> Result<Shader, ShaderError> {
+pub fn compile(gl: &Gl, shader_type: ShaderType, source: &str) -> Result<ShaderID, ShaderError> {
   let id = unsafe { gl.CreateShader(shader_type as u32) };
   let cs_source = CString::new(source).expect("CString::new failed");
 
@@ -42,7 +24,7 @@ pub fn compile(gl: &Gl, shader_type: Type, source: &str) -> Result<Shader, Shade
   Ok(id)
 }
 
-fn check_shader_errors(gl: &Gl, id: Shader) -> Result<(), ShaderError> {
+fn check_shader_errors(gl: &Gl, id: ShaderID) -> Result<(), ShaderError> {
   let mut success: GLT::GLint = 1;
   let mut len: GLT::GLint = 0;
 
@@ -81,26 +63,7 @@ fn check_shader_errors(gl: &Gl, id: Shader) -> Result<(), ShaderError> {
   Ok(())
 }
 
-pub fn create_program(gl: &Gl, vertex: Shader, fragment: Shader) -> Result<Program, ProgramError> {
-  let program = unsafe { gl.CreateProgram() };
-
-  unsafe {
-    gl.AttachShader(program, vertex);
-    gl.AttachShader(program, fragment);
-    gl.LinkProgram(program);
-  }
-
-  check_program_errors(&gl, program).unwrap();
-
-  unsafe {
-    gl.DeleteProgram(vertex);
-    gl.DeleteProgram(fragment);
-  }
-
-  Ok(program)
-}
-
-fn check_program_errors(gl: &Gl, id: Program) -> Result<(), ProgramError> {
+pub fn check_program_errors(gl: &Gl, id: ProgramID) -> Result<(), ProgramError> {
   let mut success: GLT::GLint = 1;
   let mut len: GLT::GLint = 0;
 

@@ -1,6 +1,6 @@
 #[allow(dead_code)]
 mod resources;
-use gl::GL;
+use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
@@ -25,13 +25,13 @@ fn main() {
     let windowed_context = ContextBuilder::new().build_windowed(wb, &event_loop).unwrap();
 
     // It is essential to make the context current before calling `gl::load_with`.
-    let gl_window = unsafe { windowed_context.make_current().unwrap() };
+    let window = unsafe { windowed_context.make_current().unwrap() };
 
-    // Load the OpenGL function pointers
-    let gl = GL::Gl::load_with(|symbol| gl_window.get_proc_address(symbol));
+    // Create render context
+    let context = Gl::load_with(|symbol| window.get_proc_address(symbol));
 
     // Init game render
-    let target = render::create_target(&gl);
+    let renderer = render::create_renderer(&context);
 
     // Store monotonic clock time since start
     let time = Instant::now();
@@ -49,7 +49,7 @@ fn main() {
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::Resized(physical_size) => {
                     store.dispatch(Action::WindowResize(physical_size.width, physical_size.height));
-                    gl_window.resize(physical_size)
+                    window.resize(physical_size)
                 }
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 _ => (),
@@ -60,8 +60,8 @@ fn main() {
                 //gl_window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
-                render::step(&gl, &target, time);
-                gl_window.swap_buffers().unwrap();
+                render::step(&context, &renderer, time);
+                window.swap_buffers().unwrap();
             }
             Event::RedrawEventsCleared => {
                 delta = Instant::now();
