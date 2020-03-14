@@ -31,7 +31,7 @@ fn main() {
     let context = Gl::load_with(|symbol| window.get_proc_address(symbol));
 
     // Init game render
-    let renderer = render::create_renderer(&context);
+    let mut renderer = render::create_renderer(&context);
 
     // Store monotonic clock time since start
     let time = Instant::now();
@@ -57,10 +57,10 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                //gl_window.window().request_redraw();
+                //window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
-                render::step(&context, &renderer, time);
+                render::step(&context, &mut renderer, time);
                 window.swap_buffers().unwrap();
             }
             Event::RedrawEventsCleared => {

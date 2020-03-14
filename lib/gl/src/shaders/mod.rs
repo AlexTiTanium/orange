@@ -1,5 +1,6 @@
 use crate::GL;
 
+use std::ffi::CString;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -19,6 +20,8 @@ pub enum ShaderType {
 pub enum ProgramError {
   #[error("Can't link shader")]
   Linking,
+  #[error("Uniform `{0:?}` location not found in shader")]
+  NoLocation(CString),
 }
 
 pub mod program;

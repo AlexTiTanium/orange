@@ -40,19 +40,14 @@ pub fn create_renderer(gl: &Gl) -> Renderer {
   return renderer;
 }
 
-pub fn step(gl: &Gl, renderer: &Renderer, time: Instant) {
+pub fn step(gl: &Gl, renderer: &mut Renderer, time: Instant) {
   let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
   let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
-  // unsafe {
-  //   gl.UseProgram(target.program);
-  //   gl.Uniform4f(target.color_location, r, g, 0.5, 1.0);
+  renderer.bind();
 
-  //   target.vao.bind(&gl);
-  //   target.ibo.bind(&gl);
-
-  //   target.ibo.draw(&gl);
-  // }
+  let color: [f32; 4] = [r, g, 0.5, 1.0];
+  renderer.set_uniform_f4("u_Color", &color);
 
   renderer.draw();
 }

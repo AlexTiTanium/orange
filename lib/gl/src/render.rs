@@ -6,6 +6,7 @@ use crate::ShaderType;
 use crate::VertexArray;
 use crate::VertexBuffer;
 use crate::GL;
+use std::{any, mem::transmute};
 
 pub struct Renderer {
   gl: Gl,
@@ -69,11 +70,17 @@ impl Renderer {
     self
   }
 
-  pub fn draw(&self) {
+  pub fn set_uniform_f4(&mut self, name: &str, data: &[f32; 4]) {
+    self.program.uniform4f(&name, &data);
+  }
+
+  pub fn bind(&self) {
     self.program.bind();
     self.vao.bind();
     self.ibo.bind();
+  }
 
+  pub fn draw(&self) {
     self.ibo.draw();
   }
 }
