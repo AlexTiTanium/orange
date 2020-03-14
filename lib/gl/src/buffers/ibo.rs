@@ -68,3 +68,11 @@ impl IndexBuffer {
     }
   }
 }
+
+impl Drop for IndexBuffer {
+  fn drop(&mut self) {
+    unsafe {
+      self.gl.DeleteBuffers(1, &mut self.id);
+    }
+  }
+}

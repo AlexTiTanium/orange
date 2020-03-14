@@ -34,6 +34,16 @@ impl Program {
 
     utils::check_program_errors(&self.gl, self.id).unwrap();
 
+    self.delete_shaders();
+  }
+
+  pub fn bind(&self) {
+    unsafe {
+      self.gl.UseProgram(self.id);
+    }
+  }
+
+  fn delete_shaders(&mut self) {
     for &shader in &self.shaders {
       unsafe {
         self.gl.DeleteProgram(shader);
@@ -42,10 +52,13 @@ impl Program {
 
     self.shaders.clear();
   }
+}
 
-  pub fn bind(&self) {
+impl Drop for Program {
+  fn drop(&mut self) {
+    self.delete_shaders();
     unsafe {
-      self.gl.UseProgram(self.id);
+      self.gl.DeleteProgram(self.id);
     }
   }
 }

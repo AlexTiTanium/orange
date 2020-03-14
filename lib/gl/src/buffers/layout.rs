@@ -40,3 +40,9 @@ impl Layout {
     self.stride += count * el_type.1;
   }
 }
+
+impl Drop for Layout {
+  fn drop(&mut self) {
+    self.elements.clear();
+  }
+}

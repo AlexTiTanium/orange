@@ -50,4 +50,18 @@ impl VertexArray {
       self.gl.BindVertexArray(self.id);
     }
   }
+
+  pub fn unbind(&self) {
+    unsafe {
+      self.gl.BindVertexArray(0);
+    }
+  }
+}
+
+impl Drop for VertexArray {
+  fn drop(&mut self) {
+    unsafe {
+      self.gl.DeleteVertexArrays(1, &mut self.id);
+    }
+  }
 }
