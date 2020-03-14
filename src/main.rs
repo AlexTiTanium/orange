@@ -57,7 +57,7 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                //window.window().request_redraw();
+                window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render::step(&context, &mut renderer, time);

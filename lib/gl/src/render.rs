@@ -75,9 +75,9 @@ impl Renderer {
   }
 
   pub fn bind(&self) {
-    self.program.bind();
     self.vao.bind();
     self.ibo.bind();
+    self.program.bind();
   }
 
   pub fn draw(&self) {
