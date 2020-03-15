@@ -21,7 +21,7 @@ impl Repository {
     }
   }
 
-  pub fn load(&mut self, id: &str, path: &str) {
+  pub fn load_slow(&mut self, id: &str, path: &str) {
     let time = Instant::now();
 
     let decoder = png::Decoder::new(File::open(path).unwrap());
@@ -32,8 +32,11 @@ impl Repository {
     println!("Time png {:?} ", time.elapsed());
   }
 
-  pub fn load2(&mut self, id: &str, path: &str) {
+  pub fn load(&mut self, id: &str, path: &str) {
     let time = Instant::now();
+    unsafe {
+      stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
+    }
     let img = stb_image::image::load(path);
 
     match img {

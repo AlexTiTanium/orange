@@ -2,6 +2,7 @@ use crate::Gl;
 use crate::Layout;
 use crate::RenderID;
 use crate::VertexBuffer;
+use crate::GLT;
 use std::ffi::c_void;
 
 pub struct VertexArray {
@@ -31,14 +32,21 @@ impl VertexArray {
 
     let mut offset: usize = 0;
     for (index, element) in layout.elements.iter().enumerate() {
+      println!("--------------");
+      println!("index : {:?}", index as u32);
+      println!("count : {:?}", element.count as i32);
+      println!("stride : {:?}", layout.stride as i32);
+      println!("offset : {:?}", offset as *const GLT::GLvoid);
+      println!("offset : {:?}", offset);
+      println!("--------------");
       unsafe {
         self.gl.VertexAttribPointer(
-          index as u32,            // index of the generic vertex attribute ("layout (location = 0)")
-          element.count as i32,    // the number of components per generic vertex attribute
-          element.element_type,    // data type
-          element.normalized,      // normalized (int-to-float conversion)
-          layout.stride as i32,    // stride (byte offset between consecutive attributes)
-          offset as *const c_void, // offset of the first component
+          index as u32,                 // index of the generic vertex attribute ("layout (location = 0)")
+          element.count as i32,         // the number of components per generic vertex attribute
+          element.element_type,         // data type
+          element.normalized,           // normalized (int-to-float conversion)
+          layout.stride as i32,         // stride (byte offset between consecutive attributes)
+          offset as *const GLT::GLvoid, // offset of the first component
         );
       }
       offset += element.count * element.size;

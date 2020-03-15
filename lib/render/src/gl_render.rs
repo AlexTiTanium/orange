@@ -9,11 +9,13 @@ pub static SHADER_BASIC_VERT: &'static str = include_str!("./shaders/gl/shader_b
 pub static SHADER_BASIC_FRAG: &'static str = include_str!("./shaders/gl/shader_basic_frag.glsl");
 
 pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
-  let vertices: [f32; 2 * 4] = [
-    -0.5, -0.5, // 0
-    0.5, -0.5, //  1
-    0.5, 0.5, //   2
-    -0.5, 0.5, //  3
+  #[rustfmt::skip]
+  let vertices: [f32; 2 * 4 + 4 * 3] = [
+  // position loc=0    | color loc=1  |
+   -0.5, -0.5, /* 0 */  1.0, 1.0, 1.0,
+    0.5, -0.5, /* 1 */  1.0, 1.0, 1.0,
+    0.5,  0.5, /* 2 */  1.0, 1.0, 1.0,
+   -0.5,  0.5, /* 3 */  1.0, 1.0, 1.0
   ];
 
   let indexes: [u16; 2 * 3] = [
@@ -22,12 +24,12 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   ];
 
   let mut renderer = Renderer::new(&gl);
-
-  //let res = store.assets.get("cat");
+  let image = store.assets.get("cat");
 
   renderer
     .add_vertices(&vertices)
     .add_layout::<f32>(2)
+    .add_layout::<f32>(3)
     .commit_layout()
     .add_shader(ShaderType::Vertex, SHADER_BASIC_VERT)
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
