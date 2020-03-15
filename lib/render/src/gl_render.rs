@@ -2,11 +2,10 @@ use gl::Gl;
 use gl::Renderer;
 use gl::ShaderType;
 
-use std::ffi::CString;
 use std::{str, time::Instant};
 
-pub static SHADER_BASIC_VERT: &'static str = include_str!("../../../resources/shader_basic_vert.glsl");
-pub static SHADER_BASIC_FRAG: &'static str = include_str!("../../../resources/shader_basic_frag.glsl");
+pub static SHADER_BASIC_VERT: &'static str = include_str!("./shaders/gl/shader_basic_vert.glsl");
+pub static SHADER_BASIC_FRAG: &'static str = include_str!("./shaders/gl/shader_basic_frag.glsl");
 
 pub fn create_renderer(gl: &Gl) -> Renderer {
   let vertices: [f32; 2 * 4] = [
@@ -32,11 +31,6 @@ pub fn create_renderer(gl: &Gl) -> Renderer {
     .commit_shaders()
     .add_indexes(&indexes, 6);
 
-  // // Setup color uniform
-  // let color_uniform_name = CString::new("u_Color").unwrap();
-  // let color_location = unsafe { gl.GetUniformLocation(program, color_uniform_name.as_ptr()) };
-  // // TODO: Add warning for location == -1
-
   return renderer;
 }
 
@@ -47,7 +41,7 @@ pub fn step(gl: &Gl, renderer: &mut Renderer, time: Instant) {
   renderer.bind();
 
   let color: [f32; 4] = [r, g, 0.5, 1.0];
-  renderer.set_uniform_f4("u_Color", &color);
+  renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
 
   renderer.draw();
 }
