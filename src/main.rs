@@ -1,5 +1,4 @@
 #[allow(dead_code)]
-mod resources;
 use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
@@ -12,6 +11,10 @@ use std::time::Instant;
 
 fn main() {
     let mut store = create_store();
+
+    //store.assets.load("cat", "./resources/cat_big.png");
+    store.assets.load2("cat", "./resources/cat_big.png");
+    //println!("RESS:: {:?}", store.assets.get("cat"));
 
     store.dispatch(Action::WindowResize(600, 800));
 
@@ -31,7 +34,7 @@ fn main() {
     let context = Gl::load_with(|symbol| window.get_proc_address(symbol));
 
     // Init game render
-    let mut renderer = render::create_renderer(&context);
+    let mut renderer = render::create_renderer(&store, &context);
 
     // Store monotonic clock time since start
     let time = Instant::now();
@@ -57,7 +60,7 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                window.window().request_redraw();
+                //window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render::step(&context, &mut renderer, time);

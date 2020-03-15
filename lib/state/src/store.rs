@@ -1,8 +1,10 @@
 use crate::Reducer;
+use assets::Repository;
 
 pub struct Store<State, Action> {
   reducer: Reducer<State, Action>,
   state: State,
+  pub assets: Repository,
 }
 
 impl<State, Action> Store<State, Action> {
@@ -10,6 +12,7 @@ impl<State, Action> Store<State, Action> {
     Self {
       reducer,
       state: initial,
+      assets: Repository::new(),
     }
   }
 

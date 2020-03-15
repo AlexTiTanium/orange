@@ -1,13 +1,14 @@
 use gl::Gl;
 use gl::Renderer;
 use gl::ShaderType;
+use state::Store;
 
 use std::{str, time::Instant};
 
 pub static SHADER_BASIC_VERT: &'static str = include_str!("./shaders/gl/shader_basic_vert.glsl");
 pub static SHADER_BASIC_FRAG: &'static str = include_str!("./shaders/gl/shader_basic_frag.glsl");
 
-pub fn create_renderer(gl: &Gl) -> Renderer {
+pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   let vertices: [f32; 2 * 4] = [
     -0.5, -0.5, // 0
     0.5, -0.5, //  1
@@ -21,6 +22,8 @@ pub fn create_renderer(gl: &Gl) -> Renderer {
   ];
 
   let mut renderer = Renderer::new(&gl);
+
+  //let res = store.assets.get("cat");
 
   renderer
     .add_vertices(&vertices)
