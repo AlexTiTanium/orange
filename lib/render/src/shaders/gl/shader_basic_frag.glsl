@@ -7,5 +7,5 @@ in vec3 outColor;
 void main()
 {
     //FragColor = u_Color;
-    FragColor = vec4(outColor.x, outColor.y, 1.0, 1.0);
+    FragColor = vec4(outColor, 1.0);
 }
