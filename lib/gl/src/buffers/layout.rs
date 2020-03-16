@@ -10,6 +10,7 @@ pub struct VertexBufferElement {
   pub normalized: u8,
 }
 
+#[derive(Default)]
 pub struct Layout {
   pub elements: Vec<VertexBufferElement>,
   pub stride: usize,

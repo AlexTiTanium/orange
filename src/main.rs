@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
@@ -47,7 +46,7 @@ fn main() {
         *control_flow = ControlFlow::Poll;
 
         match event {
-            Event::LoopDestroyed => return,
+            Event::LoopDestroyed => {}
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::Resized(physical_size) => {
                     store.dispatch(Action::WindowResize(physical_size.width, physical_size.height));

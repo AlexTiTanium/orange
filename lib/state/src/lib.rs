@@ -12,9 +12,8 @@ pub type Store = ReduxStore<State, Action>;
 
 pub fn create_store() -> Store {
     let window = Window::reducer;
-
     let reducer = combine_reducers!(State, &Action, window);
-    return Store::new(reducer, State::default());
+    Store::new(reducer, State::default())
 }
 
 pub enum Action {

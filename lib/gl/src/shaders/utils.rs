@@ -52,7 +52,7 @@ fn check_shader_errors(gl: &Gl, id: ShaderID) -> Result<(), ShaderError> {
     let all_errors = cs_error.into_string().unwrap();
 
     println!("[OpenGL] Shader compilation error:");
-    let errors = all_errors.split("\n");
+    let errors = all_errors.split('\n');
     for error in errors {
       println!("[OpenGL] {:?}", error);
     }
@@ -91,7 +91,7 @@ pub fn check_program_errors(gl: &Gl, id: ProgramID) -> Result<(), ProgramError> 
     let all_errors = cs_error.into_string().unwrap();
 
     println!("[OpenGL] Shader program error:");
-    let errors = all_errors.split("\n");
+    let errors = all_errors.split('\n');
     for error in errors {
       println!("[OpenGL] {:?}", error);
     }

@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::time::Instant;
 
+#[derive(Default)]
 pub struct Repository {
   map: HashMap<String, Vec<u8>>,
 }

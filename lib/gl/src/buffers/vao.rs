@@ -58,7 +58,7 @@ impl VertexArray {
 impl Drop for VertexArray {
   fn drop(&mut self) {
     unsafe {
-      self.gl.DeleteVertexArrays(1, &mut self.id);
+      self.gl.DeleteVertexArrays(1, &self.id);
     }
   }
 }

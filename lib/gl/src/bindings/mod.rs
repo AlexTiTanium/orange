@@ -1,18 +1,19 @@
 use std::ops::Deref;
 use std::rc::Rc;
 
-pub mod OpenGl {
+pub mod open_gl {
   //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+  #![allow(clippy::all)]
   include!("./gl-41-debug.rs");
   //include!("./gl-41-release.rs");
 }
 
-pub use OpenGl as GL;
-pub use OpenGl::types as GLT;
+pub use open_gl as GL;
+pub use open_gl::types as GLT;
 
 #[derive(Clone)]
 pub struct Gl {
-  inner: Rc<OpenGl::Gl>,
+  inner: Rc<open_gl::Gl>,
 }
 
 impl Gl {
@@ -21,15 +22,15 @@ impl Gl {
     F: FnMut(&'static str) -> *const GLT::GLvoid,
   {
     Gl {
-      inner: Rc::new(OpenGl::Gl::load_with(loadfn)),
+      inner: Rc::new(open_gl::Gl::load_with(loadfn)),
     }
   }
 }
 
 impl Deref for Gl {
-  type Target = OpenGl::Gl;
+  type Target = open_gl::Gl;
 
-  fn deref(&self) -> &OpenGl::Gl {
+  fn deref(&self) -> &open_gl::Gl {
     &self.inner
   }
 }

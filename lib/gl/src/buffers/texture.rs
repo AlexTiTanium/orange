@@ -1,10 +1,8 @@
 use crate::ConstVoid;
 use crate::Gl;
 use crate::RenderID;
-use crate::SizeIntPtr;
 use crate::GL;
-use crate::GLT;
-use std::{any, convert::TryInto, mem, ptr};
+use std::convert::TryInto;
 
 pub struct Texture {
   id: RenderID,
@@ -23,7 +21,7 @@ impl Texture {
     Self { id, gl }
   }
 
-  pub fn set_data(&mut self, width: i32, height: i32, data: &Vec<u8>) {
+  pub fn set_data(&mut self, width: i32, height: i32, data: &[u8]) {
     unsafe {
       self.gl.TexImage2D(
         GL::TEXTURE_2D,
@@ -71,10 +69,10 @@ impl Texture {
   }
 }
 
-impl Drop for Texture {
-  fn drop(&mut self) {
-    unsafe {
-      // self.gl.DeleteBuffers(1, &mut self.id);
-    }
-  }
-}
+// impl Drop for Texture {
+//   fn drop(&mut self) {
+//     //unsafe {
+//     // self.gl.DeleteBuffers(1, &mut self.id);
+//     //}
+//   }
+// }

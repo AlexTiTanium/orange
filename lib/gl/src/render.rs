@@ -6,7 +6,6 @@ use crate::ShaderType;
 use crate::VertexArray;
 use crate::VertexBuffer;
 use crate::GL;
-use std::{any, mem::transmute};
 
 pub struct Renderer {
   gl: Gl,
