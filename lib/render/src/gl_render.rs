@@ -24,12 +24,12 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   ];
 
   let mut renderer = Renderer::new(&gl);
-  let _image = store.assets.get("cat");
+  //let _image = store.assets.get("cat");
 
   renderer
     .add_vertices(&vertices)
-    .add_layout::<f32>(2)
-    .add_layout::<f32>(3)
+    .add_layout::<f32>(2) // Loc = 0
+    .add_layout::<f32>(3) // Loc = 1
     .commit_layout()
     .add_shader(ShaderType::Vertex, SHADER_BASIC_VERT)
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
