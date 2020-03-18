@@ -6,9 +6,15 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
+pub struct Image {
+  pub data: Vec<u8>,
+  pub width: usize,
+  pub height: usize,
+}
+
 #[derive(Default)]
 pub struct Repository {
-  map: HashMap<String, Vec<u8>>,
+  map: HashMap<String, Image>,
   path: PathBuf,
 }
 
@@ -51,9 +57,9 @@ impl Repository {
     }
   }
 
-  pub fn get(&self, id: &str) -> &Vec<u8> {
+  pub fn get(&self, id: &str) -> &Image {
     match self.map.get(id) {
-      Some(data) => data,
+      Some(image) => image,
       None => {
         error!("Asset {:?} not found", id);
         panic!("[Assets] Asset {:?} not found", id);
@@ -79,10 +85,15 @@ impl Repository {
         panic!("Image loading: {:?} {:?} ", e, &path);
       }
       LoadResult::ImageU8(im) => {
-        self.map.insert(String::from(id), im.data);
+        let image = Image {
+          width: im.width,
+          height: im.width,
+          data: im.data,
+        };
+        self.map.insert(String::from(id), image);
       }
-      LoadResult::ImageF32(im32) => {
-        info!("f32: {:?} ", im32.width);
+      LoadResult::ImageF32(_im32) => {
+        warn!("Got unsupported f32 image");
       }
     }
     info!("Time stb image {:?} ", time.elapsed());

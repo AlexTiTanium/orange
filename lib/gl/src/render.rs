@@ -3,6 +3,7 @@ use crate::IndexBuffer;
 use crate::Layout;
 use crate::Program;
 use crate::ShaderType;
+use crate::Texture;
 use crate::VertexArray;
 use crate::VertexBuffer;
 use crate::GL;
@@ -14,7 +15,7 @@ pub struct Renderer {
   vao: VertexArray,
   layout: Layout,
   program: Program,
-  pub color_location: i32,
+  texture: Texture,
 }
 
 impl Renderer {
@@ -27,8 +28,8 @@ impl Renderer {
       vao: VertexArray::new(&gl),
       layout: Layout::new(),
       program: Program::new(&gl),
+      texture: Texture::new(&gl),
       gl,
-      color_location: 0,
     }
   }
 
@@ -62,6 +63,14 @@ impl Renderer {
     self
   }
 
+  pub fn add_texture(&mut self, width: usize, height: usize, data: &[u8]) -> &mut Self {
+    self.texture.bind();
+    self.texture.set_param();
+    self.texture.set_data(width as i32, height as i32, data);
+    self.texture.generate_mipmap();
+    self
+  }
+
   pub fn debug(&mut self) -> &mut Self {
     unsafe {
       self.gl.PolygonMode(GL::FRONT_AND_BACK, GL::LINE);
@@ -74,6 +83,7 @@ impl Renderer {
   }
 
   pub fn bind(&self) {
+    self.texture.bind();
     self.vao.bind();
     self.ibo.bind();
     self.program.bind();
