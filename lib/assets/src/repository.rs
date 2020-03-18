@@ -1,56 +1,90 @@
-use png;
+use log::*;
 use stb_image;
 use stb_image::image::LoadResult;
 use std::collections::HashMap;
-use std::fs::File;
+use std::env;
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 #[derive(Default)]
 pub struct Repository {
   map: HashMap<String, Vec<u8>>,
+  path: PathBuf,
 }
 
 impl Repository {
   pub fn new() -> Repository {
-    Repository { map: HashMap::new() }
+    let mut path_to_exec = env::current_exe().unwrap();
+    path_to_exec.pop();
+    path_to_exec.push("resources");
+
+    let mut path_to_exec_osx = env::current_exe().unwrap();
+    path_to_exec_osx.pop();
+    path_to_exec_osx.pop();
+    path_to_exec_osx.push("Resources/resources/");
+
+    let resources_path = vec![
+      Path::new("resources/"),
+      Path::new(path_to_exec_osx.as_path()),
+      Path::new(path_to_exec.as_path()),
+    ];
+
+    let mut resources: PathBuf = PathBuf::new();
+
+    for path in resources_path {
+      if path.exists() {
+        info!("Resources found: {:?}", path);
+        resources = PathBuf::from(path);
+        break;
+      }
+      warn!("Resources path not found: {:?}", path);
+    }
+
+    if resources.as_os_str().is_empty() {
+      error!("Resource file no found");
+      panic!("Resources folder not found");
+    }
+
+    Repository {
+      map: HashMap::new(),
+      path: resources,
+    }
   }
 
   pub fn get(&self, id: &str) -> &Vec<u8> {
     match self.map.get(id) {
       Some(data) => data,
-      None => panic!("[Assets] Asset {:?} not found", id),
+      None => {
+        error!("Asset {:?} not found", id);
+        panic!("[Assets] Asset {:?} not found", id);
+      }
     }
   }
 
-  pub fn load_slow(&mut self, id: &str, path: &str) {
+  pub fn load(&mut self, id: &str, resource: &str) {
     let time = Instant::now();
 
-    let decoder = png::Decoder::new(File::open(path).unwrap());
-    let (info, mut reader) = decoder.read_info().unwrap();
-    let mut img_data = vec![0; info.buffer_size()];
-    reader.next_frame(&mut img_data).unwrap();
-    self.map.insert(String::from(id), img_data);
-    println!("Time png {:?} ", time.elapsed());
-  }
+    let mut path = PathBuf::from(&self.path);
+    path.push(resource);
 
-  pub fn load(&mut self, id: &str, path: &str) {
-    let time = Instant::now();
     unsafe {
       stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
     }
-    let img = stb_image::image::load(path);
+
+    let img = stb_image::image::load(&path);
 
     match img {
       LoadResult::Error(e) => {
-        println!("Image loading: {:?} ", e);
+        error!("Image loading: {:?} {:?} ", e, &path);
+        panic!("Image loading: {:?} {:?} ", e, &path);
       }
       LoadResult::ImageU8(im) => {
         self.map.insert(String::from(id), im.data);
       }
       LoadResult::ImageF32(im32) => {
-        println!("f32: {:?} ", im32.width);
+        info!("f32: {:?} ", im32.width);
       }
     }
-    println!("Time stb image {:?} ", time.elapsed());
+    info!("Time stb image {:?} ", time.elapsed());
   }
 }

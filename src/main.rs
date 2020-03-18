@@ -1,18 +1,29 @@
+use flexi_logger::{opt_format, Duplicate, Logger};
 use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
+use log::*;
 use render;
 use state::{create_store, Action};
 use std::time::Instant;
 
 fn main() {
+    // Setup logger
+    Logger::with_str("debug")
+        .print_message()
+        .duplicate_to_stderr(Duplicate::Debug)
+        .suppress_timestamp()
+        //.log_to_file()
+        .start()
+        .unwrap();
+
     let mut store = create_store();
 
     //store.assets.load("cat", "./resources/cat_big.png");
-    //store.assets.load("cat", "resources/cat_big.png");
+    store.assets.load("cat", "cat_big.png");
 
     store.dispatch(Action::WindowResize(600, 800));
 
@@ -58,7 +69,7 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                window.window().request_redraw();
+                //window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render::step(&context, &mut renderer, time);
