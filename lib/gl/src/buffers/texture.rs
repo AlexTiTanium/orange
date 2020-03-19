@@ -45,10 +45,13 @@ impl Texture {
 
   pub fn set_param(&self) {
     unsafe {
+      self.bind();
       self.gl.Enable(GL::BLEND);
-      self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::REPEAT.try_into().unwrap());
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::REPEAT.try_into().unwrap());
+      // self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
+      #[rustfmt::skip]
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_BORDER.try_into().unwrap());
+      #[rustfmt::skip]
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_BORDER.try_into().unwrap());
       #[rustfmt::skip]
       self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::LINEAR.try_into().unwrap());
       #[rustfmt::skip]
