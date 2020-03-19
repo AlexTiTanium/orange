@@ -66,8 +66,9 @@ impl Renderer {
   pub fn add_texture(&mut self, width: usize, height: usize, data: &[u8]) -> &mut Self {
     self.texture.bind();
     self.texture.set_param();
-    self.texture.set_data(width as i32, height as i32, data);
     self.texture.generate_mipmap();
+    self.texture.set_data(width as i32, height as i32, data);
+    self.texture.unbind();
     self
   }
 
@@ -83,10 +84,10 @@ impl Renderer {
   }
 
   pub fn bind(&self) {
-    self.texture.bind();
     self.vao.bind();
     self.ibo.bind();
     self.program.bind();
+    self.texture.bind();
   }
 
   pub fn draw(&self) {

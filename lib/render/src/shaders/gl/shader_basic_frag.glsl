@@ -11,5 +11,5 @@ void main()
 {
     //FragColor = u_Color;
     //FragColor = vec4(outColor.xyz + u_Color.xyz, 1.0);
-    FragColor = texture(u_Texture, outTexCoord);
+    FragColor = texture(u_Texture, outTexCoord) * vec4(u_Color.xyz, 1.0);
 }

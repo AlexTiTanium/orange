@@ -2,7 +2,6 @@ use crate::ConstVoid;
 use crate::Gl;
 use crate::RenderID;
 use crate::GL;
-use std::convert::TryInto;
 
 pub struct Texture {
   id: RenderID,
@@ -26,7 +25,7 @@ impl Texture {
       self.gl.TexImage2D(
         GL::TEXTURE_2D,
         0,
-        GL::RGBA.try_into().unwrap(),
+        GL::RGBA as i32,
         width,
         height,
         0,
@@ -47,20 +46,21 @@ impl Texture {
     unsafe {
       self.bind();
       self.gl.Enable(GL::BLEND);
-      // self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
+      self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
       #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_BORDER.try_into().unwrap());
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::REPEAT as i32);
       #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_BORDER.try_into().unwrap());
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::REPEAT as i32);
       #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::LINEAR.try_into().unwrap());
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST as i32);
       #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::LINEAR.try_into().unwrap());
+      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST as i32);
     }
   }
 
   pub fn bind(&self) {
     unsafe {
+      // self.gl.ActiveTexture(GL::TEXTURE0);
       self.gl.BindTexture(GL::TEXTURE_2D, self.id);
     }
   }

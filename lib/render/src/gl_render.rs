@@ -14,7 +14,7 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   // position loc=0    | color loc=1  | texture loc=2 |
    -0.5, -0.5, /* 0 */  1.0, 0.0, 0.0,  0.0, 0.0,  // bottom left
     0.5, -0.5, /* 1 */  0.0, 1.0, 0.0,  1.0, 0.0,  // bottom right
-    0.5,  0.5, /* 2 */  0.0, 0.0, 1.0,  1.1, 1.1,  // top right
+    0.5,  0.5, /* 2 */  0.0, 0.0, 1.0,  1.0, 1.0,  // top right
    -0.5,  0.5, /* 3 */  1.0, 1.0, 0.0,  0.0, 1.0,  // top left
   ];
 

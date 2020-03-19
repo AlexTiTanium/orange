@@ -87,7 +87,7 @@ impl Repository {
       LoadResult::ImageU8(im) => {
         let image = Image {
           width: im.width,
-          height: im.width,
+          height: im.height,
           data: im.data,
         };
         self.map.insert(String::from(id), image);
