@@ -1,6 +1,7 @@
 use super::utils;
 use super::ProgramError;
 use super::ShaderType;
+use crate::glm::TMat4;
 use crate::Gl;
 use crate::RenderID;
 use crate::ShaderID;
@@ -30,6 +31,16 @@ impl Program {
     }
   }
 
+  fn delete_shaders(&mut self) {
+    for &shader in &self.shaders {
+      unsafe {
+        self.gl.DeleteProgram(shader);
+      }
+    }
+
+    self.shaders.clear();
+  }
+
   pub fn add_shaders(&mut self, shader_type: ShaderType, source: &str) {
     let shader = utils::compile(&self.gl, shader_type, source).unwrap();
 
@@ -56,14 +67,10 @@ impl Program {
     }
   }
 
-  pub fn get_uniform_location(&mut self, name: &str) -> Result<Location, ProgramError> {
+  pub fn create_uniform_location(&mut self, name: &str) -> Result<Location, ProgramError> {
+    self.bind();
+
     let uniform_name = CString::new(name).unwrap();
-
-    let found_location = self.locations.get(&uniform_name);
-
-    if let Some(&location) = found_location {
-      return Ok(location);
-    }
 
     let new_location = unsafe { self.gl.GetUniformLocation(self.id, uniform_name.as_ptr()) };
 
@@ -75,34 +82,36 @@ impl Program {
     Ok(new_location)
   }
 
-  pub fn uniform1i(&mut self, name: &str, data: i32) {
-    match self.get_uniform_location(name) {
-      Ok(location) => unsafe {
-        self.gl.Uniform1i(location, data);
-      },
-      Err(ProgramError::NoLocation(location_name)) => println!("[Shader:Error] Uniform1i not found for location: {:?}", location_name),
-      _ => panic!("Unexpected Error"),
+  pub fn get_uniform_location(&self, name: &str) -> Result<Location, ProgramError> {
+    let uniform_name = CString::new(name).unwrap();
+
+    let found_location = self.locations.get(&uniform_name);
+
+    match found_location {
+      Some(&location) => Ok(location),
+      None => Err(ProgramError::CreateLocation(uniform_name)),
     }
   }
 
-  pub fn uniform4f(&mut self, name: &str, data: &[f32; 4]) {
-    match self.get_uniform_location(name) {
-      Ok(location) => unsafe {
-        self.gl.Uniform4f(location, data[0], data[1], data[2], data[3]);
-      },
-      Err(ProgramError::NoLocation(location_name)) => println!("[Shader:Error] Uniform4f not found for location: {:?}", location_name),
-      _ => panic!("Unexpected Error"),
+  pub fn uniform_mat4(&self, name: &str, data: &TMat4<f32>) {
+    let location = self.get_uniform_location(name).unwrap();
+    unsafe {
+      self.gl.UniformMatrix4fv(location, 1, 0, data.as_ptr());
     }
   }
 
-  fn delete_shaders(&mut self) {
-    for &shader in &self.shaders {
-      unsafe {
-        self.gl.DeleteProgram(shader);
-      }
+  pub fn uniform1i(&self, name: &str, data: i32) {
+    let location = self.get_uniform_location(name).unwrap();
+    unsafe {
+      self.gl.Uniform1i(location, data);
     }
+  }
 
-    self.shaders.clear();
+  pub fn uniform4f(&self, name: &str, data: &[f32; 4]) {
+    let location = self.get_uniform_location(name).unwrap();
+    unsafe {
+      self.gl.Uniform4f(location, data[0], data[1], data[2], data[3]);
+    }
   }
 }
 

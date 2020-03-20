@@ -22,6 +22,8 @@ pub enum ProgramError {
   Linking,
   #[error("Uniform `{0:?}` location not found in shader")]
   NoLocation(CString),
+  #[error("Uniform `{0:?}` create this location before get")]
+  CreateLocation(CString),
 }
 
 pub mod program;

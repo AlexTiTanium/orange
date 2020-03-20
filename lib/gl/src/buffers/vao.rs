@@ -2,7 +2,6 @@ use crate::ConstVoid;
 use crate::Gl;
 use crate::Layout;
 use crate::RenderID;
-use crate::VertexBuffer;
 
 pub struct VertexArray {
   id: RenderID,

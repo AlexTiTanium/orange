@@ -1,3 +1,5 @@
+use crate::glm;
+use crate::glm::TMat4;
 use crate::Gl;
 use crate::IndexBuffer;
 use crate::Layout;
@@ -17,6 +19,7 @@ pub struct Renderer {
   layout: Layout,
   program: Program,
   texture: Texture,
+  projection: TMat4<f32>,
 }
 
 impl Renderer {
@@ -31,6 +34,7 @@ impl Renderer {
       program: Program::new(&gl),
       texture: Texture::new(&gl),
       gl,
+      projection: glm::identity(),
     }
   }
 
@@ -90,22 +94,38 @@ impl Renderer {
     self
   }
 
-  pub fn set_uniform_i1(&mut self, name: &str, data: i32) {
+  pub fn create_uniform(&mut self, name: &str) {
+    self.program.create_uniform_location(name).unwrap();
+  }
+
+  pub fn set_uniform_mat4(&self, name: &str, data: &TMat4<f32>) {
+    self.program.uniform_mat4(&name, data);
+  }
+
+  pub fn set_uniform_i1(&self, name: &str, data: i32) {
     self.program.uniform1i(&name, data);
   }
 
-  pub fn set_uniform_f4(&mut self, name: &str, data: &[f32; 4]) {
+  pub fn set_uniform_f4(&self, name: &str, data: &[f32; 4]) {
     self.program.uniform4f(&name, &data);
   }
 
-  pub fn bind(&self) {
+  pub fn bind(&mut self) {
     self.vao.bind();
     self.ibo.bind();
     self.program.bind();
+
+    self.set_uniform_mat4("u_MVP", &self.projection);
   }
 
   pub fn select_texture_slot(&self, slot: TextureSlot) {
     self.texture.bind(slot);
+  }
+
+  pub fn create_mvp(&mut self) {
+    self.projection = glm::ortho(-2.0, 2.0, -1.5, 1.5, -1.0, 1.0);
+    self.create_uniform("u_MVP");
+    self.set_uniform_mat4("u_MVP", &self.projection);
   }
 
   pub fn draw(&self) {

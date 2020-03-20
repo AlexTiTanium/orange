@@ -1,4 +1,4 @@
-use flexi_logger::{opt_format, Duplicate, Logger};
+use flexi_logger::{Duplicate, Logger};
 use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};

@@ -27,7 +27,7 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   let mut renderer = Renderer::new(&gl);
 
   let cat = store.assets.get("cat");
-  let tree = store.assets.get("tree");
+  let _tree = store.assets.get("tree");
 
   renderer
     .add_vertices(&vertices)
@@ -39,8 +39,11 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
     .commit_shaders()
     .add_texture(TextureSlot::DEFAULT, cat.width, cat.height, &cat.data)
-    .add_texture(TextureSlot::ONE, tree.width, tree.height, &tree.data)
     .add_indexes(&indexes, 6);
+
+  renderer.create_mvp();
+  renderer.create_uniform("u_Texture");
+  renderer.create_uniform("u_Color");
 
   renderer
 }

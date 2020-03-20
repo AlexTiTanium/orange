@@ -1,3 +1,5 @@
+use nalgebra_glm as glm;
+
 pub use crate::bindings::Gl; // OpenGl instance
 pub use crate::bindings::GL; // OpenGl constants
 pub use crate::bindings::GLT; // OpenGl Types

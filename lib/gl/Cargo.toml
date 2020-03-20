@@ -9,6 +9,7 @@ edition = "2018"
 
 [dependencies]
 thiserror = "1.0.11"
+nalgebra-glm = "0.6.0"
 
 [build-dependencies]
 gl_generator = "0.14.0"

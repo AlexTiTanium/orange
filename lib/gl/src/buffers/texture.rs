@@ -3,10 +3,11 @@ use crate::Gl;
 use crate::RenderID;
 use crate::GL;
 
+#[repr(u32)]
 pub enum TextureSlot {
-  DEFAULT = GL::TEXTURE0 as isize,
-  ONE = GL::TEXTURE1 as isize,
-  TWO = GL::TEXTURE2 as isize,
+  DEFAULT = GL::TEXTURE0,
+  ONE = GL::TEXTURE1,
+  TWO = GL::TEXTURE2,
 }
 
 pub struct Texture {
