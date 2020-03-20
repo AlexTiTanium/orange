@@ -34,7 +34,9 @@ impl Renderer {
   }
 
   pub fn add_vertices<T>(&mut self, vertices: &[T]) -> &mut Self {
+    self.vbo.bind();
     self.vbo.set_data::<T>(&vertices);
+    self.vbo.unbind();
     self
   }
 
@@ -44,7 +46,11 @@ impl Renderer {
   }
 
   pub fn commit_layout(&mut self) -> &mut Self {
-    self.vao.add_buffer(&self.vbo, &self.layout);
+    self.vao.bind();
+    self.vbo.bind();
+    self.vao.add_buffer(&self.layout);
+    self.vbo.unbind();
+    self.vao.unbind();
     self
   }
 
@@ -59,7 +65,9 @@ impl Renderer {
   }
 
   pub fn add_indexes<T>(&mut self, indexes: &[T], count: i32) -> &mut Self {
+    self.ibo.bind();
     self.ibo.set_data::<T>(&indexes, count);
+    self.ibo.unbind();
     self
   }
 

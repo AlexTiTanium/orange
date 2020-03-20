@@ -22,7 +22,7 @@ fn main() {
     let mut store = create_store();
 
     //store.assets.load("cat", "./resources/cat_big.png");
-    store.assets.load("cat", "cat_big.png");
+    store.assets.load("cat", "tree.png");
 
     store.dispatch(Action::WindowResize(600, 800));
 

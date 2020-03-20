@@ -23,8 +23,6 @@ impl VertexBuffer {
   }
 
   pub fn set_data<T>(&self, data: &[T]) {
-    self.bind();
-
     unsafe {
       self.gl.BufferData(
         GL::ARRAY_BUFFER,

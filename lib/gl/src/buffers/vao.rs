@@ -21,10 +21,7 @@ impl VertexArray {
     Self { id, gl }
   }
 
-  pub fn add_buffer(&self, buffer: &VertexBuffer, layout: &Layout) {
-    self.bind();
-    buffer.bind();
-
+  pub fn add_buffer(&self, layout: &Layout) {
     let mut offset: usize = 0;
     for (index, element) in layout.elements.iter().enumerate() {
       unsafe {
