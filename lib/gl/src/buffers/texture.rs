@@ -3,6 +3,12 @@ use crate::Gl;
 use crate::RenderID;
 use crate::GL;
 
+pub enum TextureSlot {
+  DEFAULT = GL::TEXTURE0 as isize,
+  ONE = GL::TEXTURE1 as isize,
+  TWO = GL::TEXTURE2 as isize,
+}
+
 pub struct Texture {
   id: RenderID,
   gl: Gl,
@@ -44,7 +50,6 @@ impl Texture {
 
   pub fn set_param(&self) {
     unsafe {
-      self.bind();
       self.gl.Enable(GL::BLEND);
       self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
       #[rustfmt::skip]
@@ -58,24 +63,24 @@ impl Texture {
     }
   }
 
-  pub fn bind(&self) {
+  pub fn bind(&self, slot: TextureSlot) {
     unsafe {
-      // self.gl.ActiveTexture(GL::TEXTURE0);
+      self.gl.ActiveTexture(slot as u32);
       self.gl.BindTexture(GL::TEXTURE_2D, self.id);
     }
   }
 
   pub fn unbind(&self) {
     unsafe {
-      self.gl.BindBuffer(GL::TEXTURE_2D, 0);
+      self.gl.BindTexture(GL::TEXTURE_2D, 0);
     }
   }
 }
 
-// impl Drop for Texture {
-//   fn drop(&mut self) {
-//     //unsafe {
-//     // self.gl.DeleteBuffers(1, &mut self.id);
-//     //}
-//   }
-// }
+impl Drop for Texture {
+  fn drop(&mut self) {
+    unsafe {
+      self.gl.DeleteTextures(1, &self.id);
+    }
+  }
+}

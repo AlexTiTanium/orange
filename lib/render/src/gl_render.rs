@@ -1,6 +1,7 @@
 use gl::Gl;
 use gl::Renderer;
 use gl::ShaderType;
+use gl::TextureSlot;
 use state::Store;
 
 use std::{str, time::Instant};
@@ -24,7 +25,9 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   ];
 
   let mut renderer = Renderer::new(&gl);
-  let image = store.assets.get("cat");
+
+  let cat = store.assets.get("cat");
+  let tree = store.assets.get("tree");
 
   renderer
     .add_vertices(&vertices)
@@ -35,7 +38,8 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
     .add_shader(ShaderType::Vertex, SHADER_BASIC_VERT)
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
     .commit_shaders()
-    .add_texture(image.width, image.height, &image.data)
+    .add_texture(TextureSlot::DEFAULT, cat.width, cat.height, &cat.data)
+    .add_texture(TextureSlot::ONE, tree.width, tree.height, &tree.data)
     .add_indexes(&indexes, 6);
 
   renderer
@@ -45,8 +49,12 @@ pub fn step(_gl: &Gl, renderer: &mut Renderer, time: Instant) {
   let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
   let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
+  renderer.select_texture_slot(TextureSlot::DEFAULT);
+  renderer.select_texture_slot(TextureSlot::ONE);
+
   renderer.bind();
 
+  renderer.set_uniform_i1("u_Texture", 0);
   renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
 
   renderer.draw();

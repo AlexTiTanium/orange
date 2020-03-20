@@ -71,10 +71,18 @@ impl Program {
       return Err(ProgramError::NoLocation(uniform_name));
     }
 
-    println!("{:?}", new_location);
-
     self.locations.insert(uniform_name, new_location);
     Ok(new_location)
+  }
+
+  pub fn uniform1i(&mut self, name: &str, data: i32) {
+    match self.get_uniform_location(name) {
+      Ok(location) => unsafe {
+        self.gl.Uniform1i(location, data);
+      },
+      Err(ProgramError::NoLocation(location_name)) => println!("[Shader:Error] Uniform1i not found for location: {:?}", location_name),
+      _ => panic!("Unexpected Error"),
+    }
   }
 
   pub fn uniform4f(&mut self, name: &str, data: &[f32; 4]) {

@@ -4,6 +4,7 @@ use crate::Layout;
 use crate::Program;
 use crate::ShaderType;
 use crate::Texture;
+use crate::TextureSlot;
 use crate::VertexArray;
 use crate::VertexBuffer;
 use crate::GL;
@@ -71,12 +72,14 @@ impl Renderer {
     self
   }
 
-  pub fn add_texture(&mut self, width: usize, height: usize, data: &[u8]) -> &mut Self {
-    self.texture.bind();
+  pub fn add_texture(&mut self, slot: TextureSlot, width: usize, height: usize, data: &[u8]) -> &mut Self {
+    self.select_texture_slot(slot);
     self.texture.set_param();
     self.texture.generate_mipmap();
     self.texture.set_data(width as i32, height as i32, data);
     self.texture.unbind();
+    // TODO: Should I free image buffer?
+    // TODO: Crate consume_texture method variant ?
     self
   }
 
@@ -87,6 +90,10 @@ impl Renderer {
     self
   }
 
+  pub fn set_uniform_i1(&mut self, name: &str, data: i32) {
+    self.program.uniform1i(&name, data);
+  }
+
   pub fn set_uniform_f4(&mut self, name: &str, data: &[f32; 4]) {
     self.program.uniform4f(&name, &data);
   }
@@ -95,7 +102,10 @@ impl Renderer {
     self.vao.bind();
     self.ibo.bind();
     self.program.bind();
-    self.texture.bind();
+  }
+
+  pub fn select_texture_slot(&self, slot: TextureSlot) {
+    self.texture.bind(slot);
   }
 
   pub fn draw(&self) {

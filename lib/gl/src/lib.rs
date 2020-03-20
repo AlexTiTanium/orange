@@ -18,6 +18,7 @@ pub mod shaders;
 pub use buffers::ibo::IndexBuffer;
 pub use buffers::layout::{Layout, VertexBufferElement};
 pub use buffers::texture::Texture;
+pub use buffers::texture::TextureSlot;
 pub use buffers::vao::VertexArray;
 pub use buffers::vbo::VertexBuffer;
 

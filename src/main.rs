@@ -22,7 +22,8 @@ fn main() {
     let mut store = create_store();
 
     //store.assets.load("cat", "./resources/cat_big.png");
-    store.assets.load("cat", "tree.png");
+    store.assets.load("cat", "cat_big.png");
+    store.assets.load("tree", "tree.png");
 
     store.dispatch(Action::WindowResize(600, 800));
 
@@ -68,7 +69,7 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                window.window().request_redraw();
+                //window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render::step(&context, &mut renderer, time);
