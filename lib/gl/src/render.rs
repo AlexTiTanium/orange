@@ -149,4 +149,11 @@ impl Renderer {
   pub fn draw(&self) {
     self.ibo.draw();
   }
+
+  pub fn clear(&self) {
+    unsafe {
+      self.gl.ClearColor(0.2, 0.2, 0.2, 1.0);
+      self.gl.Clear(GL::COLOR_BUFFER_BIT);
+    }
+  }
 }
