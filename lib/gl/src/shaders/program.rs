@@ -96,7 +96,7 @@ impl Program {
   pub fn uniform_mat4(&self, name: &str, data: &TMat4<f32>) {
     let location = self.get_uniform_location(name).unwrap();
     unsafe {
-      self.gl.UniformMatrix4fv(location, 1, 1, data.as_ptr());
+      self.gl.UniformMatrix4fv(location, 1, 0, data.as_ptr());
     }
   }
 
