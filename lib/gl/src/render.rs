@@ -122,8 +122,9 @@ impl Renderer {
     self.texture.bind(slot);
   }
 
-  pub fn create_mvp(&mut self) {
-    self.projection = glm::ortho(-2.0, 2.0, -1.5, 1.5, -1.0, 1.0);
+  pub fn create_mvp(&mut self, width: u32, height: u32) {
+    self.projection = glm::ortho(0.0, width as f32, height as f32, 0.0, -1.0, 1.0);
+
     self.create_uniform("u_MVP");
     self.set_uniform_mat4("u_MVP", &self.projection);
   }
