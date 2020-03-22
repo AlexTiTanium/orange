@@ -1,5 +1,5 @@
 [package]
-name = "game"
+name = "editor"
 version = "0.1.0"
 authors = ["Alex Kucherenko <kucherenko.email@gmail.com>"]
 edition = "2018"

@@ -4,7 +4,7 @@ use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
-use imgui::{im_str, Condition, Context, Io, Ui, Window};
+use imgui::{im_str, Condition, Context, Ui, Window};
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
 use render;
 use state::{create_store, Action};
