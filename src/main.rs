@@ -1,11 +1,10 @@
+use editor::Editor;
 use flexi_logger::Logger;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
-use imgui::{im_str, Condition, Context, Ui, Window};
-use imgui_winit_support::{HiDpiMode, WinitPlatform};
 use render;
 use state::{create_store, Action};
 use std::time::Instant;
@@ -33,9 +32,6 @@ fn main() {
         .with_title("Hello world!")
         .with_inner_size(LogicalSize::new(state.window.width, state.window.width));
 
-    let mut imgui = Context::create();
-    imgui.fonts().build_rgba32_texture();
-
     // Create windowed context
     let windowed_context = ContextBuilder::new().with_vsync(true).build_windowed(wb, &event_loop).unwrap();
 
@@ -45,7 +41,8 @@ fn main() {
     // Game render
     let mut render = render::create(&store, |symbol| window.get_proc_address(symbol));
 
-    let ui_renderer = imgui_opengl_renderer::Renderer::new(&mut imgui, |symbol| window.get_proc_address(symbol));
+    // Create editor UI render
+    let mut editor = Editor::new(&window.window(), |symbol| window.get_proc_address(symbol));
 
     // Store monotonic clock time since start
     let time = Instant::now();
@@ -53,19 +50,17 @@ fn main() {
     // Delta time
     let mut delta = Instant::now();
 
-    let mut platform = WinitPlatform::init(&mut imgui); // step 1
-    platform.attach_window(imgui.io_mut(), &window.window(), HiDpiMode::Default); // step 2
-
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
         // Poll should work better for games
         *control_flow = ControlFlow::Poll;
 
-        platform.handle_event(imgui.io_mut(), &window.window(), &event);
+        // Listen user input for editor UI
+        editor.handle_event(&window.window(), &event);
 
         match event {
             Event::NewEvents(_) => {
-                delta = imgui.io_mut().update_delta_time(delta);
+                editor.update();
             }
             Event::LoopDestroyed => {}
             Event::WindowEvent { event, .. } => match event {
@@ -79,20 +74,12 @@ fn main() {
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
                 //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
-                platform.prepare_frame(imgui.io_mut(), &window.window()).expect("Failed to prepare frame");
+                editor.prepare_frame(&window.window());
                 window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
-                //renderer.clear();
-
                 render.step(&store);
-
-                let ui = imgui.frame();
-                platform.prepare_render(&ui, &window.window());
-
-                draw_ui(&ui, time);
-
-                ui_renderer.render(ui);
+                editor.step(&store, &window.window());
                 window.swap_buffers().unwrap();
             }
             Event::RedrawEventsCleared => {
@@ -101,17 +88,4 @@ fn main() {
             _ => (),
         }
     });
-}
-
-fn draw_ui(ui: &Ui, time: Instant) {
-    Window::new(im_str!("Hello world"))
-        .size([300.0, 100.0], Condition::FirstUseEver)
-        .build(&ui, || {
-            ui.text(im_str!("Hello world!{:?}", time.elapsed().as_millis()));
-            ui.text(im_str!("こんにちは世界！"));
-            ui.text(im_str!("This...is...imgui-rs!  {:?}", ui.io().delta_time));
-            ui.separator();
-            let mouse_pos = ui.io().mouse_pos;
-            ui.text(format!("Mouse Position: ({:.1},{:.1})", mouse_pos[0], mouse_pos[1]));
-        });
 }
