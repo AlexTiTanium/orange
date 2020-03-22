@@ -7,8 +7,6 @@ pub struct State {
 
 impl State {
   pub fn default() -> Self {
-    Self {
-      window: Window::default(),
-    }
+    Self { window: Window::default() }
   }
 }

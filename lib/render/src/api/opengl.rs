@@ -1,15 +1,54 @@
 use gl::Gl;
 use gl::Renderer;
+use gl::GLT;
+use state::*;
+
 use gl::ShaderType;
 use gl::TextureSlot;
 use state::Store;
 
-use std::{str, time::Instant};
+use std::str;
 
-pub static SHADER_BASIC_VERT: &str = include_str!("./shaders/gl/shader_basic_vert.glsl");
-pub static SHADER_BASIC_FRAG: &str = include_str!("./shaders/gl/shader_basic_frag.glsl");
+pub static SHADER_BASIC_VERT: &str = include_str!("../shaders/gl/shader_basic_vert.glsl");
+pub static SHADER_BASIC_FRAG: &str = include_str!("../shaders/gl/shader_basic_frag.glsl");
 
-pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
+pub struct OpenGL {
+  renderer: Renderer,
+}
+
+impl OpenGL {
+  pub fn new<F>(store: &Store, load: F) -> Self
+  where
+    F: FnMut(&'static str) -> *const GLT::GLvoid,
+  {
+    let gl = Gl::load_with(load);
+    let renderer = create_renderer(store, &gl);
+
+    Self { renderer }
+  }
+
+  pub fn update_time() {
+    println!("Not implemented");
+  }
+
+  pub fn step(&mut self, store: &Store) {
+    self.renderer.clear();
+    // let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
+    // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
+
+    //renderer.select_texture_slot(TextureSlot::DEFAULT);
+    //renderer.select_texture_slot(TextureSlot::ONE);
+
+    self.renderer.bind();
+
+    //renderer.set_uniform_i1("u_Texture", 0);
+    //self.renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
+
+    self.renderer.draw();
+  }
+}
+
+fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   let state = store.state();
 
   #[rustfmt::skip]
@@ -50,19 +89,4 @@ pub fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
   renderer.create_uniform("u_Color");
 
   renderer
-}
-
-pub fn step(_gl: &Gl, renderer: &mut Renderer, time: Instant) {
-  let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
-  let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
-
-  //renderer.select_texture_slot(TextureSlot::DEFAULT);
-  //renderer.select_texture_slot(TextureSlot::ONE);
-
-  renderer.bind();
-
-  //renderer.set_uniform_i1("u_Texture", 0);
-  renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
-
-  renderer.draw();
 }

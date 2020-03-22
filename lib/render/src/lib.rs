@@ -1,4 +1,10 @@
-pub mod gl_render;
+mod api;
+use gl::GLT;
+use state::*;
 
-pub use gl_render::create_renderer;
-pub use gl_render::step;
+pub fn create<F>(store: &Store, load: F) -> api::OpenGL
+where
+  F: FnMut(&'static str) -> *const GLT::GLvoid,
+{
+  api::OpenGL::new(store, load)
+}

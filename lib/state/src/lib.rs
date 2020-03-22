@@ -1,14 +1,13 @@
-mod reducer;
+mod base;
 mod state;
-mod store;
 mod window;
 
-use reducer::Reducer;
+use base::reducer::Reducer;
+
 use state::State;
-use store::Store as ReduxStore;
 use window::Window;
 
-pub type Store = ReduxStore<State, Action>;
+pub type Store = base::store::Store<State, Action>;
 
 pub fn create_store() -> Store {
     let window = Window::reducer;

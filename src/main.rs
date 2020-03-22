@@ -1,5 +1,4 @@
 use flexi_logger::Logger;
-use gl::Gl;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
@@ -43,13 +42,10 @@ fn main() {
     // It is essential to make the context current before calling `gl::load_with`.
     let window = unsafe { windowed_context.make_current().unwrap() };
 
+    // Game render
+    let mut render = render::create(&store, |symbol| window.get_proc_address(symbol));
+
     let ui_renderer = imgui_opengl_renderer::Renderer::new(&mut imgui, |symbol| window.get_proc_address(symbol));
-
-    // Create render context
-    let context = Gl::load_with(|symbol| window.get_proc_address(symbol));
-
-    // Init game render
-    let mut renderer = render::create_renderer(&store, &context);
 
     // Store monotonic clock time since start
     let time = Instant::now();
@@ -87,9 +83,9 @@ fn main() {
                 window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
-                renderer.clear();
+                //renderer.clear();
 
-                render::step(&context, &mut renderer, time);
+                render.step(&store);
 
                 let ui = imgui.frame();
                 platform.prepare_render(&ui, &window.window());

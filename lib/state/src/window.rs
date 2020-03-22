@@ -9,10 +9,7 @@ pub struct Window {
 
 impl Window {
   pub fn default() -> Self {
-    Self {
-      width: 1024,
-      height: 768,
-    }
+    Self { width: 1024, height: 768 }
   }
 
   pub fn reducer(state: &State, action: &Action) -> State {
