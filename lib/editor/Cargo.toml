@@ -12,5 +12,5 @@ imgui = "0.3.0"
 imgui-winit-support = { version =  "0.3.1", features = ["winit-20"] }
 imgui-opengl-renderer = "0.7.0"
 
-[dependencies.state]
-path = '../state/'
+[dependencies.ecs]
+path = '../ecs/'

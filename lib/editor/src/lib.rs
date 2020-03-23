@@ -1,9 +1,9 @@
+use ecs::State;
 use glutin::event::Event;
 use glutin::window::Window;
 use imgui::{Context, Ui};
 use imgui_opengl_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
-use state::*;
 use std::ffi::c_void;
 use std::time::Instant;
 mod ui;
@@ -50,17 +50,17 @@ impl Editor {
             .expect("Failed to prepare frame");
     }
 
-    pub fn step(&mut self, store: &Store, window: &Window) {
+    pub fn step(&mut self, state: &State, window: &Window) {
         let ui = self.context.frame();
 
         self.platform.prepare_render(&ui, &window);
 
-        build_ui(&ui, &store);
+        build_ui(&ui, &state);
 
         self.renderer.render(ui);
     }
 }
 
-fn build_ui(ui: &Ui, store: &Store) {
-    ui::test::build(&ui, &store);
+fn build_ui(ui: &Ui, state: &State) {
+    ui::test::build(&ui, &state);
 }

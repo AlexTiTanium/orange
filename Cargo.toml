@@ -31,9 +31,6 @@ log = "0.4"
 [build-dependencies]
 fs_extra = "1.1.0"
 
-[dependencies.state]
-path = 'lib/state/'
-
 [dependencies.render]
 path = 'lib/render/'
 
@@ -45,3 +42,6 @@ path = 'lib/assets/'
 
 [dependencies.editor]
 path = 'lib/editor/'
+
+[dependencies.ecs]
+path = 'lib/ecs/'

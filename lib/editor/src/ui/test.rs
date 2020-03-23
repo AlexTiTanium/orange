@@ -1,7 +1,7 @@
+use ecs::State;
 use imgui::{im_str, Condition, Ui, Window};
-use state::*;
 
-pub fn build(ui: &Ui, store: &Store) {
+pub fn build(ui: &Ui, state: &State) {
   Window::new(im_str!("Hello world"))
     .size([300.0, 100.0], Condition::FirstUseEver)
     .build(&ui, || {

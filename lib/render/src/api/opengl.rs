@@ -1,11 +1,10 @@
+use ecs::State;
 use gl::Gl;
 use gl::Renderer;
 use gl::GLT;
-use state::*;
 
 use gl::ShaderType;
 use gl::TextureSlot;
-use state::Store;
 
 use std::str;
 
@@ -17,12 +16,12 @@ pub struct OpenGL {
 }
 
 impl OpenGL {
-  pub fn new<F>(store: &Store, load: F) -> Self
+  pub fn new<F>(load: F) -> Self
   where
     F: FnMut(&'static str) -> *const GLT::GLvoid,
   {
     let gl = Gl::load_with(load);
-    let renderer = create_renderer(store, &gl);
+    let renderer = create_renderer(&gl);
 
     Self { renderer }
   }
@@ -31,7 +30,7 @@ impl OpenGL {
     println!("Not implemented");
   }
 
-  pub fn step(&mut self, store: &Store) {
+  pub fn step(&mut self) {
     self.renderer.clear();
     // let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
     // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
@@ -48,9 +47,7 @@ impl OpenGL {
   }
 }
 
-fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
-  let state = store.state();
-
+fn create_renderer(gl: &Gl) -> Renderer {
   #[rustfmt::skip]
   let vertices: [f32; 2 * 4 + 4 * 3 + 4 * 2] = [
   // position loc=0          | color loc=1  | texture loc=2 |
@@ -68,9 +65,6 @@ fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
 
   let mut renderer = Renderer::new(&gl);
 
-  let cat = store.assets.get("cat");
-  let _tree = store.assets.get("tree");
-
   renderer
     .add_vertices(&vertices)
     .add_layout::<f32>(2) // Loc = 0 position
@@ -81,10 +75,10 @@ fn create_renderer(store: &Store, gl: &Gl) -> Renderer {
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
     .commit_shaders()
     //.add_texture(TextureSlot::DEFAULT, cat.width, cat.height, &cat.data)
-    .add_texture(TextureSlot::DEFAULT, _tree.width, _tree.height, &_tree.data)
+    //.add_texture(TextureSlot::DEFAULT, _tree.width, _tree.height, &_tree.data)
     .add_indexes(&indexes, 6);
 
-  renderer.create_mvp(state.window.width, state.window.height);
+  renderer.create_mvp(800, 600);
   //renderer.create_uniform("u_Texture");
   renderer.create_uniform("u_Color");
 
