@@ -1,4 +1,6 @@
-use ecs::State;
+use ecs::component::Position;
+use ecs::entity::Display;
+use ecs::*;
 use gl::Gl;
 use gl::Renderer;
 use gl::GLT;
@@ -16,12 +18,12 @@ pub struct OpenGL {
 }
 
 impl OpenGL {
-  pub fn new<F>(load: F) -> Self
+  pub fn new<F>(state: &State, load: F) -> Self
   where
     F: FnMut(&'static str) -> *const GLT::GLvoid,
   {
     let gl = Gl::load_with(load);
-    let renderer = create_renderer(&gl);
+    let renderer = create_renderer(state, &gl);
 
     Self { renderer }
   }
@@ -30,24 +32,34 @@ impl OpenGL {
     println!("Not implemented");
   }
 
-  pub fn step(&mut self) {
+  pub fn step(&mut self, state: &State) {
     self.renderer.clear();
     // let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
     // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
+    let positions = state.world.borrow::<&Position>();
+
+    (&positions).iter().for_each(|pos| {
+      self.renderer.translate(pos.x, pos.y);
+      self.renderer.bind();
+      self.renderer.draw();
+    });
+
     //renderer.select_texture_slot(TextureSlot::DEFAULT);
     //renderer.select_texture_slot(TextureSlot::ONE);
 
-    self.renderer.bind();
+    //self.renderer.bind();
 
     //renderer.set_uniform_i1("u_Texture", 0);
     //self.renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
 
-    self.renderer.draw();
+    //self.renderer.draw();
   }
 }
 
-fn create_renderer(gl: &Gl) -> Renderer {
+fn create_renderer(state: &State, gl: &Gl) -> Renderer {
+  let display = state.world.borrow::<Unique<&Display>>();
+
   #[rustfmt::skip]
   let vertices: [f32; 2 * 4 + 4 * 3 + 4 * 2] = [
   // position loc=0          | color loc=1  | texture loc=2 |
@@ -78,7 +90,7 @@ fn create_renderer(gl: &Gl) -> Renderer {
     //.add_texture(TextureSlot::DEFAULT, _tree.width, _tree.height, &_tree.data)
     .add_indexes(&indexes, 6);
 
-  renderer.create_mvp(800, 600);
+  renderer.create_mvp(display.width, display.height);
   //renderer.create_uniform("u_Texture");
   renderer.create_uniform("u_Color");
 

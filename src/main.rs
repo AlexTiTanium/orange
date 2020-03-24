@@ -79,7 +79,7 @@ fn main() {
                 window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
-                render.step();
+                render.step(&state);
                 editor.step(&state, &window.window());
                 window.swap_buffers().unwrap();
             }

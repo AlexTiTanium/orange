@@ -1,4 +1,5 @@
-use crate::entities::Display;
+use crate::component::Position;
+use crate::entity::Display;
 use crate::*;
 
 #[derive(Default)]
@@ -13,7 +14,11 @@ impl State {
     Self { world }
   }
 
-  pub fn create_entities(&self) {}
+  pub fn create_entities(&self) {
+    let (mut entities, mut positions) = self.world.borrow::<(EntitiesMut, &mut Position)>();
+
+    entities.add_entity(&mut positions, Position { x: 0.0, y: 0.0 });
+  }
 
   pub fn create_resources(&self) {
     self.world.add_unique(Display::new(100, 100));

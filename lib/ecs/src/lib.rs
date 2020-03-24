@@ -1,8 +1,13 @@
-pub mod entities;
 mod state;
-
-use shipyard::prelude::*;
 pub use state::State;
+
+pub mod components;
+pub mod entities;
+
+pub use components as component;
+pub use entities as entity;
+
+pub use shipyard::prelude::*;
 
 pub fn create_state() -> State {
     let state = State::new();

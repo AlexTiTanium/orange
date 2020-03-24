@@ -21,7 +21,7 @@ pub struct Renderer {
   texture: Texture,
   projection: TMat4<f32>,
   camera: TMat4<f32>,
-  model: TMat4<f32>,
+  pub model: TMat4<f32>,
 }
 
 impl Renderer {
@@ -132,10 +132,13 @@ impl Renderer {
     self.texture.bind(slot);
   }
 
+  pub fn translate(&mut self, x: f32, y: f32) {
+    self.model = glm::translate(&glm::identity(), &glm::vec3(x, y, 0.0));
+  }
+
   pub fn create_mvp(&mut self, width: u32, height: u32) {
     self.projection = glm::ortho(0.0, width as f32, 0.0, height as f32, -1.0, 1.0);
     self.camera = glm::translate(&self.camera, &glm::vec3(0.0, 0.0, 0.0));
-    self.model = glm::translate(&self.model, &glm::vec3(0.0, 50.0, 0.0));
 
     self.create_uniform("u_Projection");
     self.create_uniform("u_View");
