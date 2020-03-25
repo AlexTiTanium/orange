@@ -358,9 +358,9 @@ dependencies = [
 
 [[package]]
 name = "flexi_logger"
-version = "0.15.1"
+version = "0.15.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0abf3563b32f3218df0774d4d8b6e4c9d47ddd466f4cbada500219bf09401a7"
+checksum = "fdd4de217664c0ebd05d54e722f42c190fdf31c8965a77fcfac9253ff61a0369"
 dependencies = [
  "chrono",
  "glob",
@@ -429,6 +429,15 @@ name = "fuchsia-zircon-sys"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
+
+[[package]]
+name = "game"
+version = "0.1.0"
+dependencies = [
+ "ecs",
+ "glutin",
+ "nalgebra-glm",
+]
 
 [[package]]
 name = "gcc"
@@ -996,6 +1005,7 @@ dependencies = [
  "editor",
  "flexi_logger",
  "fs_extra",
+ "game",
  "gl",
  "glutin",
  "log",
@@ -1214,9 +1224,9 @@ checksum = "2439c63f3f6139d1b57529d16bc3b8bb855230c8efcc5d3a896c8bea7c3b1e84"
 
 [[package]]
 name = "regex"
-version = "1.3.5"
+version = "1.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8900ebc1363efa7ea1c399ccc32daed870b4002651e0bed86e72d501ebbe0048"
+checksum = "7f6946991529684867e47d86474e3a6d0c0ab9b82d5821e314b1ede31fa3a4b3"
 dependencies = [
  "aho-corasick",
  "memchr",

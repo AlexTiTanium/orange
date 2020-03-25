@@ -1,5 +1,6 @@
 use editor::Editor;
 use flexi_logger::Logger;
+use game::input::handle_keyboard_input;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
@@ -70,7 +71,9 @@ fn main() {
                     window.resize(new_size)
                 }
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                _ => (),
+                _ => {
+                    handle_keyboard_input(&event);
+                }
             },
             Event::MainEventsCleared => {
                 //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
