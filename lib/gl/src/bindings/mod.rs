@@ -4,8 +4,8 @@ use std::rc::Rc;
 pub mod open_gl {
   //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
   #![allow(clippy::all)]
-  include!("./gl-41-debug.rs");
-  //include!("./gl-41-release.rs");
+  //include!("./gl-41-debug.rs");
+  include!("./gl-41-release.rs");
 }
 
 pub use open_gl as GL;
