@@ -1,5 +1,5 @@
 use crate::glm;
-use crate::glm::TMat4;
+use crate::glm::*;
 use crate::Gl;
 use crate::IndexBuffer;
 use crate::Layout;
@@ -132,8 +132,8 @@ impl Renderer {
     self.texture.bind(slot);
   }
 
-  pub fn translate(&mut self, x: f32, y: f32) {
-    self.model = glm::translate(&glm::identity(), &glm::vec3(x, y, 0.0));
+  pub fn translate(&mut self, vec3: &Vec3) {
+    self.model = glm::translate(&glm::identity(), vec3);
   }
 
   pub fn create_mvp(&mut self, width: u32, height: u32) {

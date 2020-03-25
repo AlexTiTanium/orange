@@ -1,3 +1,5 @@
+use crate::glm::*;
+
 #[derive(Debug)]
 pub struct Size {
   pub width: u32,
@@ -5,7 +7,4 @@ pub struct Size {
 }
 
 #[derive(Debug)]
-pub struct Position {
-  pub x: f32,
-  pub y: f32,
-}
+pub struct Position(pub Vec3);

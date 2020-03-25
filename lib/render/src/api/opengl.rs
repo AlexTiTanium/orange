@@ -39,8 +39,8 @@ impl OpenGL {
 
     let positions = state.world.borrow::<&Position>();
 
-    (&positions).iter().for_each(|pos| {
-      self.renderer.translate(pos.x, pos.y);
+    (&positions).iter().for_each(|Position(pos)| {
+      self.renderer.translate(&pos);
       self.renderer.bind();
       self.renderer.draw();
     });

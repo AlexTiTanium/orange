@@ -7,6 +7,7 @@ use imgui_winit_support::{HiDpiMode, WinitPlatform};
 use std::ffi::c_void;
 use std::time::Instant;
 mod ui;
+pub(crate) use nalgebra_glm as glm;
 
 pub struct Editor {
     context: Context,

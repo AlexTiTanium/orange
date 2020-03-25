@@ -1,6 +1,8 @@
 mod state;
 pub use state::State;
 
+pub(crate) use nalgebra_glm as glm;
+
 pub mod components;
 pub mod entities;
 
