@@ -1,13 +1,11 @@
 use editor::Editor;
 use flexi_logger::Logger;
-use game::input::handle_keyboard_input;
 use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
 use glutin::ContextBuilder;
 use render;
-use std::time::Instant;
 
 fn main() {
     //Default window size
@@ -46,12 +44,6 @@ fn main() {
     // Create editor UI render
     let mut editor = Editor::new(&window.window(), |symbol| window.get_proc_address(symbol));
 
-    // Store monotonic clock time since start
-    let time = Instant::now();
-
-    // Delta time
-    let mut delta = Instant::now();
-
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
         // Poll should work better for games
@@ -63,6 +55,7 @@ fn main() {
         match event {
             Event::NewEvents(_) => {
                 editor.update();
+                state.update_input();
             }
             Event::LoopDestroyed => {}
             Event::WindowEvent { event, .. } => match event {
@@ -72,7 +65,7 @@ fn main() {
                 }
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 _ => {
-                    handle_keyboard_input(&event);
+                    state.handle_window_events(&event);
                 }
             },
             Event::MainEventsCleared => {

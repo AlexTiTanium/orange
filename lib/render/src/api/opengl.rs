@@ -1,5 +1,5 @@
-use ecs::component::Position;
-use ecs::entity::Display;
+use ecs::components::Position;
+use ecs::entities::Display;
 use ecs::*;
 use gl::Gl;
 use gl::Renderer;

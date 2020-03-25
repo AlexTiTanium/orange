@@ -1,5 +1,5 @@
 use crate::glm::*;
-use ecs::component::Position;
+use ecs::components::Position;
 use ecs::State;
 use ecs::*;
 use imgui::{im_str, Condition, Ui, Window};

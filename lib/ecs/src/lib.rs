@@ -5,9 +5,7 @@ pub(crate) use nalgebra_glm as glm;
 
 pub mod components;
 pub mod entities;
-
-pub use components as component;
-pub use entities as entity;
+pub mod systems;
 
 pub use shipyard::prelude::*;
 

@@ -45,6 +45,3 @@ path = 'lib/editor/'
 
 [dependencies.ecs]
 path = 'lib/ecs/'
-
-[dependencies.game]
-path = 'lib/game/'

@@ -322,6 +322,7 @@ checksum = "52ba6eb47c2131e784a38b726eb54c1e1484904f013e576a25354d0124161af6"
 name = "ecs"
 version = "0.1.0"
 dependencies = [
+ "glutin",
  "nalgebra-glm",
  "shipyard",
 ]
@@ -429,15 +430,6 @@ name = "fuchsia-zircon-sys"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
-
-[[package]]
-name = "game"
-version = "0.1.0"
-dependencies = [
- "ecs",
- "glutin",
- "nalgebra-glm",
-]
 
 [[package]]
 name = "gcc"
@@ -1005,7 +997,6 @@ dependencies = [
  "editor",
  "flexi_logger",
  "fs_extra",
- "game",
  "gl",
  "glutin",
  "log",
