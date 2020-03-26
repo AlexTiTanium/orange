@@ -1,5 +1,4 @@
-use crate::components::Position;
-use crate::entities::*;
+use crate::components::*;
 use crate::glm::*;
 use crate::systems::*;
 use crate::*;
@@ -25,6 +24,7 @@ impl State {
   pub fn create_resources(&self) {
     self.world.add_unique(Display::new(100, 100));
     self.world.add_unique(Input::default());
+    self.world.add_unique(Time::default());
   }
 
   pub fn update_display(&self, width: u32, height: u32) {
@@ -38,5 +38,9 @@ impl State {
 
   pub fn update_input(&self) {
     self.world.run_system::<MoveOnInput>();
+  }
+
+  pub fn update_time(&self) {
+    self.world.run_system::<UpdateTime>();
   }
 }

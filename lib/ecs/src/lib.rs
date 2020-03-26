@@ -4,7 +4,6 @@ pub use state::State;
 pub(crate) use nalgebra_glm as glm;
 
 pub mod components;
-pub mod entities;
 pub mod systems;
 
 pub use shipyard::prelude::*;

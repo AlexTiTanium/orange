@@ -46,17 +46,13 @@ fn main() {
 
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
-        // Poll should work better for games
-        *control_flow = ControlFlow::Poll;
+        // Poll doesn't work with vsync
+        *control_flow = ControlFlow::Wait;
 
         // Listen user input for editor UI
         editor.handle_event(&window.window(), &event);
 
         match event {
-            Event::NewEvents(_) => {
-                editor.update();
-                state.update_input();
-            }
             Event::LoopDestroyed => {}
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::Resized(new_size) => {
@@ -68,9 +64,13 @@ fn main() {
                     state.handle_window_events(&event);
                 }
             },
+
+            Event::NewEvents(_) => {
+                state.update_time();
+                editor.update();
+                state.update_input();
+            }
             Event::MainEventsCleared => {
-                //println!("[Game] Elapsed time ms: {:?}", time.elapsed().as_millis());
-                //println!("[Game] Delta time ms: {:?}", Instant::now().duration_since(delta).as_millis());
                 editor.prepare_frame(&window.window());
                 window.window().request_redraw();
             }
@@ -79,9 +79,7 @@ fn main() {
                 editor.step(&state, &window.window());
                 window.swap_buffers().unwrap();
             }
-            Event::RedrawEventsCleared => {
-                //delta = Instant::now();
-            }
+            Event::RedrawEventsCleared => {}
             _ => (),
         }
     });

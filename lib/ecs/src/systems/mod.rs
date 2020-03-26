@@ -1,2 +1,5 @@
-pub mod input_processing;
-pub use input_processing::*;
+pub mod input;
+pub use input::*;
+
+pub mod time;
+pub use time::*;
