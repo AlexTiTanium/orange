@@ -1,16 +1,18 @@
-use std::time::Duration;
+use std::f32;
 use std::time::Instant;
 
 pub struct Time {
-  pub delta: Duration,
+  pub delta: f32,
   pub last: Instant,
+  pub running: Instant,
 }
 
 impl Default for Time {
   fn default() -> Self {
     Self {
-      delta: Duration::from_secs(0),
+      delta: f32::MIN_POSITIVE,
       last: Instant::now(),
+      running: Instant::now(),
     }
   }
 }

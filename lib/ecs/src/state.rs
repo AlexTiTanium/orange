@@ -18,13 +18,14 @@ impl State {
 
   pub fn create_entities(&self) {
     let (mut entities, mut positions) = self.world.borrow::<(EntitiesMut, &mut Position)>();
-    entities.add_entity(&mut positions, Position(vec3(0.0, 0.0, 0.0)));
+    entities.add_entity(&mut positions, Position::default());
   }
 
   pub fn create_resources(&self) {
     self.world.add_unique(Display::new(100, 100));
     self.world.add_unique(Input::default());
     self.world.add_unique(Time::default());
+    self.world.add_unique(FPS::default());
   }
 
   pub fn update_display(&self, width: u32, height: u32) {
@@ -42,5 +43,9 @@ impl State {
 
   pub fn update_time(&self) {
     self.world.run_system::<UpdateTime>();
+  }
+
+  pub fn update_fps(&self) {
+    self.world.run_system::<UpdateFPS>();
   }
 }

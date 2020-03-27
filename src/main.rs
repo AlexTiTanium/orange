@@ -4,7 +4,7 @@ use glutin::dpi::LogicalSize;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::ControlFlow;
 use glutin::window::WindowBuilder;
-use glutin::ContextBuilder;
+use glutin::{ContextBuilder, GlRequest};
 use render;
 
 fn main() {
@@ -33,7 +33,15 @@ fn main() {
         .with_inner_size(LogicalSize::new(window_size.0, window_size.1));
 
     // Create windowed context
-    let windowed_context = ContextBuilder::new().with_vsync(true).build_windowed(wb, &event_loop).unwrap();
+    let windowed_context = ContextBuilder::new()
+        .with_gl(GlRequest::GlThenGles {
+            opengl_version: (3, 3),
+            opengles_version: (3, 0),
+        })
+        .with_srgb(true)
+        .with_vsync(true)
+        .build_windowed(wb, &event_loop)
+        .unwrap();
 
     // It is essential to make the context current before calling `gl::load_with`.
     let window = unsafe { windowed_context.make_current().unwrap() };
@@ -46,32 +54,28 @@ fn main() {
 
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
-        // Poll doesn't work with vsync
-        *control_flow = ControlFlow::Wait;
-
         // Listen user input for editor UI
         editor.handle_event(&window.window(), &event);
 
         match event {
             Event::LoopDestroyed => {}
-            Event::WindowEvent { event, .. } => match event {
-                WindowEvent::Resized(new_size) => {
-                    state.update_display(new_size.width, new_size.height);
-                    window.resize(new_size)
+            Event::WindowEvent { event, .. } => {
+                match event {
+                    WindowEvent::Resized(new_size) => window.resize(new_size),
+                    WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                    _ => (),
                 }
-                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                _ => {
-                    state.handle_window_events(&event);
-                }
-            },
 
+                state.handle_window_events(&event);
+            }
             Event::NewEvents(_) => {
                 state.update_time();
                 editor.update();
                 state.update_input();
             }
             Event::MainEventsCleared => {
-                editor.prepare_frame(&window.window());
+                //println!("______ >>> {:?}", event);
+                //editor.prepare_frame(&window.window());
                 window.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
@@ -79,7 +83,9 @@ fn main() {
                 editor.step(&state, &window.window());
                 window.swap_buffers().unwrap();
             }
-            Event::RedrawEventsCleared => {}
+            Event::RedrawEventsCleared => {
+                state.update_fps();
+            }
             _ => (),
         }
     });
