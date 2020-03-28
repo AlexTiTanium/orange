@@ -14,6 +14,13 @@ pub struct Editor {
     renderer: Renderer,
     platform: WinitPlatform,
     delta: Instant,
+    state: UiState,
+}
+
+#[derive(Default)]
+pub struct UiState {
+    show_entities_control: bool,
+    show_app_metrics: bool,
 }
 
 impl Editor {
@@ -29,11 +36,14 @@ impl Editor {
         let mut platform = WinitPlatform::init(&mut context); // step 1
         platform.attach_window(context.io_mut(), window, HiDpiMode::Default); // step 2
 
+        let state = UiState::default();
+
         Self {
             context,
             renderer,
             platform,
             delta: Instant::now(),
+            state,
         }
     }
 
@@ -56,12 +66,16 @@ impl Editor {
 
         self.platform.prepare_render(&ui, &window);
 
-        build_ui(&ui, &state);
+        build_ui(&ui, &state, &mut self.state);
 
         self.renderer.render(ui);
     }
 }
 
-fn build_ui(ui: &Ui, state: &State) {
-    ui::test::build(&ui, &state);
+fn build_ui(ui: &Ui, state: &State, ui_state: &mut UiState) {
+    ui::main_menu::build(ui, state, ui_state);
+
+    if ui_state.show_entities_control {
+        ui::entities_control::build(ui, state);
+    }
 }

@@ -16,10 +16,6 @@ pub fn build(ui: &Ui, state: &State) {
 fn build_ui(ui: &Ui, state: &State) {
     let (mut entities, mut positions, fps) = state.world.borrow::<(EntitiesMut, &mut Position, Unique<&FPS>)>();
 
-    ui.text(format!("mGUI FPS: {:?}", ui.io().framerate.round()));
-    ui.text(format!("GAME FPS: {:?}", fps.get_fps()));
-    ui.text(format!("GAME AVERAGE FPS: {:?}", fps.get_average_fps()));
-
     (&mut positions).iter().enumerate().with_id().for_each(|(id, (index, Position(pos)))| {
         let group = ui.push_id(index as i32);
         ui.text(format!("EntityId: {:?}", &id));
