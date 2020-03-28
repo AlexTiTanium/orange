@@ -72,6 +72,7 @@ fn main() {
             }
             Event::MainEventsCleared => {
                 println!("Main event cleared ");
+                context.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render.step(&state);
