@@ -1,5 +1,5 @@
 use crate::*;
-use glutin::event::*;
+use winit::event::*;
 
 #[derive(Debug, Default)]
 pub struct Input {

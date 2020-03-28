@@ -8,10 +8,18 @@ edition = "2018"
 
 [dependencies]
 nalgebra-glm = "0.6.0"
-glutin = "0.23"
+winit = "0.22.0"
 imgui = "0.3.0"
-imgui-winit-support = { version =  "0.3.1", features = ["winit-20"] }
-imgui-opengl-renderer = "0.7.0"
+
+[dependencies.imgui-winit-support]
+features = ["winit-20"]
+path = './imgui-winit-support/'
+
+[dependencies.imgui-opengl-renderer]
+path = './imgui-opengl-renderer/'
 
 [dependencies.ecs]
 path = '../ecs/'
+
+[dependencies.gl]
+path = '../gl/'

@@ -2,7 +2,7 @@ use crate::components::*;
 use crate::glm::*;
 use crate::systems::*;
 use crate::*;
-use glutin::event::WindowEvent;
+use winit::event::WindowEvent;
 
 #[derive(Default)]
 pub struct State {

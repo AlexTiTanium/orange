@@ -24,5 +24,4 @@ pub fn run(mut fps: Unique<&mut FPS>, time: Unique<&Time>) {
   fps.frames += 1.0;
   let time_from_start = time.running.elapsed().as_secs_f32();
   fps.fps = fps.frames / time_from_start;
-  println!("FPS {:?}", fps.fps);
 }

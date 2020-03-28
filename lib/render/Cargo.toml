@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 thiserror = "1.0.11"
 nalgebra-glm = "0.6.0"
-glutin = "0.23"
+winit = "0.22.0"
 
 [dependencies.ecs]
 path = '../ecs/'

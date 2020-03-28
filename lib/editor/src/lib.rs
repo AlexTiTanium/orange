@@ -1,11 +1,11 @@
 use ecs::State;
-use glutin::event::Event;
-use glutin::window::Window;
 use imgui::{Context, Ui};
 use imgui_opengl_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
 use std::ffi::c_void;
 use std::time::Instant;
+use winit::event::Event;
+use winit::window::Window;
 mod ui;
 pub(crate) use nalgebra_glm as glm;
 
@@ -38,7 +38,7 @@ impl Editor {
     }
 
     pub fn handle_event(&mut self, window: &Window, event: &Event<()>) {
-        self.platform.handle_event(self.context.io_mut(), &window, &event);
+        self.platform.handle_event(self.context.io_mut(), window, event);
     }
 
     pub fn update(&mut self) {
