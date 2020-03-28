@@ -54,7 +54,7 @@ impl Editor {
     pub fn step(&mut self, state: &State, window: &Window) {
         let ui = self.context.frame();
 
-        //self.platform.prepare_render(&ui, &window);
+        self.platform.prepare_render(&ui, &window);
 
         build_ui(&ui, &state);
 

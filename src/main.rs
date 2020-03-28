@@ -65,23 +65,19 @@ fn main() {
                 state.handle_window_events(&event);
             }
             Event::NewEvents(_) => {
-                println!("NewEvents ");
                 state.update_time();
                 editor.update();
                 state.update_input();
             }
             Event::MainEventsCleared => {
-                println!("Main event cleared ");
                 context.window().request_redraw();
             }
             Event::RedrawRequested(_) => {
                 render.step(&state);
                 editor.step(&state, &context.window());
                 context.swap_buffers().unwrap();
-                println!("RedrawRequested ");
             }
             Event::RedrawEventsCleared => {
-                println!("RedrawEventsCleared ");
                 state.update_fps();
             }
             _ => (),
