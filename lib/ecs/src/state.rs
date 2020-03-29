@@ -1,8 +1,17 @@
 use crate::components::*;
-use crate::glm::*;
+use crate::resources::*;
 use crate::systems::*;
 use crate::*;
 use winit::event::WindowEvent;
+
+pub fn create_state() -> State {
+  let state = State::new();
+
+  state.create_entities();
+  state.create_resources();
+
+  state
+}
 
 #[derive(Default)]
 pub struct State {
@@ -16,16 +25,23 @@ impl State {
     Self { world }
   }
 
-  pub fn create_entities(&self) {
-    let (mut entities, mut positions) = self.world.borrow::<(EntitiesMut, &mut Position)>();
-    entities.add_entity(&mut positions, Position::default());
-  }
+  pub fn create_entities(&self) {}
 
   pub fn create_resources(&self) {
     self.world.add_unique(Display::new(100, 100));
     self.world.add_unique(Input::default());
     self.world.add_unique(Time::default());
     self.world.add_unique(FPS::default());
+  }
+
+  pub fn create_game_object(&self) -> EntityId {
+    let (mut entities, mut game_object, mut transform, mut active) =
+      self.world.borrow::<(EntitiesMut, &mut GameObject, &mut Transform, &mut ActiveTag)>();
+
+    entities.add_entity(
+      (&mut game_object, &mut transform, &mut active),
+      (GameObject::default(), Transform::default(), ActiveTag),
+    )
   }
 
   pub fn update_display(&self, width: u32, height: u32) {
@@ -38,7 +54,7 @@ impl State {
   }
 
   pub fn update_input(&self) {
-    self.world.run_system::<MoveOnInput>();
+    //self.world.run_system::<MoveOnInput>();
   }
 
   pub fn update_time(&self) {

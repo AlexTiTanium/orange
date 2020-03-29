@@ -14,6 +14,7 @@ pub fn build(ui: &Ui, _state: &State, ui_state: &mut UiState) {
 }
 
 fn build_tools_menu(ui: &Ui, ui_state: &mut UiState) {
+  // Entities Control
   if let Some(menu) = ui.begin_menu(im_str!("Tools"), true) {
     MenuItem::new(im_str!("Entities Control")).build_with_ref(ui, &mut ui_state.show_entities_control);
     menu.end(ui);

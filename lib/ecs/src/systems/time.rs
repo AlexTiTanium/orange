@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::resources::*;
 use crate::*;
 use std::f32;
 use std::time::Instant;

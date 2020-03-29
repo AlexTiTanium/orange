@@ -1,4 +1,5 @@
-use ecs::components::{Display, Position};
+use ecs::components::*;
+use ecs::resources::Display;
 use ecs::*;
 use gl::Gl;
 use gl::Renderer;
@@ -36,10 +37,10 @@ impl OpenGL {
     // let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
     // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
-    let positions = state.world.borrow::<&Position>();
+    let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
 
-    (&positions).iter().for_each(|Position(pos)| {
-      self.renderer.translate(&pos);
+    (&transform, &active).iter().for_each(|(trans, _)| {
+      self.renderer.translate(&trans.position);
       self.renderer.bind();
       self.renderer.draw();
     });
