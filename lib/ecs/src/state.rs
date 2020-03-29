@@ -1,4 +1,5 @@
 use crate::components::*;
+use crate::resources::Window;
 use crate::resources::*;
 use crate::systems::*;
 use crate::*;
@@ -6,10 +7,7 @@ use winit::event::WindowEvent;
 
 pub fn create_state() -> State {
   let state = State::new();
-
-  state.create_entities();
   state.create_resources();
-
   state
 }
 
@@ -25,10 +23,8 @@ impl State {
     Self { world }
   }
 
-  pub fn create_entities(&self) {}
-
   pub fn create_resources(&self) {
-    self.world.add_unique(Display::new(100, 100));
+    self.world.add_unique(Window::default());
     self.world.add_unique(Input::default());
     self.world.add_unique(Time::default());
     self.world.add_unique(FPS::default());
@@ -44,17 +40,9 @@ impl State {
     )
   }
 
-  pub fn update_display(&self, width: u32, height: u32) {
-    let mut display = self.world.borrow::<Unique<&mut Display>>();
-    display.update(width, height);
-  }
-
   pub fn handle_window_events(&self, event: &WindowEvent) {
     handle_keyboard_input(&self.world, event);
-  }
-
-  pub fn update_input(&self) {
-    //self.world.run_system::<MoveOnInput>();
+    handle_window_resize(&self.world, event);
   }
 
   pub fn update_time(&self) {

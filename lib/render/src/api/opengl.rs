@@ -1,5 +1,5 @@
 use ecs::components::*;
-use ecs::resources::Display;
+use ecs::resources::Window;
 use ecs::*;
 use gl::Gl;
 use gl::Renderer;
@@ -58,7 +58,7 @@ impl OpenGL {
 }
 
 fn create_renderer(state: &State, gl: &Gl) -> Renderer {
-  let display = state.world.borrow::<Unique<&Display>>();
+  let display = state.world.borrow::<Unique<&Window>>();
 
   #[rustfmt::skip]
   let vertices: [f32; 2 * 4 + 4 * 3 + 4 * 2] = [

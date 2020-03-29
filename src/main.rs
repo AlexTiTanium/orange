@@ -8,21 +8,11 @@ use winit::event_loop::ControlFlow;
 use winit::window::WindowBuilder;
 
 fn main() {
-    //Default window size
-    let window_size = (800, 600);
-
     // Setup logger
     Logger::with_str("debug").start_with_specfile("./logspec.toml").unwrap();
 
     // Create entities component system
     let state = ecs::create_state();
-
-    // Set default resolution
-    state.update_display(window_size.0, window_size.1);
-
-    // Load assets
-    // store.assets.load("cat", "cat_big.png");
-    // store.assets.load("tree", "tree.png");
 
     // Start event loop
     let event_loop = winit::event_loop::EventLoop::new();
@@ -30,7 +20,7 @@ fn main() {
     // Create winit window
     let wb = WindowBuilder::new()
         .with_title("Hello world!")
-        .with_inner_size(LogicalSize::new(window_size.0, window_size.1));
+        .with_inner_size(LogicalSize::new(1024, 768));
 
     // Create windowed context
     let windowed_context = ContextBuilder::new()
@@ -67,7 +57,6 @@ fn main() {
             Event::NewEvents(_) => {
                 state.update_time();
                 editor.update();
-                state.update_input();
             }
             Event::MainEventsCleared => {
                 context.window().request_redraw();
