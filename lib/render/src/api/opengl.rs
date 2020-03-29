@@ -38,9 +38,15 @@ impl OpenGL {
     // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
     let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
+    let textures = state.world.borrow::<&Texture>();
 
-    (&transform, &active).iter().for_each(|(trans, _)| {
+    (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
       self.renderer.translate(&trans.position);
+
+      if textures.contains(id) {
+        println!("Has texture");
+      }
+
       self.renderer.bind();
       self.renderer.draw();
     });
