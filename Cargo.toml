@@ -38,9 +38,6 @@ path = 'lib/render/'
 [dependencies.gl]
 path = 'lib/gl/'
 
-[dependencies.assets]
-path = 'lib/assets/'
-
 [dependencies.editor]
 path = 'lib/editor/'
 

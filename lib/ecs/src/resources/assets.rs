@@ -13,13 +13,13 @@ pub struct Image {
 }
 
 #[derive(Default)]
-pub struct Repository {
-  map: HashMap<String, Image>,
+pub struct Assets {
+  images: HashMap<String, Image>,
   path: PathBuf,
 }
 
-impl Repository {
-  pub fn new() -> Repository {
+impl Assets {
+  pub fn new() -> Self {
     let mut path_to_exec = env::current_exe().unwrap();
     path_to_exec.pop();
     path_to_exec.push("resources");
@@ -51,14 +51,14 @@ impl Repository {
       panic!("Resources folder not found");
     }
 
-    Repository {
-      map: HashMap::new(),
+    Self {
+      images: HashMap::new(),
       path: resources,
     }
   }
 
-  pub fn get(&self, id: &str) -> &Image {
-    match self.map.get(id) {
+  pub fn get_image(&self, id: &str) -> &Image {
+    match self.images.get(id) {
       Some(image) => image,
       None => {
         error!("Asset {:?} not found", id);
@@ -67,7 +67,7 @@ impl Repository {
     }
   }
 
-  pub fn load(&mut self, id: &str, resource: &str) {
+  pub fn load_image(&mut self, id: &str, resource: &str) {
     let time = Instant::now();
 
     let mut path = PathBuf::from(&self.path);
@@ -76,6 +76,8 @@ impl Repository {
     unsafe {
       stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
     }
+
+    info!("Image {:?} loading from: {:?}", id, path);
 
     let img = stb_image::image::load(&path);
 
@@ -90,7 +92,7 @@ impl Repository {
           height: im.height,
           data: im.data,
         };
-        self.map.insert(String::from(id), image);
+        self.images.insert(String::from(id), image);
       }
       LoadResult::ImageF32(_im32) => {
         warn!("Got unsupported f32 image");

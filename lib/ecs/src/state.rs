@@ -28,6 +28,7 @@ impl State {
     self.world.add_unique(Input::default());
     self.world.add_unique(Time::default());
     self.world.add_unique(FPS::default());
+    self.world.add_unique(Assets::new());
   }
 
   pub fn create_game_object(&self) -> EntityId {

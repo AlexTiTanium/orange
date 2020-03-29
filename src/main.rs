@@ -1,3 +1,5 @@
+mod game;
+
 use editor::Editor;
 use flexi_logger::Logger;
 use glutin::ContextBuilder;
@@ -37,6 +39,9 @@ fn main() {
 
     // Create editor UI render
     let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));
+
+    // Start game
+    game::start(&state);
 
     // Game event loop
     event_loop.run(move |event, _, control_flow| {
