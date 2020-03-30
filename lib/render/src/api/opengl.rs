@@ -44,7 +44,7 @@ impl OpenGL {
       self.renderer.translate(&trans.position);
 
       if textures.contains(id) {
-        println!("Has texture");
+        //println!("Has texture");
       }
 
       self.renderer.bind();

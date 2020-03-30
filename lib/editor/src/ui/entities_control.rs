@@ -32,8 +32,11 @@ fn build_ui(ui: &Ui, state: &State) {
             ui.text(format!("{:?}", id));
             ui.text(format!("Name: {:?}", game_object.name));
 
-            ui.drag_float(im_str!("X"), &mut transform.position.x).max(800.0).min(0.0).build();
-            ui.drag_float(im_str!("Y"), &mut transform.position.y).max(860.0).min(0.0).build();
+            let mut position: [f32; 3] = [transform.position.x, transform.position.y, transform.position.z];
+            ui.drag_float3(im_str!("Position"), &mut position).max(800.0).min(0.0).build();
+            transform.position.x = position[0];
+            transform.position.y = position[1];
+            transform.position.z = position[2];
 
             let is_active = active.contains(id);
             let mut checked = is_active;
