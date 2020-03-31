@@ -1,5 +1,5 @@
 ### Optional: Default log level
-global_level = 'trace'
+global_level = 'info'
 ### Optional: specify a regular expression to suppress all messages that don't match
 #global_pattern = 'foo'
 

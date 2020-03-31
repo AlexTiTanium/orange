@@ -1,4 +1,5 @@
 use ecs::components::*;
+use ecs::resources::Assets;
 use ecs::resources::Window;
 use ecs::*;
 use gl::Gl;
@@ -6,7 +7,6 @@ use gl::Renderer;
 use gl::GLT;
 
 use gl::ShaderType;
-use gl::TextureSlot;
 
 use std::str;
 
@@ -39,16 +39,21 @@ impl OpenGL {
 
     let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
     let textures = state.world.borrow::<&Texture>();
+    let assets = state.world.borrow::<Unique<&Assets>>();
 
     (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
       self.renderer.translate(&trans.position);
+      self.renderer.bind();
 
       if textures.contains(id) {
-        //println!("Has texture");
+        self.renderer.bind_texture(assets.images[&textures[id].id]);
       }
 
-      self.renderer.bind();
       self.renderer.draw();
+
+      if textures.contains(id) {
+        self.renderer.unbind_texture(assets.images[&textures[id].id]);
+      }
     });
 
     //renderer.select_texture_slot(TextureSlot::DEFAULT);
@@ -65,14 +70,15 @@ impl OpenGL {
 
 fn create_renderer(state: &State, gl: &Gl) -> Renderer {
   let display = state.world.borrow::<Unique<&Window>>();
+  let assets = state.world.borrow::<Unique<&Assets>>();
 
   #[rustfmt::skip]
   let vertices: [f32; 2 * 4 + 4 * 3 + 4 * 2] = [
   // position loc=0          | color loc=1  | texture loc=2 |
-     0.0,    0.0,    /* 0 */  1.0, 1.0, 0.0,  0.0, 1.0,  // top left     -, +
-     0.0,    300.0,  /* 1 */  1.0, 0.0, 0.0,  0.0, 0.0,  // bottom left  -, -
-     300.0,  0.0,    /* 2 */  0.0, 0.0, 1.0,  1.0, 1.0,  // top right    +, +
-     300.0,  300.0,  /* 3 */  0.0, 1.0, 0.0,  1.0, 0.0,  // bottom right +, -
+    0.0,    0.0,    /* 0 */  1.0, 1.0, 0.0,  0.0, 1.0,  // top left     -, +
+    0.0,    300.0,  /* 1 */  1.0, 0.0, 0.0,  0.0, 0.0,  // bottom left  -, -
+    300.0,  0.0,    /* 2 */  0.0, 0.0, 1.0,  1.0, 1.0,  // top right    +, +
+    300.0,  300.0,  /* 3 */  0.0, 1.0, 0.0,  1.0, 0.0,  // bottom right +, -
   ];
 
   // Clockwise
@@ -92,13 +98,16 @@ fn create_renderer(state: &State, gl: &Gl) -> Renderer {
     .add_shader(ShaderType::Vertex, SHADER_BASIC_VERT)
     .add_shader(ShaderType::Fragment, SHADER_BASIC_FRAG)
     .commit_shaders()
-    //.add_texture(TextureSlot::DEFAULT, cat.width, cat.height, &cat.data)
-    //.add_texture(TextureSlot::DEFAULT, _tree.width, _tree.height, &_tree.data)
     .add_indexes(&indexes, 6);
 
+  // Add textures to slots
+  renderer.create_uniform("u_Texture");
+  for (&slot, texture) in assets.textures.iter() {
+    renderer.add_texture(slot, texture.width, texture.height, &texture.data);
+    // TODO: Unload texture from assets
+  }
+
   renderer.create_mvp(display.width, display.height);
-  //renderer.create_uniform("u_Texture");
-  renderer.create_uniform("u_Color");
 
   renderer
 }

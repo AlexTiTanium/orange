@@ -1,7 +1,6 @@
 use crate::ConstVoid;
-use crate::Gl;
 use crate::RenderID;
-use crate::GL;
+use crate::{Gl, GL};
 
 #[repr(u32)]
 pub enum TextureSlot {
@@ -13,6 +12,8 @@ pub enum TextureSlot {
 pub struct Texture {
   id: RenderID,
   gl: Gl,
+  width: usize,
+  height: usize,
 }
 
 impl Texture {
@@ -24,23 +25,26 @@ impl Texture {
       gl.GenTextures(1, &mut id);
     }
 
-    Self { id, gl }
+    Self { id, gl, width: 0, height: 0 }
   }
 
-  pub fn set_data(&mut self, width: i32, height: i32, data: &[u8]) {
+  pub fn set_data(&mut self, width: usize, height: usize, data: &[u8]) {
     unsafe {
       self.gl.TexImage2D(
         GL::TEXTURE_2D,
         0,
         GL::RGBA as i32,
-        width,
-        height,
+        width as i32,
+        height as i32,
         0,
         GL::RGBA,
         GL::UNSIGNED_BYTE,
         data.as_ptr() as ConstVoid,
       );
     }
+
+    self.width = width;
+    self.height = height;
   }
 
   pub fn generate_mipmap(&self) {
@@ -64,9 +68,9 @@ impl Texture {
     }
   }
 
-  pub fn bind(&self, slot: TextureSlot) {
+  pub fn bind(&self, slot: u32) {
     unsafe {
-      self.gl.ActiveTexture(slot as u32);
+      self.gl.ActiveTexture(GL::TEXTURE0 + slot);
       self.gl.BindTexture(GL::TEXTURE_2D, self.id);
     }
   }

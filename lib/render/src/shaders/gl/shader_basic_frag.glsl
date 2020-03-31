@@ -10,6 +10,6 @@ in vec2 outTexCoord;
 void main()
 {
     //color = u_Color;
-    color = vec4(u_Color.xyz + outColor.xyz, 1.0);
-    //color = texture(u_Texture, outTexCoord) * vec4(u_Color.xyz, 1.0);
+    //color = vec4(u_Color.xyz + outColor.xyz, 1.0);
+    color = texture(u_Texture, outTexCoord);
 }

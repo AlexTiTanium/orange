@@ -6,10 +6,10 @@ use crate::Layout;
 use crate::Program;
 use crate::ShaderType;
 use crate::Texture;
-use crate::TextureSlot;
 use crate::VertexArray;
 use crate::VertexBuffer;
 use crate::GL;
+use std::collections::HashMap;
 
 pub struct Renderer {
   gl: Gl,
@@ -18,7 +18,7 @@ pub struct Renderer {
   vao: VertexArray,
   layout: Layout,
   program: Program,
-  texture: Texture,
+  textures: HashMap<u32, Texture>,
   projection: TMat4<f32>,
   camera: TMat4<f32>,
   pub model: TMat4<f32>,
@@ -34,7 +34,7 @@ impl Renderer {
       vao: VertexArray::new(&gl),
       layout: Layout::new(),
       program: Program::new(&gl),
-      texture: Texture::new(&gl),
+      textures: HashMap::new(),
       gl,
       projection: glm::identity(),
       camera: glm::identity(),
@@ -80,14 +80,17 @@ impl Renderer {
     self
   }
 
-  pub fn add_texture(&mut self, slot: TextureSlot, width: usize, height: usize, data: &[u8]) -> &mut Self {
-    self.select_texture_slot(slot);
-    self.texture.set_param();
-    self.texture.generate_mipmap();
-    self.texture.set_data(width as i32, height as i32, data);
-    self.texture.unbind();
-    // TODO: Should I free image buffer?
-    // TODO: Crate consume_texture method variant ?
+  pub fn add_texture(&mut self, slot: u32, width: usize, height: usize, data: &[u8]) -> &mut Self {
+    let mut texture = Texture::new(&self.gl);
+
+    texture.bind(slot);
+    texture.set_param();
+    texture.generate_mipmap();
+    texture.set_data(width, height, data);
+    texture.unbind();
+
+    self.textures.insert(slot, texture);
+
     self
   }
 
@@ -118,6 +121,15 @@ impl Renderer {
     self.program.uniform4f(&name, &data);
   }
 
+  pub fn bind_texture(&self, slot: u32) {
+    self.textures[&slot].bind(slot);
+    self.set_uniform_i1("u_Texture", slot as i32);
+  }
+
+  pub fn unbind_texture(&self, slot: u32) {
+    self.textures[&slot].unbind();
+  }
+
   pub fn bind(&mut self) {
     self.vao.bind();
     self.ibo.bind();
@@ -126,10 +138,6 @@ impl Renderer {
     self.set_uniform_mat4("u_Projection", &self.projection);
     self.set_uniform_mat4("u_View", &self.camera);
     self.set_uniform_mat4("u_Model", &self.model);
-  }
-
-  pub fn select_texture_slot(&self, slot: TextureSlot) {
-    self.texture.bind(slot);
   }
 
   pub fn translate(&mut self, vec3: &Vec3) {

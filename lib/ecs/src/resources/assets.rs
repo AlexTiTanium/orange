@@ -6,7 +6,7 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-pub struct Image {
+pub struct Texture {
   pub data: Vec<u8>,
   pub width: usize,
   pub height: usize,
@@ -14,7 +14,11 @@ pub struct Image {
 
 #[derive(Default)]
 pub struct Assets {
-  images: HashMap<String, Image>,
+  // Slot to texture map
+  pub images: HashMap<String, u32>,
+  // Textures
+  pub textures: HashMap<u32, Texture>,
+  //Path to resources
   path: PathBuf,
 }
 
@@ -53,49 +57,51 @@ impl Assets {
 
     Self {
       images: HashMap::new(),
+      textures: HashMap::new(),
       path: resources,
     }
   }
 
-  pub fn get_image(&self, id: &str) -> &Image {
-    match self.images.get(id) {
-      Some(image) => image,
+  pub fn get_texture(&self, slot: u32) -> &Texture {
+    match self.textures.get(&slot) {
+      Some(texture) => texture,
       None => {
-        error!("Asset {:?} not found", id);
-        panic!("[Assets] Asset {:?} not found", id);
+        error!("Texture {:?} not found", slot);
+        panic!("[Assets] Texture {:?} not found", slot);
       }
     }
   }
 
-  pub fn load_image(&mut self, id: &str, resource: &str) {
+  pub fn load_texture(&mut self, slot: u32, resource: &str) {
     let time = Instant::now();
 
     let mut path = PathBuf::from(&self.path);
     path.push(resource);
 
-    unsafe {
-      stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
-    }
+    // unsafe {
+    //   stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
+    // }
 
-    info!("Image {:?} loading from: {:?}", id, path);
+    info!("Texture {:?} loading from: {:?}", slot, path);
 
     let img = stb_image::image::load(&path);
 
     match img {
       LoadResult::Error(e) => {
-        error!("Image loading: {:?} {:?} ", e, &path);
-        panic!("Image loading: {:?} {:?} ", e, &path);
+        error!("Texture loading: {:?} {:?} ", e, &path);
+        panic!("Texture loading: {:?} {:?} ", e, &path);
       }
       LoadResult::ImageU8(im) => {
-        let image = Image {
+        let texture = Texture {
           width: im.width,
           height: im.height,
           data: im.data,
         };
-        self.images.insert(String::from(id), image);
+        self.textures.insert(slot, texture);
+        self.images.insert(String::from(resource), slot);
       }
       LoadResult::ImageF32(_im32) => {
-        warn!("Got unsupported f32 image");
+        warn!("Got unsupported f32 texture");
       }
     }
     info!("Time stb image {:?} ", time.elapsed());
