@@ -1,5 +1,6 @@
 use ecs::components::*;
 use ecs::resources::Assets;
+use ecs::resources::Camera;
 use ecs::resources::Window;
 use ecs::*;
 use gl::Gl;
@@ -34,12 +35,13 @@ impl OpenGL {
 
   pub fn step(&mut self, state: &State) {
     self.renderer.clear();
-    // let r = time.elapsed().as_secs_f32().sin() * 0.5 + 0.5;
-    // let g = time.elapsed().as_secs_f32().cos() * 0.5 + 0.5;
 
     let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
     let textures = state.world.borrow::<&Texture>();
     let assets = state.world.borrow::<Unique<&Assets>>();
+    let camera = state.world.borrow::<Unique<&Camera>>();
+
+    self.renderer.set_uniform_mat4("u_View", &camera.view);
 
     (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
       self.renderer.translate(&trans.position);
@@ -55,16 +57,6 @@ impl OpenGL {
         self.renderer.unbind_texture(assets.images[&textures[id].id]);
       }
     });
-
-    //renderer.select_texture_slot(TextureSlot::DEFAULT);
-    //renderer.select_texture_slot(TextureSlot::ONE);
-
-    //self.renderer.bind();
-
-    //renderer.set_uniform_i1("u_Texture", 0);
-    //self.renderer.set_uniform_f4("u_Color", &[r, g, 0.5, 1.0]);
-
-    //self.renderer.draw();
   }
 }
 

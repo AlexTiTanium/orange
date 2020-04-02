@@ -2,13 +2,6 @@ use crate::ConstVoid;
 use crate::RenderID;
 use crate::{Gl, GL};
 
-#[repr(u32)]
-pub enum TextureSlot {
-  DEFAULT = GL::TEXTURE0,
-  ONE = GL::TEXTURE1,
-  TWO = GL::TEXTURE2,
-}
-
 pub struct Texture {
   id: RenderID,
   gl: Gl,
