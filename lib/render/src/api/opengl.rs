@@ -39,8 +39,8 @@ impl OpenGL {
     let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
     let textures = state.world.borrow::<&Texture>();
     let assets = state.world.borrow::<Unique<&Assets>>();
-    let camera = state.world.borrow::<Unique<&Camera>>();
 
+    let camera = state.world.borrow::<Unique<&Camera>>();
     self.renderer.set_uniform_mat4("u_View", &camera.view);
 
     (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {

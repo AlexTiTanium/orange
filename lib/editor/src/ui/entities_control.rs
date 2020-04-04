@@ -32,26 +32,33 @@ fn build_ui(ui: &Ui, state: &State) {
       ui.text(format!("{:?}", id));
       ui.text(format!("Name: {:?}", game_object.name));
 
-      let mut position: [f32; 3] = [transform.position.x, transform.position.y, transform.position.z];
-      ui.drag_float3(im_str!("Position"), &mut position).max(800.0).min(0.0).build();
-      transform.position.x = position[0];
-      transform.position.y = position[1];
-      transform.position.z = position[2];
-
-      let is_active = active.contains(id);
-      let mut checked = is_active;
-
-      ui.checkbox(im_str!("Active"), &mut checked);
-
-      if !checked && is_active {
-        active.delete(id);
-      }
-
-      if checked && !is_active {
-        entities.add_component(&mut active, ActiveTag, id);
-      }
+      transform_control(&ui, transform);
+      active_control(&ui, &mut active, id, &entities);
 
       group.pop(&ui);
       ui.separator();
     });
+}
+
+fn transform_control(ui: &Ui, transform: &mut Transform) {
+  let mut position: [f32; 3] = [transform.position.x, transform.position.y, transform.position.z];
+  ui.drag_float3(im_str!("Position"), &mut position).max(800.0).min(0.0).build();
+  transform.position.x = position[0];
+  transform.position.y = position[1];
+  transform.position.z = position[2];
+}
+
+fn active_control(ui: &Ui, active: &mut ViewMut<'_, ActiveTag>, id: EntityId, entities: &Entities) {
+  let is_active = active.contains(id);
+  let mut checked = is_active;
+
+  ui.checkbox(im_str!("Active"), &mut checked);
+
+  if !checked && is_active {
+    active.delete(id);
+  }
+
+  if checked && !is_active {
+    entities.add_component(active, ActiveTag, id);
+  }
 }
