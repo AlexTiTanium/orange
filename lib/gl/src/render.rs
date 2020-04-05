@@ -19,7 +19,7 @@ pub struct Renderer {
   layout: Layout,
   program: Program,
   textures: HashMap<u32, Texture>,
-  projection: TMat4<f32>,
+  view_projection: Mat4,
   pub model: TMat4<f32>,
 }
 
@@ -35,7 +35,7 @@ impl Renderer {
       program: Program::new(&gl),
       textures: HashMap::new(),
       gl,
-      projection: glm::identity(),
+      view_projection: glm::identity(),
       model: glm::identity(),
     }
   }
@@ -133,7 +133,7 @@ impl Renderer {
     self.ibo.bind();
     self.program.bind();
 
-    self.set_uniform_mat4("u_Projection", &self.projection);
+    self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
     self.set_uniform_mat4("u_Model", &self.model);
   }
 
@@ -141,15 +141,19 @@ impl Renderer {
     self.model = glm::translate(&glm::identity(), vec3);
   }
 
-  pub fn create_mvp(&mut self, width: u32, height: u32) {
-    self.projection = glm::ortho(0.0, width as f32, 0.0, height as f32, -1.0, 1.0);
-
-    self.create_uniform("u_Projection");
-    self.create_uniform("u_View");
+  pub fn create_mvp(&mut self) {
+    self.create_uniform("u_ViewProjection");
     self.create_uniform("u_Model");
 
-    self.set_uniform_mat4("u_Projection", &self.projection);
+    unsafe {
+      //self.gl.Viewport(0, 0, (width * 2) as i32, (height * 2) as i32);
+    }
+
     self.set_uniform_mat4("u_Model", &self.model);
+  }
+
+  pub fn set_view_projection(&mut self, vp: &Mat4) {
+    self.view_projection = vp.clone();
   }
 
   pub fn draw(&self) {

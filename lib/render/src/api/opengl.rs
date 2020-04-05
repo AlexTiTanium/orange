@@ -41,7 +41,7 @@ impl OpenGL {
     let assets = state.world.borrow::<Unique<&Assets>>();
 
     let camera = state.world.borrow::<Unique<&Camera>>();
-    self.renderer.set_uniform_mat4("u_View", &camera.view);
+    self.renderer.set_view_projection(&camera.view_projection);
 
     (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
       self.renderer.translate(&trans.position);
@@ -99,7 +99,7 @@ fn create_renderer(state: &State, gl: &Gl) -> Renderer {
     // TODO: Unload texture from assets
   }
 
-  renderer.create_mvp(display.width, display.height);
+  renderer.create_mvp();
 
   renderer
 }

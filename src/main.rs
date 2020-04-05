@@ -13,12 +13,6 @@ fn main() {
   // Setup logger
   Logger::with_str("debug").start_with_specfile("./logspec.toml").unwrap();
 
-  // Create entities component system
-  let state = ecs::create_state();
-
-  // Start game
-  game::start(&state);
-
   // Start event loop
   let event_loop = winit::event_loop::EventLoop::new();
 
@@ -36,6 +30,15 @@ fn main() {
 
   // It is essential to make the context current before calling `gl::load_with`.
   let context = unsafe { windowed_context.make_current().unwrap() };
+
+  // Create entities component system
+  let state = ecs::create_state();
+
+  // Get window size params
+  state.attach_window(&context.window());
+
+  // Start game
+  game::start(&state);
 
   // Game render
   let mut render = render::create(&state, |symbol| context.get_proc_address(symbol));

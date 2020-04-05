@@ -2,10 +2,12 @@ use ecs::State;
 use imgui::{Context, Ui};
 use imgui_opengl_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
+pub(crate) use nalgebra_glm as glm;
 use std::ffi::c_void;
 use std::time::Instant;
 use winit::event::Event;
 use winit::window::Window;
+
 mod ui;
 
 pub struct Editor {
@@ -19,6 +21,8 @@ pub struct Editor {
 #[derive(Default)]
 pub struct UiState {
   show_entities_control: bool,
+  show_camera_control: bool,
+  show_window_info: bool,
 }
 
 impl Editor {
@@ -76,5 +80,13 @@ fn build_ui(ui: &Ui, state: &State, ui_state: &mut UiState) {
 
   if ui_state.show_entities_control {
     ui::entities_control::build(ui, state);
+  }
+
+  if ui_state.show_camera_control {
+    ui::camera_control::build(ui, state);
+  }
+
+  if ui_state.show_window_info {
+    ui::window_info::build(ui, state);
   }
 }
