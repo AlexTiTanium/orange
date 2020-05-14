@@ -12,7 +12,7 @@ pub fn build(ui: &Ui, state: &State) {
 }
 
 fn build_ui(ui: &Ui, state: &State) {
-  let mut camera = state.world.borrow::<Unique<&mut Camera>>();
+  let mut camera = state.world.borrow::<UniqueViewMut<Camera>>();
   translate_control(ui, &mut camera);
 }
 

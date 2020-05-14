@@ -1,4 +1,3 @@
-use crate::components::*;
 use crate::resources::Window;
 use crate::resources::*;
 use crate::systems::*;
@@ -33,13 +32,7 @@ impl State {
   }
 
   pub fn create_game_object(&self) -> EntityId {
-    let (mut entities, mut game_object, mut transform, mut active) =
-      self.world.borrow::<(EntitiesMut, &mut GameObject, &mut Transform, &mut ActiveTag)>();
-
-    entities.add_entity(
-      (&mut game_object, &mut transform, &mut active),
-      (GameObject::default(), Transform::default(), ActiveTag),
-    )
+    self.world.run(entities::create_game_object)
   }
 
   pub fn handle_window_events(&self, event: &WindowEvent) {
@@ -58,10 +51,10 @@ impl State {
   }
 
   pub fn update_time(&self) {
-    self.world.run_system::<UpdateTime>();
+    self.world.run(time::update);
   }
 
   pub fn update_fps(&self) {
-    self.world.run_system::<UpdateFPS>();
+    self.world.run(time::update_fps);
   }
 }

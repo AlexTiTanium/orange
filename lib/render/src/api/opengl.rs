@@ -35,11 +35,11 @@ impl OpenGL {
   pub fn step(&mut self, state: &State) {
     self.renderer.clear();
 
-    let (transform, _, active) = state.world.borrow::<(&Transform, &GameObject, &ActiveTag)>();
-    let textures = state.world.borrow::<&Texture>();
-    let assets = state.world.borrow::<Unique<&Assets>>();
+    let (transform, _, active) = state.world.borrow::<(View<Transform>, View<GameObject>, View<ActiveTag>)>();
+    let textures = state.world.borrow::<View<Texture>>();
+    let assets = state.world.borrow::<UniqueView<Assets>>();
 
-    let camera = state.world.borrow::<Unique<&Camera>>();
+    let camera = state.world.borrow::<UniqueView<Camera>>();
     self.renderer.set_view_projection(&camera.view_projection);
 
     (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
@@ -60,7 +60,7 @@ impl OpenGL {
 }
 
 fn create_renderer(state: &State, gl: &Gl) -> Renderer {
-  let assets = state.world.borrow::<Unique<&Assets>>();
+  let assets = state.world.borrow::<UniqueView<Assets>>();
 
   #[rustfmt::skip]
   let vertices: [f32; 2 * 4 + 4 * 3 + 4 * 2] = [
@@ -92,6 +92,7 @@ fn create_renderer(state: &State, gl: &Gl) -> Renderer {
 
   // Add textures to slots
   renderer.create_uniform("u_Texture");
+
   for (&slot, texture) in assets.textures.iter() {
     renderer.add_texture(slot, texture.width, texture.height, &texture.data);
     // TODO: Unload texture from assets

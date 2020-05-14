@@ -1,11 +1,12 @@
-use crate::*;
+use crate::UniqueViewMut;
+use crate::World;
 use winit::dpi::LogicalSize;
 use winit::dpi::PhysicalSize;
 use winit::event::*;
 
 pub fn handle_window_resize(world: &World, event: &WindowEvent) {
   if let WindowEvent::Resized(new_size) = event {
-    let mut window = world.borrow::<Unique<&mut Window>>();
+    let mut window = world.borrow::<UniqueViewMut<Window>>();
     window.physical.width = new_size.width as f32;
     window.physical.height = new_size.height as f32;
   }
@@ -15,7 +16,7 @@ pub fn handle_window_resize(world: &World, event: &WindowEvent) {
     new_inner_size,
   } = event
   {
-    let mut window = world.borrow::<Unique<&mut Window>>();
+    let mut window = world.borrow::<UniqueViewMut<Window>>();
     window.physical.width = new_inner_size.width as f32;
     window.physical.height = new_inner_size.height as f32;
     window.scale = scale_factor.clone();
@@ -23,7 +24,7 @@ pub fn handle_window_resize(world: &World, event: &WindowEvent) {
 }
 
 pub fn update_window_sizes(world: &World, logical: LogicalSize<f32>, physical: PhysicalSize<f32>, scale: f64) {
-  let mut window = world.borrow::<Unique<&mut Window>>();
+  let mut window = world.borrow::<UniqueViewMut<Window>>();
   window.logical = logical;
   window.physical = physical;
   window.scale = scale;

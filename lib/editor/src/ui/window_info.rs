@@ -12,7 +12,7 @@ pub fn build(ui: &Ui, state: &State) {
 }
 
 fn build_ui(ui: &Ui, state: &State) {
-  let window = state.world.borrow::<Unique<&WindowResource>>();
+  let window = state.world.borrow::<UniqueView<WindowResource>>();
   ui.text(format!("Logical size: {:?}x{:?}", window.logical.width, window.logical.height));
   ui.text(format!("Physical size {:?}x{:?}", window.physical.width, window.physical.height));
   ui.text(format!("Scale factor(HDPI) {:?}", window.scale));

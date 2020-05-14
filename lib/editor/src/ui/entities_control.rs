@@ -19,8 +19,8 @@ fn build_ui(ui: &Ui, state: &State) {
 
   ui.separator();
 
-  let (game_object, mut transform) = state.world.borrow::<(&GameObject, &mut Transform)>();
-  let (entities, mut active) = state.world.borrow::<(Entities, &mut ActiveTag)>();
+  let (game_object, mut transform) = state.world.borrow::<(View<GameObject>, ViewMut<Transform>)>();
+  let (entities, mut active) = state.world.borrow::<(EntitiesView, ViewMut<ActiveTag>)>();
 
   (&mut transform, &game_object)
     .iter()

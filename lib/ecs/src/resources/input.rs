@@ -1,4 +1,5 @@
-use crate::*;
+use crate::UniqueViewMut;
+use crate::World;
 use winit::event::*;
 
 #[derive(Debug, Default)]
@@ -35,7 +36,7 @@ fn keyboard_input(world: &World, key: VirtualKeyCode, state: ElementState) {
 
 fn action_input(world: &World, state: ElementState) {
   println!("Action with pressed status: {:?}", state);
-  let mut input = world.borrow::<Unique<&mut Input>>();
+  let mut input = world.borrow::<UniqueViewMut<Input>>();
 
   match state {
     ElementState::Pressed => input.action = true,
@@ -45,7 +46,7 @@ fn action_input(world: &World, state: ElementState) {
 
 fn action_up(world: &World, state: ElementState) {
   println!("Action UP with pressed status: {:?}", state);
-  let mut input = world.borrow::<Unique<&mut Input>>();
+  let mut input = world.borrow::<UniqueViewMut<Input>>();
 
   match state {
     ElementState::Pressed => input.up = true,

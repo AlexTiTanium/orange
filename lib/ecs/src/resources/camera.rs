@@ -1,12 +1,13 @@
 use crate::glm::*;
 use crate::resources::Window;
-use crate::Unique;
+use crate::UniqueView;
+use crate::UniqueViewMut;
 use crate::World;
 use winit::event::*;
 
 pub fn handle_camera_update(world: &World) {
-  let window = world.borrow::<Unique<&Window>>();
-  let mut camera = world.borrow::<Unique<&mut Camera>>();
+  let window = world.borrow::<UniqueView<Window>>();
+  let mut camera = world.borrow::<UniqueViewMut<Camera>>();
   camera.projection = ortho(0.0, window.logical.width, 0.0, window.logical.height, -1.0, 1.0);
   camera.update();
 }

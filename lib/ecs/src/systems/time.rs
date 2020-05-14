@@ -1,10 +1,10 @@
 use crate::resources::*;
-use crate::*;
+use crate::UniqueView;
+use crate::UniqueViewMut;
 use std::f32;
 use std::time::Instant;
 
-#[system(UpdateTime)]
-pub fn run(mut time: Unique<&mut Time>) {
+pub fn update(mut time: UniqueViewMut<Time>) {
   let now = Instant::now();
   let delta = now - time.last;
 
@@ -19,8 +19,7 @@ pub fn run(mut time: Unique<&mut Time>) {
   time.last = Instant::now();
 }
 
-#[system(UpdateFPS)]
-pub fn run(mut fps: Unique<&mut FPS>, time: Unique<&Time>) {
+pub fn update_fps(mut fps: UniqueViewMut<FPS>, time: UniqueView<Time>) {
   fps.frames += 1.0;
   let time_from_start = time.running.elapsed().as_secs_f32();
   fps.fps = fps.frames / time_from_start;
