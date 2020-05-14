@@ -3,10 +3,8 @@ use ecs::resources::{Assets, Camera};
 use ecs::{IntoIter, Shiperator, State, UniqueView, View};
 use gl::Gl;
 use gl::Renderer;
-use gl::GLT;
-
 use gl::ShaderType;
-
+use gl::GLT;
 use std::str;
 
 pub static SHADER_BASIC_VERT: &str = include_str!("../shaders/gl/shader_basic_vert.glsl");
