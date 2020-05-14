@@ -145,9 +145,9 @@ impl Renderer {
     self.create_uniform("u_ViewProjection");
     self.create_uniform("u_Model");
 
-    unsafe {
-      //self.gl.Viewport(0, 0, (width * 2) as i32, (height * 2) as i32);
-    }
+    // unsafe {
+    //  self.gl.Viewport(0, 0, (width * 2) as i32, (height * 2) as i32);
+    // }
 
     self.set_uniform_mat4("u_Model", &self.model);
   }

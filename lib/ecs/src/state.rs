@@ -14,19 +14,13 @@ pub fn create_state() -> State {
 #[derive(Default)]
 pub struct State {
   pub world: World,
-  target_width: f32,
-  target_height: f32,
 }
 
 impl State {
   pub fn new() -> Self {
     let world = World::new();
 
-    Self {
-      world,
-      target_width: 1024.0,
-      target_height: 768.0,
-    }
+    Self { world }
   }
 
   pub fn create_resources(&self) {

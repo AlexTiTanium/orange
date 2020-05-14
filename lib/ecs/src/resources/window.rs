@@ -1,5 +1,4 @@
 use crate::*;
-use log::*;
 use winit::dpi::LogicalSize;
 use winit::dpi::PhysicalSize;
 use winit::event::*;

@@ -2,7 +2,6 @@ use ecs::State;
 use imgui::{Context, Ui};
 use imgui_opengl_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
-pub(crate) use nalgebra_glm as glm;
 use std::ffi::c_void;
 use std::time::Instant;
 use winit::event::Event;

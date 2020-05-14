@@ -1,7 +1,6 @@
 use ecs::components::*;
 use ecs::resources::Assets;
 use ecs::resources::Camera;
-use ecs::resources::Window;
 use ecs::*;
 use gl::Gl;
 use gl::Renderer;
@@ -61,7 +60,6 @@ impl OpenGL {
 }
 
 fn create_renderer(state: &State, gl: &Gl) -> Renderer {
-  let display = state.world.borrow::<Unique<&Window>>();
   let assets = state.world.borrow::<Unique<&Assets>>();
 
   #[rustfmt::skip]
