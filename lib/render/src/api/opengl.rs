@@ -1,7 +1,6 @@
 use ecs::components::*;
-use ecs::resources::Assets;
-use ecs::resources::Camera;
-use ecs::*;
+use ecs::resources::{Assets, Camera};
+use ecs::{IntoIter, Shiperator, State, UniqueView, View};
 use gl::Gl;
 use gl::Renderer;
 use gl::GLT;
@@ -35,27 +34,30 @@ impl OpenGL {
   pub fn step(&mut self, state: &State) {
     self.renderer.clear();
 
-    let (transform, _, active) = state.world.borrow::<(View<Transform>, View<GameObject>, View<ActiveTag>)>();
-    let textures = state.world.borrow::<View<Texture>>();
-    let assets = state.world.borrow::<UniqueView<Assets>>();
+    let (transform, active, textures, assets, camera) =
+      state
+        .world
+        .borrow::<(View<Transform>, View<ActiveTag>, View<Texture>, UniqueView<Assets>, UniqueView<Camera>)>();
 
-    let camera = state.world.borrow::<UniqueView<Camera>>();
     self.renderer.set_view_projection(&camera.view_projection);
 
-    (&transform, &active).iter().with_id().for_each(|(id, (trans, _))| {
+    for (id, (trans, _)) in (&transform, &active).iter().with_id() {
+      let has_texture = textures.contains(id);
+      let slot_id = if has_texture { assets.images[&textures[id].id] } else { 0 };
+
       self.renderer.translate(&trans.position);
       self.renderer.bind();
 
-      if textures.contains(id) {
-        self.renderer.bind_texture(assets.images[&textures[id].id]);
+      if has_texture {
+        self.renderer.bind_texture(slot_id);
       }
 
       self.renderer.draw();
 
-      if textures.contains(id) {
-        self.renderer.unbind_texture(assets.images[&textures[id].id]);
+      if has_texture {
+        self.renderer.unbind_texture(slot_id);
       }
-    });
+    }
   }
 }
 
