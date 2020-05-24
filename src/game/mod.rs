@@ -1,6 +1,6 @@
 use ecs::components::*;
 use ecs::resources::*;
-use ecs::*;
+use ecs::{EntitiesView, State, UniqueViewMut, ViewMut};
 
 pub fn start(state: &State) {
   log::info!("Game start");

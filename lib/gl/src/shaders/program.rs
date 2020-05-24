@@ -1,7 +1,7 @@
 use super::utils;
 use super::ProgramError;
 use super::ShaderType;
-use crate::glm::TMat4;
+use crate::glm::Mat4;
 use crate::Gl;
 use crate::RenderID;
 use crate::ShaderID;
@@ -93,7 +93,7 @@ impl Program {
     }
   }
 
-  pub fn uniform_mat4(&self, name: &str, data: &TMat4<f32>) {
+  pub fn uniform_mat4(&self, name: &str, data: &Mat4) {
     let location = self.get_uniform_location(name).unwrap();
     unsafe {
       self.gl.UniformMatrix4fv(location, 1, 0, data.as_ptr());

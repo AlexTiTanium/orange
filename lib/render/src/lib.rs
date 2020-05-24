@@ -6,5 +6,8 @@ pub fn create<F>(state: &State, load: F) -> api::OpenGL
 where
   F: FnMut(&'static str) -> *const c_void,
 {
-  api::OpenGL::new(state, load)
+  let mut render = api::OpenGL::new(state, load);
+  render.fill_buffer(&state);
+
+  render
 }
