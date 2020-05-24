@@ -10,7 +10,7 @@ pub struct IndexBuffer {
   id: RenderID,
   gl: Gl,
   indexes_type: GLT::GLenum,
-  pub count: i32,
+  pub count: usize,
 }
 
 impl IndexBuffer {
@@ -30,7 +30,7 @@ impl IndexBuffer {
     }
   }
 
-  pub fn set_data<T>(&mut self, data: &[T], count: i32) {
+  pub fn set_data<T>(&mut self, data: &[T], count: usize) {
     self.count = count;
 
     self.indexes_type = match any::type_name::<T>() {
@@ -52,7 +52,7 @@ impl IndexBuffer {
 
   pub fn draw(&self) {
     unsafe {
-      self.gl.DrawElements(GL::TRIANGLES, self.count, self.indexes_type, ptr::null());
+      self.gl.DrawElements(GL::TRIANGLES, self.count as i32, self.indexes_type, ptr::null());
     }
   }
 

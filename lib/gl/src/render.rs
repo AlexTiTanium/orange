@@ -1,14 +1,7 @@
 use crate::glm;
-use crate::glm::*;
-use crate::Gl;
-use crate::IndexBuffer;
-use crate::Layout;
-use crate::Program;
-use crate::ShaderType;
-use crate::Texture;
-use crate::VertexArray;
-use crate::VertexBuffer;
-use crate::GL;
+use crate::glm::{Mat4, Vec3};
+use crate::{Gl, GL};
+use crate::{IndexBuffer, Layout, Program, ShaderType, Texture, VertexArray, VertexBuffer};
 use std::collections::HashMap;
 
 pub struct Renderer {
@@ -20,7 +13,7 @@ pub struct Renderer {
   program: Program,
   textures: HashMap<u32, Texture>,
   view_projection: Mat4,
-  pub model: TMat4<f32>,
+  model: Mat4,
 }
 
 impl Renderer {
@@ -40,9 +33,22 @@ impl Renderer {
     }
   }
 
+  pub fn set_data(&mut self, data: &[f32]) {
+    self.vbo.bind();
+    self.vbo.set_sub_data::<f32>(&data);
+    self.vbo.unbind();
+  }
+
   pub fn add_vertices<T>(&mut self, vertices: &[T]) -> &mut Self {
     self.vbo.bind();
     self.vbo.set_data::<T>(&vertices);
+    self.vbo.unbind();
+    self
+  }
+
+  pub fn set_vertices_buffer_size(&mut self, size: usize) -> &mut Self {
+    self.vbo.bind();
+    self.vbo.set_size(size);
     self.vbo.unbind();
     self
   }
@@ -52,7 +58,7 @@ impl Renderer {
     self
   }
 
-  pub fn commit_layout(&mut self) -> &mut Self {
+  pub fn build_layout(&mut self) -> &mut Self {
     self.vao.bind();
     self.vbo.bind();
     self.vao.add_buffer(&self.layout);
@@ -66,12 +72,12 @@ impl Renderer {
     self
   }
 
-  pub fn commit_shaders(&mut self) -> &mut Self {
+  pub fn build_shader(&mut self) -> &mut Self {
     self.program.link();
     self
   }
 
-  pub fn add_indexes<T>(&mut self, indexes: &[T], count: i32) -> &mut Self {
+  pub fn add_indexes<T>(&mut self, indexes: &[T], count: usize) -> &mut Self {
     self.ibo.bind();
     self.ibo.set_data::<T>(&indexes, count);
     self.ibo.unbind();
@@ -103,11 +109,11 @@ impl Renderer {
     self.program.create_uniform_location(name).unwrap();
   }
 
-  pub fn set_uniform_mat4(&self, name: &str, data: &TMat4<f32>) {
+  pub fn set_uniform_mat4(&self, name: &str, data: &Mat4) {
     self.program.uniform_mat4(&name, data);
   }
 
-  pub fn set_uniform_mat4_rm(&self, name: &str, data: &TMat4<f32>) {
+  pub fn set_uniform_mat4_rm(&self, name: &str, data: &Mat4) {
     self.program.uniform_mat4(&name, data);
   }
 
@@ -134,22 +140,15 @@ impl Renderer {
     self.program.bind();
 
     self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
-    self.set_uniform_mat4("u_Model", &self.model);
   }
 
   pub fn translate(&mut self, vec3: &Vec3) {
     self.model = glm::translate(&glm::identity(), vec3);
   }
 
-  pub fn create_mvp(&mut self) {
+  pub fn create_mvp(&mut self) -> &mut Self {
     self.create_uniform("u_ViewProjection");
-    self.create_uniform("u_Model");
-
-    // unsafe {
-    //  self.gl.Viewport(0, 0, (width * 2) as i32, (height * 2) as i32);
-    // }
-
-    self.set_uniform_mat4("u_Model", &self.model);
+    self
   }
 
   pub fn set_view_projection(&mut self, vp: &Mat4) {
@@ -158,12 +157,5 @@ impl Renderer {
 
   pub fn draw(&self) {
     self.ibo.draw();
-  }
-
-  pub fn clear(&self) {
-    unsafe {
-      self.gl.ClearColor(0.2, 0.2, 0.2, 1.0);
-      self.gl.Clear(GL::COLOR_BUFFER_BIT);
-    }
   }
 }

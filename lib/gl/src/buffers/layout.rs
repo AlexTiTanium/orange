@@ -22,7 +22,7 @@ impl Layout {
   }
 
   pub fn push<T>(&mut self, count: usize) {
-    let el_type = match any::type_name::<T>() {
+    let (element_type, size, normalized) = match any::type_name::<T>() {
       "f32" => (GL::FLOAT, size_of::<GLT::GLfloat>(), GL::FALSE),
       "i32" => (GL::INT, size_of::<GLT::GLuint>(), GL::FALSE),
       "u32" => (GL::UNSIGNED_INT, size_of::<GLT::GLuint>(), GL::FALSE),
@@ -31,14 +31,14 @@ impl Layout {
     };
 
     let el = VertexBufferElement {
-      element_type: el_type.0,
+      element_type,
       count,
-      size: el_type.1,
-      normalized: el_type.2,
+      size,
+      normalized,
     };
 
     self.elements.push(el);
-    self.stride += count * el_type.1;
+    self.stride += count * size;
   }
 }
 

@@ -65,6 +65,7 @@ fn main() {
       Event::NewEvents(_) => {
         state.update_time();
         editor.update();
+        render.update(&state);
       }
       Event::MainEventsCleared => {
         context.window().request_redraw();
