@@ -23,9 +23,9 @@ cargo-bundle's support for bundling crate examples.
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winit = "0.22.0"
-glutin = "0.24.0"
-thiserror = "1.0.11"
+winit = "0.22.2"
+glutin = "0.24.1"
+thiserror = "1.0.19"
 flexi_logger = { version = "0.15", features = ["specfile"] }
 log = "0.4"
 
