@@ -11,8 +11,4 @@ categories = ["gui"]
 
 [dependencies]
 imgui = "0.4.0"
-winit-19 = { version = ">= 0.16, <= 0.19", package = "winit", optional = true }
-winit-20 = { version = ">= 0.20, <= 0.22.2", package = "winit", optional = true }
-
-[features]
-default = ["winit-20"]
+winit = "0.22.2"
