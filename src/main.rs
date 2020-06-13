@@ -1,4 +1,5 @@
 mod game;
+mod level;
 
 use editor::Editor;
 use flexi_logger::Logger;

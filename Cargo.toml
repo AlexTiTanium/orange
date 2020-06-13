@@ -28,6 +28,9 @@ glutin = "0.24.1"
 thiserror = "1.0.19"
 flexi_logger = { version = "0.15", features = ["specfile"] }
 log = "0.4"
+serde = { version = "1.0", features = [ "derive" ] }
+quick-xml = { version = "0.18.1", features = [ "serialize" ] }
+base64 = "0.12.1"
 
 [build-dependencies]
 fs_extra = "1.1.0"

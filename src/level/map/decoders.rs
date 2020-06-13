@@ -1,0 +1,21 @@
+use base64;
+use serde::de::Deserialize;
+use serde::Deserializer;
+use std::convert::TryInto;
+
+pub fn tileset_data_decoder<'de, D>(deserializer: D) -> Result<Vec<u32>, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  let base64: String = Deserialize::deserialize(deserializer)?;
+  let data: Vec<u8> = base64::decode(base64).unwrap();
+  let mut result: Vec<u32> = Vec::new();
+
+  for i in (0..data.len()).step_by(4) {
+    let bytes: [u8; 4] = data[i..i + 4].try_into().expect("slice with incorrect length");
+    let id = u32::from_le_bytes(bytes);
+    result.push(id);
+  }
+
+  Ok(result)
+}

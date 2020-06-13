@@ -2,9 +2,9 @@ use log::*;
 use stb_image;
 use stb_image::image::LoadResult;
 use std::collections::HashMap;
-use std::env;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+use std::{env, fs};
 
 pub struct Texture {
   pub data: Vec<u8>,
@@ -18,6 +18,8 @@ pub struct Assets {
   pub images: HashMap<String, u32>,
   // Textures
   pub textures: HashMap<u32, Texture>,
+  // Xml resources
+  pub strings: HashMap<String, String>,
   //Path to resources
   path: PathBuf,
 }
@@ -58,6 +60,7 @@ impl Assets {
     Self {
       images: HashMap::new(),
       textures: HashMap::new(),
+      strings: HashMap::new(),
       path: resources,
     }
   }
@@ -75,8 +78,7 @@ impl Assets {
   pub fn load_texture(&mut self, slot: u32, resource: &str) {
     let time = Instant::now();
 
-    let mut path = PathBuf::from(&self.path);
-    path.push(resource);
+    let path = self.get_path(resource);
 
     // unsafe {
     //   stb_image::stb_image::bindgen::stbi_set_flip_vertically_on_load(1);
@@ -105,5 +107,21 @@ impl Assets {
       }
     }
     info!("Time stb image {:?} ", time.elapsed());
+  }
+
+  pub fn get_path(&mut self, resource: &str) -> PathBuf {
+    let mut path = PathBuf::from(&self.path);
+    path.push(resource);
+    path
+  }
+
+  pub fn load_string(&mut self, resource: &str) {
+    let path = self.get_path(resource);
+    let string = fs::read_to_string(path).unwrap();
+    self.strings.insert(String::from(resource), string);
+  }
+
+  pub fn get_string(&mut self, resource: &str) -> &String {
+    self.strings.get(resource).unwrap()
   }
 }
