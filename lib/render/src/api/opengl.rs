@@ -1,12 +1,12 @@
 use ecs::components::*;
-use ecs::resources::{Assets, Camera};
+use ecs::resources::Camera;
 use ecs::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
 use gl::{Gl, Renderer, ShaderType, GL, GLT};
 use std::collections::HashMap;
 use std::{cmp, mem, str};
 
-pub static SHADER_BASIC_VERT: &str = include_str!("../shaders/gl/shader_basic_vert.glsl");
-pub static SHADER_BASIC_FRAG: &str = include_str!("../shaders/gl/shader_basic_frag.glsl");
+// pub static SHADER_BASIC_VERT: &str = include_str!("../shaders/gl/shader_basic_vert.glsl");
+// pub static SHADER_BASIC_FRAG: &str = include_str!("../shaders/gl/shader_basic_frag.glsl");
 
 pub static SHADER_COLOR_VERT: &str = include_str!("../shaders/gl/shader_color_vert.glsl");
 pub static SHADER_COLOR_FRAG: &str = include_str!("../shaders/gl/shader_color_frag.glsl");
@@ -20,7 +20,7 @@ pub struct OpenGL {
 }
 
 impl OpenGL {
-  pub fn new<F>(state: &State, load: F) -> Self
+  pub fn new<F>(_: &State, load: F) -> Self
   where
     F: FnMut(&'static str) -> *const GLT::GLvoid,
   {

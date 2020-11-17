@@ -20,5 +20,5 @@ pub fn load(state: &State, level: &str) {
   }
 
   //print!("{:?} ", map);
-  panic!("close");
+  //panic!("close");
 }

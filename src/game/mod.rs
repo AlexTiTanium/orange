@@ -1,7 +1,5 @@
 use crate::level;
-use ecs::components::*;
-use ecs::resources::*;
-use ecs::{EntitiesView, State, UniqueViewMut, ViewMut};
+use ecs::{State};
 
 pub fn start(state: &State) {
   log::info!("Game start");
