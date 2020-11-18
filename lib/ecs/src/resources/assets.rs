@@ -115,13 +115,14 @@ impl Assets {
     path
   }
 
-  pub fn load_string(&mut self, resource: &str) {
+  pub fn load_text(&mut self, resource: &str) -> &String {
     let path = self.get_path(resource);
     let string = fs::read_to_string(path).unwrap();
     self.strings.insert(String::from(resource), string);
+    return self.get_text(resource);
   }
 
-  pub fn get_string(&mut self, resource: &str) -> &String {
+  pub fn get_text(&mut self, resource: &str) -> &String {
     self.strings.get(resource).unwrap()
   }
 }

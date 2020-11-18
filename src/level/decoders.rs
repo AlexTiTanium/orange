@@ -1,7 +1,7 @@
 use base64;
 use serde::de::Deserialize;
 use serde::Deserializer;
-use std::convert::TryInto;
+use std::{path::Path, convert::TryInto};
 
 pub fn tileset_data_decoder<'de, D>(deserializer: D) -> Result<Vec<u32>, D::Error>
 where
@@ -18,4 +18,15 @@ where
   }
 
   Ok(result)
+}
+
+
+pub fn tileset_file_name_decoder<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  let path: String = Deserialize::deserialize(deserializer)?;
+  let file = Path::new(&path).file_name().unwrap().to_os_string().into_string().unwrap();
+
+  Ok(file)
 }

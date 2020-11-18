@@ -1,0 +1,68 @@
+{
+    "activeFile": "resources/levels/level_1.tmx",
+    "expandedProjectPaths": [
+        "resources/textures/winter",
+        "resources/levels",
+        "art/winter",
+        "art"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "resources/levels/level1.tmx": {
+            "scale": 0.5612,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 556.8424803991447,
+                "y": 1279.4012829650746
+            }
+        },
+        "resources/levels/level_1.tmx": {
+            "scale": 0.6102,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 638.3153064568993,
+                "y": 220.41953457882664
+            }
+        },
+        "resources/textures/winter/backgrounds.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.25,
+            "scaleInEditor": 1
+        },
+        "resources/textures/winter/tileset.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        }
+    },
+    "map.fixedSize": true,
+    "map.height": 50,
+    "map.layerDataFormat": 1,
+    "map.orientation": 1,
+    "map.renderOrder": 0,
+    "map.tileHeight": 32,
+    "map.tileWidth": 32,
+    "map.width": 100,
+    "openFiles": [
+        "resources/levels/level_1.tmx"
+    ],
+    "project": "orange.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "resources/levels/level_1.tmx",
+        "resources/textures/winter/tileset.tsx",
+        "resources/textures/winter/backgrounds.tsx"
+    ],
+    "resizeMap.removeObjects": false,
+    "tileset.embedInMap": false,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    },
+    "tileset.transparentColor": "#ff00ff",
+    "tileset.type": 1,
+    "tileset.useTransparentColor": false
+}

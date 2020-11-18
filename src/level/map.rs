@@ -1,10 +1,9 @@
-mod decoders;
-use decoders::tileset_data_decoder;
+use super::decoders::tileset_data_decoder;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
-enum Orientation {
+pub enum Orientation {
   Orthogonal,
 }
 
