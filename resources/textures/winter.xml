@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker https://www.codeandweb.com/texturepacker -->
+<!-- $TexturePacker:SmartUpdate:57e6088668840eb192ac8b3ba1556e5f:678fee7a4e04792874a4e28fc52e137e:689f621d4861f4f295d7134b14a707d7$ -->
+<!--Format:
+n  => name of the sprite
+x  => sprite x pos in texture
+y  => sprite y pos in texture
+w  => sprite width (may be trimmed)
+h  => sprite height (may be trimmed)
+pX => x pos of the pivot point (relative to sprite width)
+pY => y pos of the pivot point (relative to sprite height)
+oX => sprite's x-corner offset (only available if trimmed)
+oY => sprite's y-corner offset (only available if trimmed)
+oW => sprite's original width (only available if trimmed)
+oH => sprite's original height (only available if trimmed)
+r => 'y' only set if sprite is rotated
+with polygon mode enabled:
+vertices   => points in sprite coordinate system (x0,y0,x1,y1,x2,y2, ...)
+verticesUV => points in sheet coordinate system (x0,y0,x1,y1,x2,y2, ...)
+triangles  => sprite triangulation, 3 vertex indices per triangle
+-->
+<TextureAtlas imagePath="textures/winter.png" width="119" height="157">
+    <sprite n="images/winter/objects/box_1.png" x="85" y="1" w="33" h="29"/>
+    <sprite n="images/winter/objects/pointer_1.png" x="85" y="134" w="23" h="22" r="y"/>
+    <sprite n="images/winter/objects/tree_1.png" x="1" y="1" w="82" h="154"/>
+    <sprite n="images/winter/tiles/Tile_01.png" x="85" y="32" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_02.png" x="85" y="66" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_03.png" x="85" y="100" w="32" h="32"/>
+</TextureAtlas>

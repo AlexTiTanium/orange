@@ -4,7 +4,7 @@ use ecs::{State};
 pub fn start(state: &State) {
   log::info!("Game start");
 
-  level::load(state, "levels/level_1.tmx");
+  level::load(state, "maps/level_2.tmx", vec!["textures/winter.xml"]);
 
   //assets.load_texture(0, "tree.png");
   //assets.load_texture(1, "cat.png");

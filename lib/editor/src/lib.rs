@@ -20,6 +20,7 @@ pub struct Editor {
 #[derive(Default)]
 pub struct UiState {
   show_entities_control: bool,
+  show_tiles_list: bool,
   show_camera_control: bool,
   show_window_info: bool,
 }
@@ -87,5 +88,9 @@ fn build_ui(ui: &Ui, state: &State, ui_state: &mut UiState) {
 
   if ui_state.show_window_info {
     ui::window_info::build(ui, state);
+  }
+
+  if ui_state.show_tiles_list {
+    ui::tiles_list::build(ui, state);
   }
 }

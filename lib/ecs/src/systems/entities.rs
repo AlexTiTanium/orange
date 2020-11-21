@@ -5,12 +5,12 @@ use crate::ViewMut;
 
 pub fn create_game_object(
   mut entities: EntitiesViewMut,
-  mut game_object: ViewMut<GameObject>,
+  mut game_object: ViewMut<Object>,
   mut transform: ViewMut<Transform>,
   mut active: ViewMut<ActiveTag>,
 ) -> EntityId {
   entities.add_entity(
     (&mut game_object, &mut transform, &mut active),
-    (GameObject::default(), Transform::default(), ActiveTag),
+    (Object::default(), Transform::default(), ActiveTag),
   )
 }

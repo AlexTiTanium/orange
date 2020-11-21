@@ -17,6 +17,7 @@ fn build_tools_menu(ui: &Ui, ui_state: &mut UiState) {
   // Tools
   if let Some(menu) = ui.begin_menu(im_str!("Tools"), true) {
     MenuItem::new(im_str!("Entities Control")).build_with_ref(ui, &mut ui_state.show_entities_control);
+    MenuItem::new(im_str!("Tiles List")).build_with_ref(ui, &mut ui_state.show_tiles_list);
     MenuItem::new(im_str!("Camera")).build_with_ref(ui, &mut ui_state.show_camera_control);
     menu.end(ui);
   }

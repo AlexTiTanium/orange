@@ -1,4 +1,4 @@
-use super::decoders::tileset_data_decoder;
+use super::decoders::{tileset_data_decoder,relative_file_name_decoder };
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -10,6 +10,8 @@ pub enum Orientation {
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Tileset {
   pub firstgid: u32,
+
+  #[serde(deserialize_with = "relative_file_name_decoder")]
   pub source: String,
 }
 
@@ -28,13 +30,9 @@ pub struct Layer {
 pub struct Group {
   pub id: u32,
   pub name: String,
-  pub locked: Option<u32>,
 
-  #[serde(rename = "objectgroups")]
-  pub object_groups: Option<Vec<ObjectGroup>>,
-
-  #[serde(rename = "layer")]
-  pub layers: Option<Vec<Layer>>,
+  // #[serde(rename = "layer")]
+  // pub layers: Option<Vec<Layer>>,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -58,25 +56,11 @@ pub struct Object {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Map {
-  pub version: String,
-  tiledversion: String,
-  orientation: Orientation,
-  renderorder: String,
   pub width: u32,
   pub height: u32,
-
-  #[serde(rename = "tilewidth")]
-  pub tile_width: u32,
-  #[serde(rename = "tileheight")]
-  pub tile_height: u32,
-
-  infinite: u32,
-  nextlayerid: u32,
-  nextobjectid: u32,
 
   #[serde(rename = "tileset")]
   pub tilesets: Vec<Tileset>,
 
-  #[serde(rename = "group")]
-  pub groups: Vec<Group>,
+  pub group: Group
 }
