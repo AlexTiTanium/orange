@@ -19,18 +19,51 @@ fn build_ui(ui: &Ui, state: &State) {
 
   ui.separator();
 
-  let (game_object, mut transform) = state.world.borrow::<(View<Object>, ViewMut<Transform>)>();
+  let (mut transform, tile, tiles, layer, layers, sprites, groups, images, objects) = state.world.borrow::<(ViewMut<Transform>, View<TileRef>, View<Tile>, View<LayerRef>, View<Layer>, View<Sprite>, View<Group>, View<Image>, View<Object>)>();
   let (entities, mut active) = state.world.borrow::<(EntitiesView, ViewMut<ActiveTag>)>();
 
-  (&mut transform, &game_object)
+  (&mut transform, &tile, &layer)
     .iter()
     .enumerate()
     .with_id()
-    .for_each(|(id, (index, (transform, game_object)))| {
+    .for_each(|(id, (index, (transform, tile, layer)))| {
       let group = ui.push_id(index as i32);
+      let TileRef(tile_entity_id) = tile;
+      let LayerRef(layer_entity_id) = layer;
 
-      ui.text(format!("{:?}", id));
-      ui.text(format!("Name: {:?}", game_object.name));
+      ui.text(format!("Entity id: {:?}", id));
+
+      if objects.contains(id) {
+        ui.text(format!("Name: {:?}", objects[id].name));
+      }
+
+      if tiles.contains(*tile_entity_id) {
+        ui.text(format!("Tile id: {:?}", tiles[*tile_entity_id].id));
+      }
+
+      if images.contains(*tile_entity_id) {
+        let image = &images[*tile_entity_id];
+        ui.text(format!("Image size: {:?}x{:?}", image.width, image.height));
+      }
+
+      if sprites.contains(*tile_entity_id) {
+        let sprite = &sprites[*tile_entity_id];
+        ui.text(format!("Sprite texture slot: {:?}", sprite.slot));
+        ui.text(format!("Sprite source: {:?}", sprite.source));
+        ui.text(format!("Sprite size: {:?}x{:?}", sprite.width, sprite.height));
+        ui.text(format!("Sprite x, y: {:?}, {:?}", sprite.x, sprite.y));
+        ui.text(format!("Sprite rotated: {:?}", sprite.rotated));
+      }
+
+      if groups.contains(*layer_entity_id) {
+        let group = &groups[*layer_entity_id];
+        ui.text(format!("Group name: {:?}", group.name));
+      }
+
+      if layers.contains(*layer_entity_id) {
+        let layer = &layers[*layer_entity_id];
+        ui.text(format!("Layer name: {:?}", layer.name));
+      }
 
       transform_control(&ui, transform);
       active_control(&ui, &mut active, id, &entities);

@@ -20,6 +20,10 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "/Users/alex/projects/orange/resources/tilesets/tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "/Users/alex/projects/orange/resources/tilesets/winter_tileset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -60,9 +64,10 @@
     "project": "orange.tiled-project",
     "property.type": "file",
     "recentFiles": [
+        "/Users/alex/projects/orange/resources/tilesets/tiles.tsx",
         "maps/level_2.tmx",
-        "/Users/alex/projects/orange/resources/tilesets/objects.tsx",
         "/Users/alex/projects/orange/resources/tilesets/winter_tileset.tsx",
+        "/Users/alex/projects/orange/resources/tilesets/objects.tsx",
         "tilesets/winter_tileset.tsx",
         "tilesets/objects.tsx"
     ],

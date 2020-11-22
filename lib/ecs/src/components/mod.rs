@@ -5,6 +5,9 @@ pub mod texture;
 pub mod transform;
 pub mod sprite;
 pub mod image;
+pub mod group;
+pub mod layer;
+pub mod map;
 
 pub use object::*;
 pub use tags::*;
@@ -13,3 +16,6 @@ pub use tile::*;
 pub use texture::*;
 pub use sprite::*;
 pub use image::*;
+pub use group::*;
+pub use layer::*;
+pub use map::*;

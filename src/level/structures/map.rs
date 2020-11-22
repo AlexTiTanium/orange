@@ -9,49 +9,58 @@ pub enum Orientation {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Tileset {
-  pub firstgid: u32,
+  #[serde(rename = "firstgid")]
+  pub first_id: u32,
 
   #[serde(deserialize_with = "relative_file_name_decoder")]
   pub source: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
-pub struct Layer {
-  id: u32,
-  name: String,
-  width: u32,
-  height: u32,
-
-  #[serde(deserialize_with = "tileset_data_decoder")]
-  data: Vec<u32>,
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+pub struct Chunk {
+  pub x:f32,
+  pub y: f32,
+  pub width:u32,
+  pub height:u32,
+  #[serde(rename = "$value", deserialize_with = "tileset_data_decoder")]
+  pub value: Vec<u32>,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+pub struct Data {
+  pub chunk: Chunk
+}
+
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+pub struct Layer {
+  pub id: u32,
+  pub name: String,
+  pub width: u32,
+  pub height: u32,
+
+  // #[serde(deserialize_with = "tileset_data_decoder")]
+  // data: Vec<u32>,
+
+  pub data: Data
+}
+
+#[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct Group {
   pub id: u32,
   pub name: String,
 
-  // #[serde(rename = "layer")]
-  // pub layers: Option<Vec<Layer>>,
-}
-
-#[derive(Debug, Deserialize, PartialEq)]
-pub struct ObjectGroup {
-  id: u32,
-  name: String,
-
-  #[serde(rename = "object")]
-  objects: Vec<Object>,
+  #[serde(rename = "layer")]
+  pub layers: Vec<Layer>,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Object {
-  id: u32,
-  gid: u32,
-  x: u32,
-  y: u32,
-  width: u32,
-  height: u32,
+  pub id: u32,
+  pub gid: u32,
+  pub x: u32,
+  pub y: u32,
+  pub width: u32,
+  pub height: u32,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -59,8 +68,15 @@ pub struct Map {
   pub width: u32,
   pub height: u32,
 
+  #[serde(rename = "tilewidth")]
+  pub tile_width: u32,
+
+  #[serde(rename = "tileheight")]
+  pub tile_height: u32,
+
   #[serde(rename = "tileset")]
   pub tilesets: Vec<Tileset>,
 
-  pub group: Group
+  #[serde(rename = "group")]
+  pub groups: Vec<Group>
 }

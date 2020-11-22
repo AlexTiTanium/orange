@@ -117,6 +117,7 @@ impl Assets {
 
   pub fn load_text(&mut self, resource: &str) -> &String {
     let path = self.get_path(resource);
+    info!("Text file loading from: {:?}", &path);
     let string = fs::read_to_string(path).unwrap();
     self.strings.insert(String::from(resource), string);
     return self.get_text(resource);

@@ -12,3 +12,16 @@ impl Default for Transform {
     }
   }
 }
+
+impl Transform {
+  pub fn new(x: f32, y: f32) -> Self {
+    Self {
+       position: vec3(x, y, 0.0),
+    }
+  }
+
+  pub fn set(&mut self, x: f32, y: f32) {
+    self.position.x = x;
+    self.position.y = y;
+  }
+}
