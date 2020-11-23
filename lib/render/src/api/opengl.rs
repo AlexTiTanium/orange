@@ -32,25 +32,38 @@ impl OpenGL {
     let buffer = Vec::with_capacity(50);
     let map = HashMap::with_capacity(50);
 
-    Self { map, buffer, renderer, max_quads, gl: gl.clone() }
+    Self {
+      map,
+      buffer,
+      renderer,
+      max_quads,
+      gl: gl.clone(),
+    }
   }
 
   pub fn fill_buffer(&mut self, state: &State) {
-    let (transform, active) = state.world.borrow::<(View<Transform>, View<ActiveTag>)>();
+    let (transform, active, images, tile, tiles) = state
+      .world
+      .borrow::<(View<Transform>, View<ActiveTag>, View<Image>, View<TileRef>, View<Tile>)>();
 
-    let width = 300.0;
-    let height = 300.0;
+    let mut width: f32 = 300.0;
+    let mut height: f32 = 300.0;
     let shift = 20;
 
     for i in &mut self.buffer {
       *i = 0.0
     }
 
-    for (index, (id, (trans, _))) in (&transform, &active).iter().with_id().enumerate() {
+    for (index, (id, (trans, tile, _))) in (&transform, &tile, &active).iter().with_id().enumerate() {
       self.map.insert(id, index);
 
       if index * shift >= self.buffer.len() {
         self.buffer.resize(shift * (index + 1), 0.0);
+      }
+
+      if images.contains(tile.0) {
+        width = images[tile.0].width;
+        height = images[tile.0].height;
       }
 
       // top left

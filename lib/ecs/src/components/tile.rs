@@ -5,3 +5,9 @@ pub struct Tile {
 }
 
 pub struct TileRef(pub EntityId);
+
+impl TileRef {
+  pub fn entity_id(&self) -> EntityId {
+    self.0
+  }
+}

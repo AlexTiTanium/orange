@@ -1,4 +1,4 @@
-use super::decoders::{relative_image_name_decoder };
+use super::decoders::relative_image_name_decoder;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -11,8 +11,8 @@ pub struct Tile {
 pub struct Image {
   #[serde(deserialize_with = "relative_image_name_decoder")]
   pub source: String,
-  pub width: u32,
-  pub height: u32,
+  pub width: f32,
+  pub height: f32,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]

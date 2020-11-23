@@ -6,7 +6,7 @@ use structures::map::Chunk;
 use structures::map::Map;
 use structures::tileset::Tileset;
 
-use ecs::components::{Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Tile, TileRef, Transform};
+use ecs::components::{ActiveTag, Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Tile, TileRef, Transform};
 use ecs::resources::Assets;
 use ecs::{EntitiesViewMut, EntityId, State, UniqueViewMut, ViewMut};
 
@@ -117,12 +117,21 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
       );
 
       state.world.run(
-        |mut entities: EntitiesViewMut, mut transforms: ViewMut<Transform>, mut layers: ViewMut<LayerRef>, mut tile_store: ViewMut<TileRef>| {
+        |mut entities: EntitiesViewMut,
+         mut transforms: ViewMut<Transform>,
+         mut layers: ViewMut<LayerRef>,
+         mut tile_store: ViewMut<TileRef>,
+         mut active: ViewMut<ActiveTag>| {
           for position in positions {
             let tile_entity_id = tiles[&position.id];
             entities.add_entity(
-              (&mut transforms, &mut layers, &mut tile_store),
-              (Transform::new(position.x, position.y), LayerRef(layer_id), TileRef(tile_entity_id)),
+              (&mut transforms, &mut layers, &mut tile_store, &mut active),
+              (
+                Transform::new(position.x, position.y),
+                LayerRef(layer_id),
+                TileRef(tile_entity_id),
+                ActiveTag,
+              ),
             );
           }
         },
