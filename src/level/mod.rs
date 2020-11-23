@@ -1,21 +1,21 @@
 mod structures;
 use std::collections::HashMap;
 
-use structures::map::Map;
-use structures::map::Chunk;
-use structures::tileset::Tileset;
 use structures::atlas::TextureAtlas;
+use structures::map::Chunk;
+use structures::map::Map;
+use structures::tileset::Tileset;
 
-use ecs::components::{ Image, Tile, Sprite, NoSpriteTag, Group, Layer, Transform, Map as MapComp, LayerRef, TileRef };
+use ecs::components::{Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Tile, TileRef, Transform};
 use ecs::resources::Assets;
-use ecs::{State, UniqueViewMut, ViewMut, EntitiesViewMut, EntityId};
+use ecs::{EntitiesViewMut, EntityId, State, UniqueViewMut, ViewMut};
 
 use quick_xml::de::from_str;
 
 struct TileCoordinates {
   pub id: u32,
   pub x: f32,
-  pub y: f32
+  pub y: f32,
 }
 
 pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
@@ -32,17 +32,15 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
     assets.load_texture(slot as u32, &atlas.source);
 
     for sprite in atlas.sprites {
-      sprites.push(
-        Sprite {
-          slot: slot as u32,
-          source: sprite.source,
-          x: sprite.x,
-          y: sprite.y,
-          width: sprite.width,
-          height: sprite.height,
-          rotated: sprite.rotated
-        }
-      );
+      sprites.push(Sprite {
+        slot: slot as u32,
+        source: sprite.source,
+        x: sprite.x,
+        y: sprite.y,
+        width: sprite.width,
+        height: sprite.height,
+        rotated: sprite.rotated,
+      });
     }
   }
 
@@ -53,50 +51,82 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
       let tile_sprite = sprites.iter().find(|&item| item.source == tile.image.source);
       let tile_id = map_tileset.first_id + tile.id;
 
-      state.world.run(|mut entities: EntitiesViewMut, mut tile_comp: ViewMut<Tile>, mut image: ViewMut<Image>, mut sprite: ViewMut<Sprite>, mut no_sprite: ViewMut<NoSpriteTag>| {
-        let entity_id = entities.add_entity((&mut tile_comp, &mut image), (
-          Tile { id: tile_id },
-          Image { source: tile.image.source, width: tile.image.width, height: tile.image.height }
-        ));
+      state.world.run(
+        |mut entities: EntitiesViewMut,
+         mut tile_comp: ViewMut<Tile>,
+         mut image: ViewMut<Image>,
+         mut sprite: ViewMut<Sprite>,
+         mut no_sprite: ViewMut<NoSpriteTag>| {
+          let entity_id = entities.add_entity(
+            (&mut tile_comp, &mut image),
+            (
+              Tile { id: tile_id },
+              Image {
+                source: tile.image.source,
+                width: tile.image.width,
+                height: tile.image.height,
+              },
+            ),
+          );
 
-        match tile_sprite {
-          Some(s) => entities.add_component(&mut sprite, s.clone(), entity_id),
-          None => entities.add_component(&mut no_sprite, NoSpriteTag, entity_id)
-        }
+          match tile_sprite {
+            Some(s) => entities.add_component(&mut sprite, s.clone(), entity_id),
+            None => entities.add_component(&mut no_sprite, NoSpriteTag, entity_id),
+          }
 
-        tiles.insert(tile_id, entity_id);
-      }); // RUN ---------------------------
+          tiles.insert(tile_id, entity_id);
+        },
+      ); // RUN ---------------------------
     }
   }
 
   // group layers and chunk processing
   for (group_index, group) in map.groups.iter().enumerate() {
-    let group_component = Group { id: group.id, name: group.name.clone(), render_index: group_index as u32 };
+    let group_component = Group {
+      id: group.id,
+      name: group.name.clone(),
+      render_index: group_index as u32,
+    };
 
     for (layer_index, layer) in group.layers.iter().enumerate() {
-      let layer_component = Layer { id: layer.id, name: layer.name.clone(), width: layer.width, height: layer.height, render_index: layer_index as u32 };
+      let layer_component = Layer {
+        id: layer.id,
+        name: layer.name.clone(),
+        width: layer.width,
+        height: layer.height,
+        render_index: layer_index as u32,
+      };
+
       let positions = get_tiles_positions(&map, &layer.data.chunk, &layer.data.chunk.value).unwrap();
 
       // Create layer entity iw will store information about layers
-      let layer_id = state.world.run(|mut entities: EntitiesViewMut, mut groups: ViewMut<Group>, mut layers: ViewMut<Layer>, mut maps: ViewMut<MapComp>| {
-        entities.add_entity((&mut maps, &mut groups, &mut layers), (
-          MapComp { tile_width: map.tile_width, tile_height: map.tile_width },
-          group_component.clone(),
-          layer_component.clone()
-        ))
-      });
+      let layer_id = state.world.run(
+        |mut entities: EntitiesViewMut, mut groups: ViewMut<Group>, mut layers: ViewMut<Layer>, mut maps: ViewMut<MapComp>| {
+          entities.add_entity(
+            (&mut maps, &mut groups, &mut layers),
+            (
+              MapComp {
+                tile_width: map.tile_width,
+                tile_height: map.tile_width,
+              },
+              group_component.clone(),
+              layer_component.clone(),
+            ),
+          )
+        },
+      );
 
-      state.world.run(|mut entities: EntitiesViewMut, mut transforms: ViewMut<Transform>, mut layers: ViewMut<LayerRef>, mut tile_store: ViewMut<TileRef>| {
-        for position in positions {
-          let tile_entity_id = tiles[&position.id];
-          entities.add_entity((&mut transforms, &mut layers, &mut tile_store), (
-            Transform::new(position.x, position.y),
-            LayerRef(layer_id),
-            TileRef(tile_entity_id)
-          ));
-        }
-      });
-
+      state.world.run(
+        |mut entities: EntitiesViewMut, mut transforms: ViewMut<Transform>, mut layers: ViewMut<LayerRef>, mut tile_store: ViewMut<TileRef>| {
+          for position in positions {
+            let tile_entity_id = tiles[&position.id];
+            entities.add_entity(
+              (&mut transforms, &mut layers, &mut tile_store),
+              (Transform::new(position.x, position.y), LayerRef(layer_id), TileRef(tile_entity_id)),
+            );
+          }
+        },
+      );
     }
   }
 
@@ -119,14 +149,15 @@ fn get_tiles_positions(map: &Map, chunks: &Chunk, data: &Vec<u32>) -> Result<Vec
       let tile_id = data.get(tile_id_index as usize);
 
       match tile_id {
-        Some(id) => if *id > 0 {
-          result.push(TileCoordinates { id: *id, x, y });
-        },
-        None => panic!("Chunk data Index not found")
+        Some(id) => {
+          if *id > 0 {
+            result.push(TileCoordinates { id: *id, x, y });
+          }
+        }
+        None => panic!("Chunk data Index not found"),
       };
     }
   }
 
   Ok(result)
 }
-

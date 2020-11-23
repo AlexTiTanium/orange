@@ -32,13 +32,7 @@ impl OpenGL {
     let buffer = Vec::with_capacity(50);
     let map = HashMap::with_capacity(50);
 
-    Self {
-      map,
-      buffer,
-      renderer,
-      max_quads,
-      gl: gl.clone(),
-    }
+    Self { map, buffer, renderer, max_quads, gl: gl.clone() }
   }
 
   pub fn fill_buffer(&mut self, state: &State) {
