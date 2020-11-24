@@ -1,6 +1,6 @@
+mod components;
 mod game;
 mod level;
-mod components;
 
 use editor::Editor;
 use flexi_logger::Logger;
@@ -43,7 +43,7 @@ fn main() {
   game::start(&state);
 
   // Game render
-  let mut render = render::create(&state, |symbol| context.get_proc_address(symbol));
+  render::create(&state, |symbol| context.get_proc_address(symbol));
 
   // Create editor UI render
   let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));
@@ -67,13 +67,13 @@ fn main() {
       Event::NewEvents(_) => {
         state.update_time();
         editor.update();
-        render.update(&state);
+        render::update(&state);
       }
       Event::MainEventsCleared => {
         context.window().request_redraw();
       }
       Event::RedrawRequested(_) => {
-        render.step(&state);
+        render::step(&state);
         editor.step(&state, &context.window());
         context.swap_buffers().unwrap();
       }

@@ -1,34 +1,25 @@
 use ecs::components::*;
 use ecs::resources::Camera;
 use ecs::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
-use gl::{Gl, Renderer, ShaderType, GL, GLT};
+use gl::{Gl, Renderer, ShaderType};
 use std::collections::HashMap;
 use std::{cmp, mem, str};
 
-// pub static SHADER_BASIC_VERT: &str = include_str!("../shaders/gl/shader_basic_vert.glsl");
-// pub static SHADER_BASIC_FRAG: &str = include_str!("../shaders/gl/shader_basic_frag.glsl");
+pub static SHADER_COLOR_VERT: &str = include_str!("./shader_color_vert.glsl");
+pub static SHADER_COLOR_FRAG: &str = include_str!("./shader_color_frag.glsl");
 
-pub static SHADER_COLOR_VERT: &str = include_str!("../shaders/gl/shader_color_vert.glsl");
-pub static SHADER_COLOR_FRAG: &str = include_str!("../shaders/gl/shader_color_frag.glsl");
-
-pub struct OpenGL {
-  gl: Gl,
+pub struct QuadColorRender {
   renderer: Renderer,
   buffer: Vec<f32>,
   map: HashMap<EntityId, usize>,
   max_quads: usize,
 }
 
-impl OpenGL {
-  pub fn new<F>(_: &State, load: F) -> Self
-  where
-    F: FnMut(&'static str) -> *const GLT::GLvoid,
-  {
-    let gl = Gl::load_with(load);
-
+impl QuadColorRender {
+  pub fn new(gl: &Gl) -> Self {
     let max_quads: usize = 4;
 
-    let renderer = create_quads_renderer(max_quads, &gl);
+    let renderer = Self::create_renderer(&gl, max_quads);
     let buffer = Vec::with_capacity(50);
     let map = HashMap::with_capacity(50);
 
@@ -37,14 +28,43 @@ impl OpenGL {
       buffer,
       renderer,
       max_quads,
-      gl: gl.clone(),
     }
   }
 
-  pub fn fill_buffer(&mut self, state: &State) {
-    let (transform, active, images, tile, tiles) = state
-      .world
-      .borrow::<(View<Transform>, View<ActiveTag>, View<Image>, View<TileRef>, View<Tile>)>();
+  fn create_renderer(gl: &Gl, max_quads: usize) -> Renderer {
+    let mut renderer = Renderer::new(gl);
+
+    let buffer_size: usize = (20 * mem::size_of::<f32>()) * max_quads;
+    let mut indexes: Vec<u32> = Vec::with_capacity(6 * max_quads);
+
+    // Clockwise
+    for n in 0..max_quads {
+      // first triangle
+      indexes.push((1 + n * 4) as u32);
+      indexes.push((0 + n * 4) as u32);
+      indexes.push((2 + n * 4) as u32);
+      // second triangle
+      indexes.push((1 + n * 4) as u32);
+      indexes.push((2 + n * 4) as u32);
+      indexes.push((3 + n * 4) as u32);
+    }
+
+    renderer
+      .set_vertices_buffer_size(buffer_size)
+      .add_layout::<f32>(2) // Loc = 0 position
+      .add_layout::<f32>(3) // Loc = 1 color
+      .build_layout()
+      .add_shader(ShaderType::Vertex, SHADER_COLOR_VERT)
+      .add_shader(ShaderType::Fragment, SHADER_COLOR_FRAG)
+      .build_shader()
+      .add_indexes(&indexes, indexes.len())
+      .create_mvp();
+
+    renderer
+  }
+
+  pub fn update(&mut self, state: &State) {
+    let (transform, active, images, tile) = state.world.borrow::<(View<Transform>, View<ActiveTag>, View<Image>, View<TileRef>)>();
 
     let mut width: f32 = 300.0;
     let mut height: f32 = 300.0;
@@ -104,13 +124,7 @@ impl OpenGL {
     }
   }
 
-  pub fn update(&mut self, state: &State) {
-    self.fill_buffer(&state);
-  }
-
   pub fn step(&mut self, state: &State) {
-    self.clear();
-
     let camera = state.world.borrow::<UniqueView<Camera>>();
 
     self.renderer.set_view_projection(&camera.view_projection);
@@ -125,43 +139,4 @@ impl OpenGL {
       self.renderer.draw();
     }
   }
-
-  pub fn clear(&self) {
-    unsafe {
-      self.gl.ClearColor(0.2, 0.2, 0.2, 1.0);
-      self.gl.Clear(GL::COLOR_BUFFER_BIT);
-    }
-  }
-}
-
-fn create_quads_renderer(max_quads: usize, gl: &Gl) -> Renderer {
-  let mut renderer = Renderer::new(&gl);
-
-  let buffer_size: usize = (20 * mem::size_of::<f32>()) * max_quads;
-  let mut indexes: Vec<u32> = Vec::with_capacity(6 * max_quads);
-
-  // Clockwise
-  for n in 0..max_quads {
-    // first triangle
-    indexes.push((1 + n * 4) as u32);
-    indexes.push((0 + n * 4) as u32);
-    indexes.push((2 + n * 4) as u32);
-    // second triangle
-    indexes.push((1 + n * 4) as u32);
-    indexes.push((2 + n * 4) as u32);
-    indexes.push((3 + n * 4) as u32);
-  }
-
-  renderer
-    .set_vertices_buffer_size(buffer_size)
-    .add_layout::<f32>(2) // Loc = 0 position
-    .add_layout::<f32>(3) // Loc = 1 color
-    .build_layout()
-    .add_shader(ShaderType::Vertex, SHADER_COLOR_VERT)
-    .add_shader(ShaderType::Fragment, SHADER_COLOR_FRAG)
-    .build_shader()
-    .add_indexes(&indexes, indexes.len())
-    .create_mvp();
-
-  renderer
 }
