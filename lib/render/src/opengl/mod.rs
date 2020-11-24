@@ -20,20 +20,15 @@ where
 pub fn step(state: &State) {
   let mut quad_color_render = state.world.borrow::<NonSendSync<UniqueViewMut<QuadColorRender>>>();
   let layers = state.world.borrow::<View<Layer>>();
-
-  clear(state);
-
-  for (id, _) in (&layers).iter().with_id() {
-    quad_color_render.update(state, id);
-    quad_color_render.step(state);
-  }
-}
-
-fn clear(state: &State) {
   let gl = state.world.borrow::<NonSendSync<UniqueView<Gl>>>();
 
   unsafe {
     gl.ClearColor(0.2, 0.2, 0.2, 1.0);
     gl.Clear(GL::COLOR_BUFFER_BIT);
+  }
+
+  for (id, _) in (&layers).iter().with_id() {
+    quad_color_render.update(state, id);
+    quad_color_render.step(state);
   }
 }
