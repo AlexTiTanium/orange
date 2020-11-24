@@ -1,7 +1,9 @@
 mod quad_color;
 use quad_color::QuadColorRender;
 
-use ecs::{NonSendSync, State, UniqueView, UniqueViewMut};
+use ecs::components::Layer;
+use ecs::{IntoIter, Shiperator};
+use ecs::{NonSendSync, State, UniqueView, UniqueViewMut, View};
 use gl::{Gl, GL};
 use std::ffi::c_void;
 
@@ -13,25 +15,18 @@ where
 
   state.world.add_unique_non_send_sync(gl.clone());
   state.world.add_unique_non_send_sync(QuadColorRender::new(&gl));
-
-  // let mut render = api::OpenGL::new(state, load);
-  // render.fill_buffer(&state);
-
-  // render
-}
-
-pub fn update(state: &State) {
-  let mut quad_color_render = state.world.borrow::<NonSendSync<UniqueViewMut<QuadColorRender>>>();
-
-  quad_color_render.update(state);
 }
 
 pub fn step(state: &State) {
   let mut quad_color_render = state.world.borrow::<NonSendSync<UniqueViewMut<QuadColorRender>>>();
+  let layers = state.world.borrow::<View<Layer>>();
 
   clear(state);
 
-  quad_color_render.step(state);
+  for (id, _) in (&layers).iter().with_id() {
+    quad_color_render.update(state, id);
+    quad_color_render.step(state);
+  }
 }
 
 fn clear(state: &State) {

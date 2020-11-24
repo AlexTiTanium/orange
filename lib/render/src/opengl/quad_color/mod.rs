@@ -1,8 +1,7 @@
-use ecs::components::*;
+use ecs::components::{ActiveTag, Image, LayerRef, TileRef, Transform};
 use ecs::resources::Camera;
 use ecs::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
 use gl::{Gl, Renderer, ShaderType};
-use std::collections::HashMap;
 use std::{cmp, mem, str};
 
 pub static SHADER_COLOR_VERT: &str = include_str!("./shader_color_vert.glsl");
@@ -11,23 +10,23 @@ pub static SHADER_COLOR_FRAG: &str = include_str!("./shader_color_frag.glsl");
 pub struct QuadColorRender {
   renderer: Renderer,
   buffer: Vec<f32>,
-  map: HashMap<EntityId, usize>,
   max_quads: usize,
+  element_buffer_size: usize,
 }
 
 impl QuadColorRender {
   pub fn new(gl: &Gl) -> Self {
-    let max_quads: usize = 4;
+    let max_quads: usize = 400;
+    let element_buffer_size = 20;
 
     let renderer = Self::create_renderer(&gl, max_quads);
     let buffer = Vec::with_capacity(50);
-    let map = HashMap::with_capacity(50);
 
     Self {
-      map,
       buffer,
       renderer,
       max_quads,
+      element_buffer_size,
     }
   }
 
@@ -63,20 +62,25 @@ impl QuadColorRender {
     renderer
   }
 
-  pub fn update(&mut self, state: &State) {
-    let (transform, active, images, tile) = state.world.borrow::<(View<Transform>, View<ActiveTag>, View<Image>, View<TileRef>)>();
+  pub fn update(&mut self, state: &State, layer_entity_id: EntityId) {
+    let (transform, active, images, tile, layers) = state
+      .world
+      .borrow::<(View<Transform>, View<ActiveTag>, View<Image>, View<TileRef>, View<LayerRef>)>();
 
     let mut width: f32 = 300.0;
     let mut height: f32 = 300.0;
-    let shift = 20;
+    let shift = self.element_buffer_size;
 
     for i in &mut self.buffer {
       *i = 0.0
     }
 
-    for (index, (id, (trans, tile, _))) in (&transform, &tile, &active).iter().with_id().enumerate() {
-      self.map.insert(id, index);
-
+    for (index, (id, (trans, tile, _, _))) in (&transform, &tile, &layers, &active)
+      .iter()
+      .with_id()
+      .enumerate()
+      .filter(|(_, (_, (_, _, layer, _)))| layer.0 == layer_entity_id)
+    {
       if index * shift >= self.buffer.len() {
         self.buffer.resize(shift * (index + 1), 0.0);
       }
@@ -126,14 +130,15 @@ impl QuadColorRender {
 
   pub fn step(&mut self, state: &State) {
     let camera = state.world.borrow::<UniqueView<Camera>>();
+    let shift = self.element_buffer_size;
 
     self.renderer.set_view_projection(&camera.view_projection);
     self.renderer.bind();
 
-    let draw_calls: f32 = self.buffer.len() as f32 / (self.max_quads * 20) as f32;
+    let draw_calls: f32 = self.buffer.len() as f32 / (self.max_quads * shift) as f32;
     for n in 0..draw_calls.ceil() as u32 {
-      let start = n as usize * (self.max_quads * 20) as usize;
-      let end = cmp::min(start + self.max_quads * 20, self.buffer.len());
+      let start = n as usize * (self.max_quads * shift) as usize;
+      let end = cmp::min(start + self.max_quads * shift, self.buffer.len());
 
       self.renderer.set_data(&self.buffer[start..end]);
       self.renderer.draw();

@@ -10,10 +10,6 @@ where
   opengl::create(state, load);
 }
 
-pub fn update(state: &State) {
-  opengl::update(state);
-}
-
 pub fn step(state: &State) {
   opengl::step(state);
 }
