@@ -39,11 +39,11 @@ fn main() {
   // Get window size params
   state.attach_window(&context.window());
 
-  // Start game
-  game::start(&state);
-
   // Game render
   render::create(&state, |symbol| context.get_proc_address(symbol));
+
+  // Start game
+  game::start(&state);
 
   // Create editor UI render
   let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));

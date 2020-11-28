@@ -15,9 +15,9 @@ pub struct Texture {
 #[derive(Default)]
 pub struct Assets {
   // Slot to texture map
-  pub images: HashMap<String, u32>,
+  pub images: HashMap<String, i32>,
   // Textures
-  pub textures: HashMap<u32, Texture>,
+  pub textures: HashMap<i32, Texture>,
   // Xml resources
   pub strings: HashMap<String, String>,
   //Path to resources
@@ -65,7 +65,7 @@ impl Assets {
     }
   }
 
-  pub fn get_texture(&self, slot: u32) -> &Texture {
+  pub fn get_texture(&self, slot: i32) -> &Texture {
     match self.textures.get(&slot) {
       Some(texture) => texture,
       None => {
@@ -75,7 +75,7 @@ impl Assets {
     }
   }
 
-  pub fn load_texture(&mut self, slot: u32, resource: &str) {
+  pub fn load_texture(&mut self, slot: i32, resource: &str) -> Result<&Texture, ()> {
     let time = Instant::now();
 
     let path = self.get_path(resource);
@@ -88,7 +88,7 @@ impl Assets {
 
     let img = stb_image::image::load(&path);
 
-    match img {
+    let result = match img {
       LoadResult::Error(e) => {
         error!("Texture loading: {:?} {:?} ", e, &path);
         panic!("Texture loading: {:?} {:?} ", e, &path);
@@ -105,8 +105,11 @@ impl Assets {
       LoadResult::ImageF32(_im32) => {
         warn!("Got unsupported f32 texture");
       }
-    }
+    };
+
     info!("Time stb image {:?} ", time.elapsed());
+
+    Ok(self.get_texture(slot))
   }
 
   pub fn get_path(&mut self, resource: &str) -> PathBuf {

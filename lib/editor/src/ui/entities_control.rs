@@ -19,7 +19,18 @@ fn build_ui(ui: &Ui, state: &State) {
 
   ui.separator();
 
-  let (mut transform, tile, tiles, layer, layers, sprites, groups, images, objects) = state.world.borrow::<(ViewMut<Transform>, View<TileRef>, View<Tile>, View<LayerRef>, View<Layer>, View<Sprite>, View<Group>, View<Image>, View<Object>)>();
+  let (mut transform, tile, tiles, layer, layers, sprites, groups, images, objects, textures) = state.world.borrow::<(
+    ViewMut<Transform>,
+    View<TileRef>,
+    View<Tile>,
+    View<LayerRef>,
+    View<Layer>,
+    View<Sprite>,
+    View<Group>,
+    View<Image>,
+    View<Object>,
+    View<Texture>,
+  )>();
   let (entities, mut active) = state.world.borrow::<(EntitiesView, ViewMut<ActiveTag>)>();
 
   (&mut transform, &tile, &layer)
@@ -48,7 +59,7 @@ fn build_ui(ui: &Ui, state: &State) {
 
       if sprites.contains(*tile_entity_id) {
         let sprite = &sprites[*tile_entity_id];
-        ui.text(format!("Sprite texture slot: {:?}", sprite.slot));
+        ui.text(format!("Sprite texture slot: {:?}", textures[sprite.texture].slot));
         ui.text(format!("Sprite source: {:?}", sprite.source));
         ui.text(format!("Sprite size: {:?}x{:?}", sprite.width, sprite.height));
         ui.text(format!("Sprite x, y: {:?}, {:?}", sprite.x, sprite.y));

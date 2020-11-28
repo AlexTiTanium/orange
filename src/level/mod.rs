@@ -6,7 +6,7 @@ use structures::map::Chunk;
 use structures::map::Map;
 use structures::tileset::Tileset;
 
-use ecs::components::{ActiveTag, Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Tile, TileRef, Transform};
+use ecs::components::{ActiveTag, Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Texture, Tile, TileRef, Transform};
 use ecs::resources::Assets;
 use ecs::{EntitiesViewMut, EntityId, State, UniqueViewMut, ViewMut};
 
@@ -29,17 +29,37 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
   for (slot, path) in atlases.iter().enumerate() {
     let atlas: TextureAtlas = from_str(assets.load_text(&path)).unwrap();
 
-    assets.load_texture(slot as u32, &atlas.source);
+    // Load texture to memory
+    let texture = assets.load_texture(slot as i32, &atlas.source).unwrap();
+
+    // Create entity for shaders
+    let texture_id = state.world.run(|mut entities: EntitiesViewMut, mut textures: ViewMut<Texture>| {
+      entities.add_entity(
+        &mut textures,
+        Texture::new(slot as i32, &atlas.source, texture.width as u32, texture.height as u32),
+      )
+    });
 
     for sprite in atlas.sprites {
+      let w = sprite.width as f32 / texture.width as f32;
+      let h = sprite.height as f32 / texture.height as f32;
+      let x = sprite.x / texture.width as f32;
+      let y = sprite.y / texture.height as f32;
+
       sprites.push(Sprite {
-        slot: slot as u32,
+        texture: texture_id,
         source: sprite.source,
         x: sprite.x,
         y: sprite.y,
         width: sprite.width,
         height: sprite.height,
         rotated: sprite.rotated,
+        uv: [
+          [x, y + h],     // top right
+          [x, y],         // top left
+          [x + w, y + h], // bottom right
+          [x + w, y],     // bottom left
+        ],
       });
     }
   }

@@ -11,7 +11,7 @@ pub struct Renderer {
   vao: VertexArray,
   layout: Layout,
   program: Program,
-  textures: HashMap<u32, Texture>,
+  textures: HashMap<i32, Texture>,
   view_projection: Mat4,
   model: Mat4,
 }
@@ -84,7 +84,7 @@ impl Renderer {
     self
   }
 
-  pub fn add_texture(&mut self, slot: u32, width: usize, height: usize, data: &[u8]) -> &mut Self {
+  pub fn add_texture(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) -> &mut Self {
     let mut texture = Texture::new(&self.gl);
 
     texture.bind(slot);
@@ -105,8 +105,9 @@ impl Renderer {
     self
   }
 
-  pub fn create_uniform(&mut self, name: &str) {
+  pub fn create_uniform(&mut self, name: &str) -> &mut Self {
     self.program.create_uniform_location(name).unwrap();
+    self
   }
 
   pub fn set_uniform_mat4(&self, name: &str, data: &Mat4) {
@@ -125,12 +126,12 @@ impl Renderer {
     self.program.uniform4f(&name, &data);
   }
 
-  pub fn bind_texture(&self, slot: u32) {
+  pub fn bind_texture(&self, slot: i32) {
     self.textures[&slot].bind(slot);
-    self.set_uniform_i1("u_Texture", slot as i32);
+    self.set_uniform_i1("u_Texture", slot);
   }
 
-  pub fn unbind_texture(&self, slot: u32) {
+  pub fn unbind_texture(&self, slot: i32) {
     self.textures[&slot].unbind();
   }
 

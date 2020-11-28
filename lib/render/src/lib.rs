@@ -13,3 +13,7 @@ where
 pub fn step(state: &State) {
   opengl::step(state);
 }
+
+pub fn load_textures(state: &State) {
+  opengl::load_textures(state);
+}
