@@ -5,14 +5,14 @@
     },
     "activeFile": "maps/level_3.tmx",
     "expandedProjectPaths": [
+        "images/winter/objects",
+        "images",
+        "tilesets",
         "images/winter",
+        ".",
         "maps",
         "/Users/alex/projects/orange/resources/tilesets",
-        ".",
-        "images/winter/objects",
-        "levels",
-        "tilesets",
-        "images"
+        "levels"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -39,11 +39,11 @@
             }
         },
         "maps/level_3.tmx": {
-            "scale": 1.1293,
+            "scale": 1.4843,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 191.71167980164705,
-                "y": -16.381829451872818
+                "x": 327.09021087381257,
+                "y": -18.52725190325407
             }
         },
         "tilesets/objects.tsx": {

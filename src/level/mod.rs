@@ -188,9 +188,9 @@ fn get_tiles_positions(map: &Map, layer: &structures::map::Layer) -> Vec<TileCoo
       continue;
     }
 
-    let flipped_h: bool = if int_id & FLIPPED_HORIZONTALLY_FLAG == 1 { true } else { false };
-    let flipped_v: bool = if int_id & FLIPPED_VERTICALLY_FLAG == 1 { true } else { false };
-    let flipped_d: bool = if int_id & FLIPPED_DIAGONALLY_FLAG == 1 { true } else { false };
+    let flipped_h: bool = int_id & FLIPPED_HORIZONTALLY_FLAG == 1;
+    let flipped_v: bool = int_id & FLIPPED_VERTICALLY_FLAG == 1;
+    let flipped_d: bool = int_id & FLIPPED_DIAGONALLY_FLAG == 1;
 
     let tile_id = int_id & !(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 
