@@ -24,51 +24,12 @@ static FLIPPED_HORIZONTALLY_FLAG: u32 = 0x80000000;
 static FLIPPED_VERTICALLY_FLAG: u32 = 0x40000000;
 static FLIPPED_DIAGONALLY_FLAG: u32 = 0x20000000;
 
-pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
+pub fn load(state: &State, level: &str, textures: Vec<&str>) {
   let mut assets = state.world.borrow::<UniqueViewMut<Assets>>();
 
   let map: Map = from_str(assets.load_text(level)).unwrap();
-  let mut sprites: Vec<Sprite> = Vec::new();
+  let sprites: Vec<Sprite> = get_sprites(state, &mut assets, &textures);
   let mut tiles: HashMap<u32, EntityId> = HashMap::new();
-
-  // Load textures to esc and memory
-  for (slot, path) in atlases.iter().enumerate() {
-    let atlas: TextureAtlas = from_str(assets.load_text(&path)).unwrap();
-
-    // Load texture to memory
-    let texture = assets.load_texture(slot as i32, &atlas.source).unwrap();
-
-    // Create entity for shaders
-    let texture_id = state.world.run(|mut entities: EntitiesViewMut, mut textures: ViewMut<Texture>| {
-      entities.add_entity(
-        &mut textures,
-        Texture::new(slot as i32, &atlas.source, texture.width as u32, texture.height as u32),
-      )
-    });
-
-    for sprite in atlas.sprites {
-      let w = sprite.width as f32 / texture.width as f32;
-      let h = sprite.height as f32 / texture.height as f32;
-      let x = sprite.x / texture.width as f32;
-      let y = sprite.y / texture.height as f32;
-
-      sprites.push(Sprite {
-        texture: texture_id,
-        source: sprite.source,
-        x: sprite.x,
-        y: sprite.y,
-        width: sprite.width,
-        height: sprite.height,
-        rotated: sprite.rotated,
-        uv: [
-          [x, y + h],     // top right
-          [x, y],         // top left
-          [x + w, y + h], // bottom right
-          [x + w, y],     // bottom left
-        ],
-      });
-    }
-  }
 
   // Load tiles to esc
   for map_tileset in &map.tilesets {
@@ -169,9 +130,6 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
       );
     }
   }
-
-  //println!("{:#?}", map);
-  //panic!("close");
 }
 
 /// Get tiles position and flip params
@@ -208,4 +166,50 @@ fn get_tiles_positions(map: &Map, layer: &map::Layer, chunk: &map::Chunk) -> Vec
   }
 
   return result;
+}
+
+/// Import sprites, sprite contains information about texture on atlas, size position UV coordinates
+fn get_sprites(state: &State, assets: &mut Assets, textures: &Vec<&str>) -> Vec<Sprite> {
+  let mut sprites: Vec<Sprite> = Vec::new();
+
+  // Load textures to esc and memory
+  for (slot, path) in textures.iter().enumerate() {
+    let atlas: TextureAtlas = from_str(assets.load_text(&path)).unwrap();
+
+    // Load texture to memory
+    let texture = assets.load_texture(slot as i32, &atlas.source).unwrap();
+
+    // Create entity for shaders
+    let texture_id = state.world.run(|mut entities: EntitiesViewMut, mut textures: ViewMut<Texture>| {
+      entities.add_entity(
+        &mut textures,
+        Texture::new(slot as i32, &atlas.source, texture.width as u32, texture.height as u32),
+      )
+    });
+
+    for sprite in atlas.sprites {
+      let w = sprite.width as f32 / texture.width as f32;
+      let h = sprite.height as f32 / texture.height as f32;
+      let x = sprite.x / texture.width as f32;
+      let y = sprite.y / texture.height as f32;
+
+      sprites.push(Sprite {
+        texture: texture_id,
+        source: sprite.source,
+        x: sprite.x,
+        y: sprite.y,
+        width: sprite.width,
+        height: sprite.height,
+        rotated: sprite.rotated,
+        uv: [
+          [x, y + h],     // top right
+          [x, y],         // top left
+          [x + w, y + h], // bottom right
+          [x + w, y],     // bottom left
+        ],
+      });
+    }
+  }
+
+  return sprites;
 }
