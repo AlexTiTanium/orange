@@ -28,7 +28,8 @@ pub struct Chunk {
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct Data {
-  pub chunk: Chunk,
+  #[serde(rename = "chunk", default)]
+  pub chunks: Vec<Chunk>,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
@@ -44,8 +45,6 @@ pub struct Layer {
   #[serde(rename = "offsety", default)]
   pub offset_y: f32,
 
-  // #[serde(deserialize_with = "tileset_data_decoder")]
-  // data: Vec<u32>,
   pub data: Data,
 }
 

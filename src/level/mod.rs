@@ -2,6 +2,7 @@ mod structures;
 use std::collections::HashMap;
 
 use structures::atlas::TextureAtlas;
+use structures::map;
 use structures::map::Map;
 use structures::tileset::Tileset;
 
@@ -122,7 +123,12 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
         render_index: layer_index as u32,
       };
 
-      let positions = get_tiles_positions(&map, &layer);
+      let mut positions: Vec<TileCoordinates> = Vec::new();
+
+      for chunk in &layer.data.chunks {
+        let mut result = get_tiles_positions(&map, &layer, &chunk);
+        positions.append(&mut result);
+      }
 
       // Create layer entity iw will store information about layers
       let layer_id = state.world.run(
@@ -169,10 +175,7 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
 }
 
 /// Get tiles position and flip params
-fn get_tiles_positions(map: &Map, layer: &structures::map::Layer) -> Vec<TileCoordinates> {
-  let chunks = &layer.data.chunk;
-  let data = &chunks.value;
-
+fn get_tiles_positions(map: &Map, layer: &map::Layer, chunk: &map::Chunk) -> Vec<TileCoordinates> {
   let tile_width: f32 = map.tile_width as f32;
   let tile_height: f32 = map.tile_height as f32;
 
@@ -180,7 +183,7 @@ fn get_tiles_positions(map: &Map, layer: &structures::map::Layer) -> Vec<TileCoo
 
   let mut count = 0;
 
-  for id in data {
+  for id in &chunk.value {
     let int_id = id & 0xFFFFFFFF;
 
     if int_id == 0 {
@@ -194,8 +197,8 @@ fn get_tiles_positions(map: &Map, layer: &structures::map::Layer) -> Vec<TileCoo
 
     let tile_id = int_id & !(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 
-    let ceil_x = chunks.x + (count % chunks.width) as f32;
-    let ceil_y = chunks.y + (count / chunks.height) as f32;
+    let ceil_x = chunk.x + (count % chunk.width) as f32;
+    let ceil_y = chunk.y + (count / chunk.height) as f32;
 
     let x = ceil_x * tile_width + layer.offset_x;
     let y = ceil_y * tile_height + layer.offset_y;
