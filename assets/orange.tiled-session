@@ -11,22 +11,22 @@
         "images/winter",
         ".",
         "maps",
-        "/Users/alex/projects/orange/resources/tilesets",
+        "../resources/tilesets",
         "levels"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
-        "/Users/alex/projects/orange/resources/tilesets/objects.tsx": {
+        "../resources/tilesets/objects.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
-        "/Users/alex/projects/orange/resources/tilesets/tiles.tsx": {
+        "../resources/tilesets/tiles.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
-        "/Users/alex/projects/orange/resources/tilesets/winter_tileset.tsx": {
+        "../resources/tilesets/winter_tileset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -70,17 +70,17 @@
     "map.width": 100,
     "openFiles": [
         "maps/level_3.tmx",
-        "/Users/alex/projects/orange/resources/tilesets/tiles.tsx",
-        "/Users/alex/projects/orange/resources/tilesets/objects.tsx"
+        "../orange/resources/tilesets/tiles.tsx",
+        "../orange/resources/tilesets/objects.tsx"
     ],
     "project": "orange.tiled-project",
     "property.type": "file",
     "recentFiles": [
-        "/Users/alex/projects/orange/resources/tilesets/objects.tsx",
-        "/Users/alex/projects/orange/resources/tilesets/tiles.tsx",
+        "../resources/tilesets/objects.tsx",
+        "../resources/tilesets/tiles.tsx",
         "maps/level_3.tmx",
         "maps/level_2.tmx",
-        "/Users/alex/projects/orange/resources/tilesets/winter_tileset.tsx",
+        "../resources/tilesets/winter_tileset.tsx",
         "tilesets/winter_tileset.tsx",
         "tilesets/objects.tsx"
     ],
