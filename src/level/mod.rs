@@ -2,7 +2,6 @@ mod structures;
 use std::collections::HashMap;
 
 use structures::atlas::TextureAtlas;
-use structures::map::Chunk;
 use structures::map::Map;
 use structures::tileset::Tileset;
 
@@ -17,6 +16,12 @@ struct TileCoordinates {
   pub x: f32,
   pub y: f32,
 }
+
+/// Constants for tile flipping
+/// http://doc.mapeditor.org/reference/tmx-map-format/#tile-flipping
+static FLIPPED_HORIZONTALLY_FLAG: u32 = 0x80000000;
+static FLIPPED_VERTICALLY_FLAG: u32 = 0x40000000;
+static FLIPPED_DIAGONALLY_FLAG: u32 = 0x20000000;
 
 pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
   let mut assets = state.world.borrow::<UniqueViewMut<Assets>>();
@@ -117,7 +122,7 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
         render_index: layer_index as u32,
       };
 
-      let positions = get_tiles_positions(&map, &layer.data.chunk, &layer.data.chunk.value).unwrap();
+      let positions = get_tiles_positions(&map, &layer);
 
       // Create layer entity iw will store information about layers
       let layer_id = state.world.run(
@@ -163,30 +168,41 @@ pub fn load(state: &State, level: &str, atlases: Vec<&str>) {
   //panic!("close");
 }
 
-fn get_tiles_positions(map: &Map, chunks: &Chunk, data: &Vec<u32>) -> Result<Vec<TileCoordinates>, ()> {
-  let tile_width: u32 = map.tile_width;
-  let tile_height: u32 = map.tile_height;
+/// Get tiles position and flip params
+fn get_tiles_positions(map: &Map, layer: &structures::map::Layer) -> Vec<TileCoordinates> {
+  let chunks = &layer.data.chunk;
+  let data = &chunks.value;
+
+  let tile_width: f32 = map.tile_width as f32;
+  let tile_height: f32 = map.tile_height as f32;
 
   let mut result: Vec<TileCoordinates> = Vec::new();
 
-  for column in 0..chunks.height {
-    let y = (column * tile_height) as f32;
+  let mut count = 0;
 
-    for row in 0..chunks.width {
-      let x = (row * tile_width) as f32;
-      let tile_id_index = column * chunks.width + row;
-      let tile_id = data.get(tile_id_index as usize);
+  for id in data {
+    let int_id = id & 0xFFFFFFFF;
 
-      match tile_id {
-        Some(id) => {
-          if *id > 0 {
-            result.push(TileCoordinates { id: *id, x, y });
-          }
-        }
-        None => panic!("Chunk data Index not found"),
-      };
+    if int_id == 0 {
+      count += 1;
+      continue;
     }
+
+    let flipped_h: bool = if int_id & FLIPPED_HORIZONTALLY_FLAG == 1 { true } else { false };
+    let flipped_v: bool = if int_id & FLIPPED_VERTICALLY_FLAG == 1 { true } else { false };
+    let flipped_d: bool = if int_id & FLIPPED_DIAGONALLY_FLAG == 1 { true } else { false };
+
+    let tile_id = int_id & !(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+
+    let ceil_x = chunks.x + (count % chunks.width) as f32;
+    let ceil_y = chunks.y + (count / chunks.height) as f32;
+
+    let x = ceil_x * tile_width + layer.offset_x;
+    let y = ceil_y * tile_height + layer.offset_y;
+
+    result.push(TileCoordinates { id: tile_id, x, y: -y });
+    count += 1;
   }
 
-  Ok(result)
+  return result;
 }

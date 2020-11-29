@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker https://www.codeandweb.com/texturepacker -->
-<!-- $TexturePacker:SmartUpdate:57e6088668840eb192ac8b3ba1556e5f:678fee7a4e04792874a4e28fc52e137e:689f621d4861f4f295d7134b14a707d7$ -->
+<!-- $TexturePacker:SmartUpdate:43bbc4df6f4866912f5e27c095e762c8:752f845a8dc11d76dc4e1856f8b362f2:689f621d4861f4f295d7134b14a707d7$ -->
 <!--Format:
 n  => name of the sprite
 x  => sprite x pos in texture
@@ -19,11 +19,16 @@ vertices   => points in sprite coordinate system (x0,y0,x1,y1,x2,y2, ...)
 verticesUV => points in sheet coordinate system (x0,y0,x1,y1,x2,y2, ...)
 triangles  => sprite triangulation, 3 vertex indices per triangle
 -->
-<TextureAtlas imagePath="textures/winter.png" width="119" height="157">
-    <sprite n="images/winter/objects/box_1.png" x="85" y="1" w="33" h="29"/>
-    <sprite n="images/winter/objects/pointer_1.png" x="85" y="134" w="23" h="22" r="y"/>
+<TextureAtlas imagePath="textures/winter.png" width="118" height="221">
+    <sprite n="images/winter/objects/box_1.png" x="1" y="191" w="33" h="29"/>
+    <sprite n="images/winter/objects/pointer_1.png" x="36" y="191" w="22" h="23"/>
     <sprite n="images/winter/objects/tree_1.png" x="1" y="1" w="82" h="154"/>
-    <sprite n="images/winter/tiles/Tile_01.png" x="85" y="32" w="32" h="32"/>
-    <sprite n="images/winter/tiles/Tile_02.png" x="85" y="66" w="32" h="32"/>
-    <sprite n="images/winter/tiles/Tile_03.png" x="85" y="100" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_01.png" x="1" y="157" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_02.png" x="35" y="157" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_03.png" x="85" y="1" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_11.png" x="85" y="35" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_13.png" x="85" y="69" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_21.png" x="85" y="103" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_22.png" x="85" y="137" w="32" h="32"/>
+    <sprite n="images/winter/tiles/Tile_23.png" x="69" y="171" w="32" h="32"/>
 </TextureAtlas>

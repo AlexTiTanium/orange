@@ -26,7 +26,7 @@
             </struct>
         </array>
         <key>allowRotation</key>
-        <true/>
+        <false/>
         <key>shapeDebug</key>
         <false/>
         <key>dpi</key>
@@ -229,6 +229,11 @@
             <key type="filename">images/winter/tiles/Tile_01.png</key>
             <key type="filename">images/winter/tiles/Tile_02.png</key>
             <key type="filename">images/winter/tiles/Tile_03.png</key>
+            <key type="filename">images/winter/tiles/Tile_11.png</key>
+            <key type="filename">images/winter/tiles/Tile_13.png</key>
+            <key type="filename">images/winter/tiles/Tile_21.png</key>
+            <key type="filename">images/winter/tiles/Tile_22.png</key>
+            <key type="filename">images/winter/tiles/Tile_23.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

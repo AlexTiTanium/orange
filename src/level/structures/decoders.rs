@@ -1,7 +1,7 @@
 use base64;
 use serde::de::Deserialize;
 use serde::Deserializer;
-use std::{path::Path, convert::TryInto};
+use std::{convert::TryInto, path::Path};
 
 pub fn tileset_data_decoder<'de, D>(deserializer: D) -> Result<Vec<u32>, D::Error>
 where
@@ -19,7 +19,6 @@ where
 
   Ok(result)
 }
-
 
 pub fn tileset_file_name_decoder<'de, D>(deserializer: D) -> Result<String, D::Error>
 where

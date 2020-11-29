@@ -1,4 +1,4 @@
-use super::decoders::{tileset_data_decoder,relative_file_name_decoder };
+use super::decoders::{relative_file_name_decoder, tileset_data_decoder};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -18,17 +18,17 @@ pub struct Tileset {
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct Chunk {
-  pub x:f32,
+  pub x: f32,
   pub y: f32,
-  pub width:u32,
-  pub height:u32,
+  pub width: u32,
+  pub height: u32,
   #[serde(rename = "$value", deserialize_with = "tileset_data_decoder")]
   pub value: Vec<u32>,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct Data {
-  pub chunk: Chunk
+  pub chunk: Chunk,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
@@ -38,10 +38,15 @@ pub struct Layer {
   pub width: u32,
   pub height: u32,
 
+  #[serde(rename = "offsetx", default)]
+  pub offset_x: f32,
+
+  #[serde(rename = "offsety", default)]
+  pub offset_y: f32,
+
   // #[serde(deserialize_with = "tileset_data_decoder")]
   // data: Vec<u32>,
-
-  pub data: Data
+  pub data: Data,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Clone)]
@@ -78,5 +83,5 @@ pub struct Map {
   pub tilesets: Vec<Tileset>,
 
   #[serde(rename = "group")]
-  pub groups: Vec<Group>
+  pub groups: Vec<Group>,
 }

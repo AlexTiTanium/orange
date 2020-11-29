@@ -22,6 +22,7 @@
             "scaleInEditor": 1
         },
         "/Users/alex/projects/orange/resources/tilesets/tiles.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
