@@ -284,7 +284,7 @@ name = "editor"
 version = "0.1.0"
 dependencies = [
  "ecs",
- "gl",
+ "gl 0.14.0",
  "imgui",
  "imgui-opengl-renderer",
  "imgui-winit-support",
@@ -417,6 +417,15 @@ dependencies = [
  "gl_generator 0.14.0",
  "nalgebra-glm",
  "thiserror",
+]
+
+[[package]]
+name = "gl"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a94edab108827d67608095e269cf862e60d920f144a5026d3dbcfd8b877fb404"
+dependencies = [
+ "gl_generator 0.14.0",
 ]
 
 [[package]]
@@ -554,7 +563,7 @@ dependencies = [
 name = "imgui-opengl-renderer"
 version = "0.7.0"
 dependencies = [
- "gl",
+ "gl 0.1.0",
  "imgui",
 ]
 
@@ -988,7 +997,6 @@ dependencies = [
  "editor",
  "flexi_logger",
  "fs_extra",
- "gl",
  "glutin",
  "log",
  "quick-xml",
@@ -1259,7 +1267,7 @@ name = "render"
 version = "0.1.0"
 dependencies = [
  "ecs",
- "gl",
+ "gl 0.1.0",
  "nalgebra-glm",
  "thiserror",
  "winit",

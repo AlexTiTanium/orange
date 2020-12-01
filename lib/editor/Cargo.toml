@@ -11,14 +11,7 @@ nalgebra-glm = "0.7.0"
 winit = "0.22.2"
 imgui = "0.4.0"
 
-[dependencies.imgui-winit-support]
-path = './imgui-winit-support/'
-
-[dependencies.imgui-opengl-renderer]
-path = './imgui-opengl-renderer/'
-
-[dependencies.ecs]
-path = '../ecs/'
-
-[dependencies.gl]
-path = '../gl/'
+imgui-winit-support = { path = './imgui-winit-support/' }
+imgui-opengl-renderer = { path = './imgui-opengl-renderer/' }
+ecs = { path = '../ecs' }
+gl = { patch = '../render/lib/gl/' }

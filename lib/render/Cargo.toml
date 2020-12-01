@@ -11,8 +11,5 @@ thiserror = "1.0.19"
 nalgebra-glm = "0.7.0"
 winit = "0.22.2"
 
-[dependencies.ecs]
-path = '../ecs/'
-
-[dependencies.gl]
-path = '../gl/'
+ecs = { path = '../ecs/' }
+gl = { path = './lib/gl/' }
