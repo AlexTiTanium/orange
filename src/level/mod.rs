@@ -6,9 +6,9 @@ use structures::map;
 use structures::map::Map;
 use structures::tileset::Tileset;
 
-use ecs::components::{ActiveTag, Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Texture, Tile, TileRef, Transform};
-use ecs::resources::Assets;
-use ecs::{EntitiesViewMut, EntityId, State, UniqueViewMut, ViewMut};
+use game::components::{ActiveTag, Group, Image, Layer, LayerRef, Map as MapComp, NoSpriteTag, Sprite, Texture, Tile, TileRef, Transform};
+use game::resources::Assets;
+use game::{EntitiesViewMut, EntityId, State, UniqueViewMut, ViewMut};
 
 use quick_xml::de::from_str;
 

@@ -1,6 +1,6 @@
-use ecs::resources::Camera;
-use ecs::State;
-use ecs::*;
+use game::resources::Camera;
+use game::State;
+use game::*;
 use imgui::{im_str, Condition, Ui, Window};
 
 pub fn build(ui: &Ui, state: &State) {

@@ -1,6 +1,6 @@
-use ecs::components::*;
-use ecs::resources::{Assets, Camera};
-use ecs::{IntoIter, Shiperator, State, UniqueView, View};
+use game::components::*;
+use game::resources::{Assets, Camera};
+use game::{IntoIter, Shiperator, State, UniqueView, View};
 use gl::Gl;
 use gl::Renderer;
 use gl::ShaderType;

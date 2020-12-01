@@ -1,5 +1,5 @@
 use crate::UiState;
-use ecs::State;
+use game::State;
 use imgui::{im_str, MenuItem, Ui};
 
 pub fn build(ui: &Ui, _state: &State, ui_state: &mut UiState) {

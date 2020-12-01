@@ -1,9 +1,9 @@
 mod components;
-mod game;
 mod level;
 
 use editor::Editor;
 use flexi_logger::Logger;
+use game;
 use glutin::ContextBuilder;
 use render;
 use winit::dpi::LogicalSize;
@@ -34,7 +34,7 @@ fn main() {
   let context = unsafe { windowed_context.make_current().unwrap() };
 
   // Create entities component system
-  let state = ecs::create_state();
+  let state = game::create_state();
 
   // Get window size params
   state.attach_window(&context.window());
@@ -43,7 +43,7 @@ fn main() {
   render::create(&state, |symbol| context.get_proc_address(symbol));
 
   // Start game
-  game::start(&state);
+  //game::start(&state);
 
   // Create editor UI render
   let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));

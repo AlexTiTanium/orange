@@ -1,4 +1,4 @@
-use ecs::State;
+use game::State;
 use imgui::{Context, Ui};
 use imgui_opengl_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};

@@ -1,6 +1,6 @@
-use ecs::resources::Window as WindowResource;
-use ecs::State;
-use ecs::*;
+use game::resources::Window as WindowResource;
+use game::State;
+use game::*;
 use imgui::{im_str, Condition, Ui, Window};
 
 pub fn build(ui: &Ui, state: &State) {

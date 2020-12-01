@@ -1,6 +1,6 @@
 mod opengl;
 
-use ecs::State;
+use game::State;
 use std::ffi::c_void;
 
 pub fn create<F>(state: &State, load: F)

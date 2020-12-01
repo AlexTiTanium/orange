@@ -13,5 +13,5 @@ imgui = "0.4.0"
 
 imgui-winit-support = { path = './imgui-winit-support/' }
 imgui-opengl-renderer = { path = './imgui-opengl-renderer/' }
-ecs = { path = '../ecs' }
+game = { path = '../game' }
 gl = { patch = '../render/lib/gl/' }

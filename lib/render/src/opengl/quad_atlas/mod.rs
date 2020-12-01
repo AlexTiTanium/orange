@@ -1,6 +1,6 @@
-use ecs::components::{ActiveTag, Image, LayerRef, Sprite, Texture, TileRef, Transform};
-use ecs::resources::{Assets, Camera};
-use ecs::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
+use game::components::{ActiveTag, Image, LayerRef, Sprite, Texture, TileRef, Transform};
+use game::resources::{Assets, Camera};
+use game::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
 use gl::{Gl, Renderer, ShaderType};
 use std::{cmp, mem, str};
 

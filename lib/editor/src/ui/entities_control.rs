@@ -1,6 +1,6 @@
-use ecs::components::*;
-use ecs::State;
-use ecs::*;
+use game::components::*;
+use game::State;
+use game::*;
 use imgui::{im_str, Condition, Ui, Window};
 
 pub fn build(ui: &Ui, state: &State) {

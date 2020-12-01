@@ -4,9 +4,9 @@ use quad_color::QuadColorRender;
 mod quad_atlas;
 use quad_atlas::QuadAtlasRender;
 
-use ecs::components::{Layer, Texture};
-use ecs::{IntoIter, Shiperator};
-use ecs::{NonSendSync, State, UniqueView, UniqueViewMut, View};
+use game::components::{Layer, Texture};
+use game::{IntoIter, Shiperator};
+use game::{NonSendSync, State, UniqueView, UniqueViewMut, View};
 use gl::{Gl, GL};
 use std::ffi::c_void;
 

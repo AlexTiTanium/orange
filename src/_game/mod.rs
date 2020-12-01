@@ -1,5 +1,5 @@
 use crate::level;
-use ecs::State;
+use game::State;
 
 pub fn start(state: &State) {
   log::info!("Game start");

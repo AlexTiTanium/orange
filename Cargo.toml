@@ -33,7 +33,7 @@ quick-xml = { version = "0.18.1", features = [ "serialize" ] }
 base64 = "0.12.1"
 render = { path = 'lib/render/' }
 editor = { path = 'lib/editor/' }
-ecs = { path = 'lib/ecs' }
+game = { path = 'lib/game' }
 
 [build-dependencies]
 fs_extra = "1.1.0"
