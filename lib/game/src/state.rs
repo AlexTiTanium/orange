@@ -2,6 +2,7 @@ use crate::resources::Window;
 use crate::resources::*;
 use crate::systems::*;
 use crate::*;
+use module::Module;
 use winit::event::WindowEvent;
 
 pub fn create_state() -> State {
@@ -20,6 +21,18 @@ impl State {
     let world = World::new();
 
     Self { world }
+  }
+
+  /// Runs module initialization
+  pub fn add_module(&self, module: &dyn Module) -> &Self {
+    module.init(&self);
+    &self
+  }
+
+  /// Adds resources to the world
+  pub fn add_resource<T: 'static + Send + Sync>(&self, resource: T) -> &Self {
+    self.world.add_unique(resource);
+    &self
   }
 
   pub fn create_resources(&self) {

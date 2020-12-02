@@ -1,6 +1,8 @@
 mod components;
 mod level;
 
+use diagnostic::DiagnosticModule;
+
 use editor::Editor;
 use flexi_logger::Logger;
 use game;
@@ -41,6 +43,8 @@ fn main() {
 
   // Game render
   render::create(&state, |symbol| context.get_proc_address(symbol));
+
+  state.add_module(&DiagnosticModule::default());
 
   // Start game
   //game::start(&state);

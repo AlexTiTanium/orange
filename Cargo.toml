@@ -31,9 +31,15 @@ log = "0.4"
 serde = { version = "1.0", features = [ "derive" ] }
 quick-xml = { version = "0.18.1", features = [ "serialize" ] }
 base64 = "0.12.1"
+
+# Game root component
+game = { path = 'lib/game' }
+
+# Internal modules
 render = { path = 'lib/render/' }
 editor = { path = 'lib/editor/' }
-game = { path = 'lib/game' }
+diagnostic = { path = 'lib/diagnostic/' }
+
 
 [build-dependencies]
 fs_extra = "1.1.0"
