@@ -5,8 +5,8 @@ mod quad_atlas;
 use quad_atlas::QuadAtlasRender;
 
 use game::components::{Layer, Texture};
-use game::{IntoIter, Shiperator};
-use game::{NonSendSync, State, UniqueView, UniqueViewMut, View};
+use game::{IntoIter};
+use game::{NonSendSync, State, UniqueView, UniqueViewMut, View, IntoWithId};
 use gl::{Gl, GL};
 use std::ffi::c_void;
 

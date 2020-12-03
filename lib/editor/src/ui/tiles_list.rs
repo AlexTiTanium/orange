@@ -20,7 +20,7 @@ fn build_ui(ui: &Ui, state: &State) {
   let textures = state.world.borrow::<View<Texture>>();
   let no_sprite = state.world.borrow::<View<NoSpriteTag>>();
 
-  tiles.iter().enumerate().with_id().for_each(|(id, (index, tiles))| {
+  tiles.iter().with_id().enumerate().for_each(|(index, (id, tiles))| {
     let group = ui.push_id(index as i32);
     ui.separator();
 

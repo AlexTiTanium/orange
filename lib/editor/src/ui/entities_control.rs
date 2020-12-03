@@ -1,6 +1,7 @@
 use game::components::*;
 use game::State;
 use game::*;
+use game::{IntoWithId, View};
 use imgui::{im_str, Condition, Ui, Window};
 
 pub fn build(ui: &Ui, state: &State) {
@@ -19,7 +20,7 @@ fn build_ui(ui: &Ui, state: &State) {
 
   ui.separator();
 
-  let (mut transform, tile, tiles, layer, layers, sprites, groups, images, objects, textures) = state.world.borrow::<(
+  let (mut transforms, tile, tiles, layer, layers, sprites, groups, images, objects, textures) = state.world.borrow::<(
     ViewMut<Transform>,
     View<TileRef>,
     View<Tile>,
@@ -33,11 +34,11 @@ fn build_ui(ui: &Ui, state: &State) {
   )>();
   let (entities, mut active) = state.world.borrow::<(EntitiesView, ViewMut<ActiveTag>)>();
 
-  (&mut transform, &tile, &layer)
+  (&mut transforms, &tile, &layer)
     .iter()
-    .enumerate()
     .with_id()
-    .for_each(|(id, (index, (transform, tile, layer)))| {
+    .enumerate()
+    .for_each(|(index, (id, (mut transform, tile, layer)))| {
       let group = ui.push_id(index as i32);
       let TileRef(tile_entity_id) = tile;
       let LayerRef(layer_entity_id) = layer;
@@ -76,7 +77,7 @@ fn build_ui(ui: &Ui, state: &State) {
         ui.text(format!("Layer name: {:?}", layer.name));
       }
 
-      transform_control(&ui, transform);
+      transform_control(&ui, &mut transform);
       active_control(&ui, &mut active, id, &entities);
 
       group.pop(&ui);
@@ -103,6 +104,6 @@ fn active_control(ui: &Ui, active: &mut ViewMut<'_, ActiveTag>, id: EntityId, en
   }
 
   if checked && !is_active {
-    entities.add_component(active, ActiveTag, id);
+    entities.add_component(id, active, ActiveTag);
   }
 }

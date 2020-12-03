@@ -1,8 +1,9 @@
+use std::collections::HashMap;
+
 use crate::resources::Window;
 use crate::resources::*;
 use crate::systems::*;
 use crate::*;
-use module::Module;
 use winit::event::WindowEvent;
 
 pub fn create_state() -> State {
@@ -11,7 +12,12 @@ pub fn create_state() -> State {
   state
 }
 
-#[derive(Default)]
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub enum Stage {
+  Startup,
+  Update,
+}
+
 pub struct State {
   pub world: World,
 }
@@ -19,20 +25,29 @@ pub struct State {
 impl State {
   pub fn new() -> Self {
     let world = World::new();
-
     Self { world }
-  }
-
-  /// Runs module initialization
-  pub fn add_module(&self, module: &dyn Module) -> &Self {
-    module.init(&self);
-    &self
   }
 
   /// Adds resources to the world
   pub fn add_resource<T: 'static + Send + Sync>(&self, resource: T) -> &Self {
     self.world.add_unique(resource);
     &self
+  }
+
+  // /// Add workload
+  pub fn workload(&self, stage: Stage) {
+    //self.world.add_workload(Self::stage_as_string(stage))
+  }
+
+  /// Execute workload
+  pub fn run_workload(&self, stage: Stage) {
+    //self.world.run_workload(Self::stage_as_string(stage));
+  }
+
+  /// Build all known workloads, must be called after all modules initialization
+  pub fn build(&self) {
+    //self.workload(Stage::Update).build();
+    //self.workload(Stage::Startup).build();
   }
 
   pub fn create_resources(&self) {
@@ -69,5 +84,12 @@ impl State {
 
   pub fn update_fps(&self) {
     self.world.run(time::update_fps);
+  }
+
+  fn stage_as_string(stage: Stage) -> &'static str {
+    match stage {
+      Stage::Startup => "Startup",
+      Stage::Update => "Update",
+    }
   }
 }

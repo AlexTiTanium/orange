@@ -1,7 +1,7 @@
 mod components;
 mod level;
 
-use diagnostic::DiagnosticModule;
+use diagnostic;
 
 use editor::Editor;
 use flexi_logger::Logger;
@@ -44,10 +44,17 @@ fn main() {
   // Game render
   render::create(&state, |symbol| context.get_proc_address(symbol));
 
-  state.add_module(&DiagnosticModule::default());
+  diagnostic::init(&state);
+
+  state.build();
+
+  state.run_workload(game::Stage::Update);
 
   // Start game
-  //game::start(&state);
+  log::info!("Game start");
+  level::load(&state, "maps/level_3.tmx", vec!["textures/winter.xml"]);
+  // Load textures on GPU
+  render::load_textures(&state);
 
   // Create editor UI render
   let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));

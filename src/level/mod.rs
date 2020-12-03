@@ -57,8 +57,8 @@ pub fn load(state: &State, level: &str, textures: Vec<&str>) {
           );
 
           match tile_sprite {
-            Some(s) => entities.add_component(&mut sprite, s.clone(), entity_id),
-            None => entities.add_component(&mut no_sprite, NoSpriteTag, entity_id),
+            Some(s) => entities.add_component(entity_id, &mut sprite, s.clone()),
+            None => entities.add_component(entity_id, &mut no_sprite, NoSpriteTag),
           }
 
           tiles.insert(tile_id, entity_id);

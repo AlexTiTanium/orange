@@ -1,6 +1,6 @@
 use game::components::{ActiveTag, Image, LayerRef, TileRef, Transform};
 use game::resources::Camera;
-use game::{EntityId, IntoIter, Shiperator, State, UniqueView, View};
+use game::{EntityId, IntoIter, State, UniqueView, View};
 use gl::{Gl, Renderer, ShaderType};
 use std::{cmp, mem, str};
 

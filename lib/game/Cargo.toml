@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-shipyard = { version = "0.4.1", features = ["non_send", "non_sync"] }
+shipyard = { git = "https://github.com/leudz/shipyard", features = ["non_send", "non_sync"] }
 nalgebra-glm = "0.7.0"
 winit = "0.22.2"
 log = "0.4"
