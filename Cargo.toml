@@ -42,7 +42,8 @@ game = { path = 'lib/game' }
 render = { path = 'lib/render/' }
 editor = { path = 'lib/editor/' }
 diagnostic = { path = 'lib/diagnostic/' }
-
+logger = { path = 'lib/logger/' }
+window = { path = 'lib/window/' }
 
 [build-dependencies]
 fs_extra = "1.1.0"

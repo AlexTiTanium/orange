@@ -15,7 +15,7 @@ use winit::window::WindowBuilder;
 
 fn main() {
   // Setup logger
-  Logger::with_str("debug").start_with_specfile("./logspec.toml").unwrap();
+  //Logger::with_str("debug").start_with_specfile("./logspec.toml").unwrap();
 
   // Start event loop
   let event_loop = winit::event_loop::EventLoop::new();
@@ -44,15 +44,20 @@ fn main() {
   // Game render
   render::create(&state, |symbol| context.get_proc_address(symbol));
 
+  // Init modules
+  logger::init();
+  window::init(&state);
   diagnostic::init(&state);
   editor::init(&state);
 
+  // Batch all systems
   state.build();
 
-  state.run_workload(game::stage::UPDATE);
+  // Start game
+  state.run_workload(game::stage::FIRST);
 
   // Start game
-  log::info!("Game start");
+  //log::info!("Game start");
   level::load(&state, "maps/level_3.tmx", vec!["textures/winter.xml"]);
   // Load textures on GPU
   render::load_textures(&state);

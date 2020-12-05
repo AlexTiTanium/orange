@@ -41,6 +41,10 @@ impl State {
     self.add_workload(stage::UPDATE, workload);
   }
 
+  pub fn on_start(&self, workload: WorkloadBuilder) {
+    self.add_workload(stage::FIRST, workload);
+  }
+
   /// Add new workloads
   pub fn add_workload(&self, stage: &str, workload: WorkloadBuilder) {
     let workloads = &mut self.workloads.borrow_mut();
