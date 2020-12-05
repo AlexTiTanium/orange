@@ -45,6 +45,7 @@ fn main() {
   render::create(&state, |symbol| context.get_proc_address(symbol));
 
   diagnostic::init(&state);
+  editor::init(&state);
 
   state.build();
 

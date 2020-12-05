@@ -8,7 +8,6 @@ use systems::update_fps;
 /// Module initialization
 pub fn init(state: &State) {
   state.add_resource(FPS::default());
-  //state.update.borrow_mut().with_system(system!(update_fps));
 
   let mut workload = WorkloadBuilder::default();
 
