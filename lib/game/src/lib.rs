@@ -1,7 +1,8 @@
+pub mod stage;
 mod state;
 
 /// Game state
-pub use state::{Stage, State};
+pub use state::State;
 
 // Game public API
 pub use state::create_state;

@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-
 use crate::resources::Window;
 use crate::resources::*;
+use crate::stage;
 use crate::systems::*;
 use crate::*;
+use std::{cell::RefCell, collections::HashMap};
 use winit::event::WindowEvent;
 
 pub fn create_state() -> State {
@@ -12,20 +12,22 @@ pub fn create_state() -> State {
   state
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
-pub enum Stage {
-  Startup,
-  Update,
-}
-
 pub struct State {
+  // world
   pub world: World,
+
+  // Workload builders
+  workloads: RefCell<HashMap<String, Vec<WorkloadBuilder>>>,
 }
 
 impl State {
   pub fn new() -> Self {
     let world = World::new();
-    Self { world }
+
+    // Store workloads builders, after self.build() them will be cleared
+    let workloads = RefCell::new(HashMap::new());
+
+    Self { world, workloads }
   }
 
   /// Adds resources to the world
@@ -34,20 +36,39 @@ impl State {
     &self
   }
 
-  // /// Add workload
-  pub fn workload(&self, stage: Stage) {
-    //self.world.add_workload(Self::stage_as_string(stage))
+  /// Add systems to UPDATE workload
+  pub fn on_update(&self, workload: WorkloadBuilder) {
+    self.add_workload(stage::UPDATE, workload);
+  }
+
+  /// Add new workloads
+  pub fn add_workload(&self, stage: &str, workload: WorkloadBuilder) {
+    let workloads = &mut self.workloads.borrow_mut();
+    let workloads_vec = workloads.entry(stage.to_string()).or_insert(vec![]);
+    workloads_vec.push(workload);
   }
 
   /// Execute workload
-  pub fn run_workload(&self, stage: Stage) {
-    //self.world.run_workload(Self::stage_as_string(stage));
+  pub fn run_workload(&self, stage: &str) {
+    self.world.run_workload(stage);
   }
 
   /// Build all known workloads, must be called after all modules initialization
   pub fn build(&self) {
-    //self.workload(Stage::Update).build();
-    //self.workload(Stage::Startup).build();
+    let workloads = &mut self.workloads.borrow_mut();
+
+    for (stage, builders) in workloads.iter_mut() {
+      let mut workload = WorkloadBuilder::new(stage.to_string());
+
+      for mut builder in builders.iter_mut() {
+        workload.append(&mut builder);
+      }
+
+      let info = workload.add_to_world_with_info(&self.world).unwrap();
+      println!("{:?}", info)
+    }
+
+    workloads.clear();
   }
 
   pub fn create_resources(&self) {
@@ -84,12 +105,5 @@ impl State {
 
   pub fn update_fps(&self) {
     self.world.run(time::update_fps);
-  }
-
-  fn stage_as_string(stage: Stage) -> &'static str {
-    match stage {
-      Stage::Startup => "Startup",
-      Stage::Update => "Update",
-    }
   }
 }

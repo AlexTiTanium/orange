@@ -149,9 +149,9 @@ fn get_tiles_positions(map: &Map, layer: &map::Layer, chunk: &map::Chunk) -> Vec
       continue;
     }
 
-    let flipped_h: bool = int_id & FLIPPED_HORIZONTALLY_FLAG == 1;
-    let flipped_v: bool = int_id & FLIPPED_VERTICALLY_FLAG == 1;
-    let flipped_d: bool = int_id & FLIPPED_DIAGONALLY_FLAG == 1;
+    // let flipped_h: bool = int_id & FLIPPED_HORIZONTALLY_FLAG == 1;
+    // let flipped_v: bool = int_id & FLIPPED_VERTICALLY_FLAG == 1;
+    // let flipped_d: bool = int_id & FLIPPED_DIAGONALLY_FLAG == 1;
 
     let tile_id = int_id & !(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 

@@ -22,6 +22,9 @@ cargo-bundle's support for bundling crate examples.
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+members = ["lib/*"]
+
 [dependencies]
 winit = "0.22.2"
 glutin = "0.24.1"

@@ -20,16 +20,6 @@ where
   Ok(result)
 }
 
-pub fn tileset_file_name_decoder<'de, D>(deserializer: D) -> Result<String, D::Error>
-where
-  D: Deserializer<'de>,
-{
-  let path: String = Deserialize::deserialize(deserializer)?;
-  let file = Path::new(&path).file_name().unwrap().to_os_string().into_string().unwrap();
-
-  Ok(file)
-}
-
 pub fn relative_file_name_decoder<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
   D: Deserializer<'de>,

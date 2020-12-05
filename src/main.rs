@@ -48,7 +48,7 @@ fn main() {
 
   state.build();
 
-  state.run_workload(game::Stage::Update);
+  state.run_workload(game::stage::UPDATE);
 
   // Start game
   log::info!("Game start");
