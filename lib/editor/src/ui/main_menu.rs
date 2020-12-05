@@ -1,4 +1,4 @@
-use crate::UiState;
+use crate::editor::UiState;
 use game::State;
 use imgui::{im_str, MenuItem, Ui};
 

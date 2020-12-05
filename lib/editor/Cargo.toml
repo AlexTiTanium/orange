@@ -11,7 +11,10 @@ nalgebra-glm = "0.7.0"
 winit = "0.22.2"
 imgui = "0.4.0"
 
+# Internal
 imgui-winit-support = { path = './imgui-winit-support/' }
 imgui-opengl-renderer = { path = './imgui-opengl-renderer/' }
+
+# Game modules
 game = { path = '../game' }
 gl = { patch = '../render/lib/gl/' }
