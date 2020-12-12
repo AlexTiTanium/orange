@@ -1,4 +1,5 @@
-use game::components::{ActiveTag, Image, LayerRef, Sprite, Texture, TileRef, Transform};
+use crate::components::{Image, LayerRef, Sprite, Texture, TileRef};
+use game::components::{ActiveTag, Transform};
 use game::resources::{Assets, Camera};
 use game::{EntityId, IntoIter, State, UniqueView, View};
 use gl::{Gl, Renderer, ShaderType};
@@ -67,17 +68,17 @@ impl QuadAtlasRender {
   }
 
   #[inline]
-  fn update(&mut self, state: &State, layer_id: EntityId, texture_id: EntityId) {
-    let (transform, active, images, sprites, tile, layers, textures) = state.world.borrow::<(
-      View<Transform>,
-      View<ActiveTag>,
-      View<Image>,
-      View<Sprite>,
-      View<TileRef>,
-      View<LayerRef>,
-      View<Texture>,
-    )>();
-
+  pub fn update(
+    &mut self,
+    texture_id: EntityId,
+    transforms: &View<Transform>,
+    active: &View<ActiveTag>,
+    images: &View<Image>,
+    sprites: &View<Sprite>,
+    tile: &View<TileRef>,
+    layers: &View<LayerRef>,
+    textures: &View<Texture>,
+  ) {
     let mut width: f32;
     let mut height: f32;
     let shift = self.element_buffer_size;
@@ -90,10 +91,10 @@ impl QuadAtlasRender {
       *i = 0.0
     }
 
-    for (index, (trans, tile, _, _)) in (&transform, &tile, &layers, &active)
+    for (index, (trans, tile, _, _)) in (transforms, tile, layers, active)
       .iter()
       .enumerate()
-      .filter(|(_, (_, tile, layer, _))| layer.0 == layer_id && sprites[tile.0].texture == texture_id)
+      .filter(|(_, (_, tile, _, _))| sprites[tile.0].texture == texture_id)
     {
       if index * shift >= self.buffer.len() {
         self.buffer.resize(shift * (index + 1), 0.0);
@@ -145,14 +146,14 @@ impl QuadAtlasRender {
     }
   }
 
-  pub fn step(&mut self, state: &State, layer_id: EntityId, texture_id: EntityId) {
-    // Prepare render step
-    self.update(state, layer_id, texture_id);
+  pub fn set_camera(&mut self, camera: &UniqueView<Camera>) {
+    self.renderer.set_view_projection(&camera.view_projection);
+  }
 
-    let camera = state.world.borrow::<UniqueView<Camera>>();
+  #[inline]
+  pub fn step(&mut self) {
     let shift = self.element_buffer_size;
 
-    self.renderer.set_view_projection(&camera.view_projection);
     self.renderer.bind();
 
     self.renderer.bind_texture(self.texture_slot);

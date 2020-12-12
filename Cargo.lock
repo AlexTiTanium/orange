@@ -1060,6 +1060,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "opengl_api"
+version = "0.1.0"
+dependencies = [
+ "game",
+ "gl 0.1.0",
+ "render_components",
+ "window",
+]
+
+[[package]]
 name = "orange"
 version = "0.1.0"
 dependencies = [
@@ -1364,10 +1374,15 @@ name = "render"
 version = "0.1.0"
 dependencies = [
  "game",
- "gl 0.1.0",
- "nalgebra-glm",
- "thiserror",
- "winit",
+ "opengl_api",
+ "render_components",
+]
+
+[[package]]
+name = "render_components"
+version = "0.1.0"
+dependencies = [
+ "game",
 ]
 
 [[package]]

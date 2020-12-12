@@ -1,11 +1,13 @@
 mod components;
 mod level;
 
+use std::rc::Rc;
+
 use diagnostic;
 
 use editor::Editor;
 use flexi_logger::Logger;
-use game;
+use game::{self, State};
 use glutin::ContextBuilder;
 use render;
 use winit::dpi::LogicalSize;
@@ -14,89 +16,72 @@ use winit::event_loop::ControlFlow;
 use winit::window::WindowBuilder;
 
 fn main() {
-  // Setup logger
-  //Logger::with_str("debug").start_with_specfile("./logspec.toml").unwrap();
+  // Register logger
+  logger::init();
 
-  // Start event loop
-  let event_loop = winit::event_loop::EventLoop::new();
-
-  // Create winit window
-  let wb = WindowBuilder::new()
-    .with_title("Hello world!")
-    .with_inner_size(LogicalSize::new(1024, 768));
-
-  // Create windowed context
-  let windowed_context = ContextBuilder::new()
-    .with_srgb(true)
-    .with_vsync(true)
-    .build_windowed(wb, &event_loop)
-    .unwrap();
-
-  // It is essential to make the context current before calling `gl::load_with`.
-  let context = unsafe { windowed_context.make_current().unwrap() };
-
-  // Create entities component system
-  let state = game::create_state();
-
-  // Get window size params
-  state.attach_window(&context.window());
+  // Create game state and init component system
+  let state = Rc::new(State::new());
 
   // Game render
-  render::create(&state, |symbol| context.get_proc_address(symbol));
-
+  ///render::create(&state, |symbol| context.get_proc_address(symbol));
   // Init modules
-  logger::init();
-  window::init(&state);
-  diagnostic::init(&state);
-  editor::init(&state);
+  let event_loop = window::build(&state);
+
+  //diagnostic::init(&state);
+  game::init(&state);
+  render::init(&state);
+
+  //editor::init(&state);
 
   // Batch all systems
   state.build();
 
-  // Start game
-  state.run_workload(game::stage::FIRST);
+  window::run(&state, event_loop);
 
   // Start game
-  //log::info!("Game start");
-  level::load(&state, "maps/level_3.tmx", vec!["textures/winter.xml"]);
-  // Load textures on GPU
-  render::load_textures(&state);
+  //state.run_workload(game::stage::FIRST);
 
-  // Create editor UI render
-  let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));
+  // // Start game
+  // //log::info!("Game start");
+  // level::load(&state, "maps/level_3.tmx", vec!["textures/winter.xml"]);
+  // // Load textures on GPU
+  // render::load_textures(&state);
 
-  // Game event loop
-  event_loop.run(move |event, _, control_flow| {
-    // Listen user input for editor UI
-    editor.handle_event(&context.window(), &event);
+  // // Create editor UI render
+  // let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));
 
-    match event {
-      Event::LoopDestroyed => {}
-      Event::WindowEvent { event, .. } => {
-        match event {
-          WindowEvent::Resized(new_size) => context.resize(new_size),
-          WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-          _ => (),
-        }
+  // // Game event loop
+  // event_loop.run(move |event, _, control_flow| {
+  //   // Listen user input for editor UI
+  //   editor.handle_event(&context.window(), &event);
 
-        state.handle_window_events(&event);
-      }
-      Event::NewEvents(_) => {
-        state.update_time();
-        editor.update();
-      }
-      Event::MainEventsCleared => {
-        context.window().request_redraw();
-      }
-      Event::RedrawRequested(_) => {
-        render::step(&state);
-        editor.step(&state, &context.window());
-        context.swap_buffers().unwrap();
-      }
-      Event::RedrawEventsCleared => {
-        state.update_fps();
-      }
-      _ => (),
-    }
-  });
+  //   match event {
+  //     Event::LoopDestroyed => {}
+  //     Event::WindowEvent { event, .. } => {
+  //       match event {
+  //         WindowEvent::Resized(new_size) => context.resize(new_size),
+  //         WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+  //         _ => (),
+  //       }
+
+  //       state.handle_window_events(&event);
+  //     }
+  //     Event::NewEvents(_) => {
+  //       state.update_time();
+  //       editor.update();
+  //     }
+  //     Event::MainEventsCleared => {
+  //       context.window().request_redraw();
+  //     }
+  //     Event::RedrawRequested(_) => {
+  //       render::step(&state);
+  //       editor.step(&state, &context.window());
+  //       context.swap_buffers().unwrap();
+  //     }
+  //     Event::RedrawEventsCleared => {
+  //       state.update_fps();
+  //     }
+  //     _ => (),
+  //   }
+  // });
 }

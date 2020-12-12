@@ -16,5 +16,14 @@ pub const UPDATE: &str = "update";
 /// Name of app stage responsible for processing the results of UPDATE. Runs after UPDATE.
 pub const POST_UPDATE: &str = "post_update";
 
+/// When all events cleared
+pub const PRE_RENDER: &str = "pre_render";
+
+/// Renderers
+pub const RENDER: &str = "render";
+
+/// After render workload
+pub const POST_RENDER: &str = "post_render";
+
 /// Name of app stage that runs after all other app stages
 pub const LAST: &str = "last";

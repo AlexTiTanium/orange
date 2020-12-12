@@ -15,7 +15,7 @@ pub fn build(ui: &Ui, state: &State) {
 fn build_ui(ui: &Ui, state: &State) {
   ui.same_line(ui.window_content_region_width() / 2.0 - 170.0 / 2.0);
   if ui.button(im_str!("Create Game Object"), [170.0, 25.0]) {
-    state.create_game_object();
+    //state.create_game_object();
   }
 
   ui.separator();
