@@ -1,4 +1,4 @@
-use common::{events::Events, log::info, stage, Application, UniqueViewMut};
+use common::{log::info, stage, Application};
 use glutin::{
   event::{Event, WindowEvent},
   event_loop::ControlFlow,

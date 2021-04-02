@@ -12,4 +12,3 @@ glutin = "0.26.0"
 
 # Game modules
 common = { path = '../common/' }
-logger = { path = '../logger/' }

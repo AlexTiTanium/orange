@@ -1,7 +1,5 @@
-use common::{events::Events, NonSendSync, UniqueView, UniqueViewMut};
-use logger::log;
-
 use crate::{resources::WindowSize, WindowContext, WindowResizeEvent};
+use common::{events::Events, log, NonSendSync, UniqueView, UniqueViewMut};
 
 pub fn window_resize(context: NonSendSync<UniqueViewMut<WindowContext>>, events: UniqueView<Events<WindowResizeEvent>>) {
   let mut reader = events.get_reader();
