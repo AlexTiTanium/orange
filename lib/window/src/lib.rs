@@ -1,50 +1,38 @@
-pub mod resources;
+// Private
+mod plugin;
+mod resources;
+mod runner;
 mod systems;
 
-use game::{events::GameEvent, system, State};
-use glutin::{ContextWrapper, PossiblyCurrent};
-use resources::WindowSize;
-use winit::event_loop::EventLoop;
+use glutin::{dpi::PhysicalSize, ContextWrapper, PossiblyCurrent};
 use winit::window::Window;
+type WindowContext = ContextWrapper<PossiblyCurrent, Window>;
 
-use std::rc::Rc;
+// Public
+pub use plugin::WindowPlugin;
 
-pub type WindowContext = ContextWrapper<PossiblyCurrent, Window>;
+pub struct WindowResizeEvent(PhysicalSize<u32>);
 
-/// Module initialization
-fn init(state: &Rc<State>) {
-  // Register resources
-  state.add_resource(WindowSize::default());
+// /// Module initialization
+// fn init(state: &Rc<State>) {
+//   // Register resources
+//   state.add_resource(WindowSize::default());
 
-  // Listen resize event
-  let ref_state = Rc::clone(&state);
-  state.listen(Box::new(move |event| match event {
-    GameEvent::WindowResize(width, height) => {
-      ref_state.world.run_with_data(systems::window_resize, (*width, *height));
-      ref_state.world.run(systems::update_window_size);
-    }
-  }));
+//   state.pre_render.borrow_mut().with_system(system!(systems::request_redraw));
+//   state.post_render.borrow_mut().with_system(system!(systems::swap));
+// }
 
-  state.pre_render.borrow_mut().with_system(system!(systems::request_redraw));
-  state.post_render.borrow_mut().with_system(system!(systems::swap));
-}
+// // Create system window
+// pub fn create(state: &Rc<State>) -> EventLoop<()> {
+//   // Init resources
+//   init(state);
 
-// Create system window
-pub fn build(state: &Rc<State>) -> EventLoop<()> {
-  // Init resources
-  init(state);
+//   // Build window and get event loop
+//   let event_loop = systems::build_window(state);
 
-  // Build window and get event loop
-  let event_loop = systems::build_window(state);
+//   // Update window size
+//   state.world.run(systems::update_window_size);
 
-  // Update window size
-  state.world.run(systems::update_window_size);
-
-  // Return event loop for main
-  return event_loop;
-}
-
-/// Run game loop
-pub fn run(state: &Rc<State>, event_loop: EventLoop<()>) {
-  systems::run_game_loop(state, event_loop);
-}
+//   // Return event loop for main
+//   return event_loop;
+// }

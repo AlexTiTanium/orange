@@ -10,7 +10,7 @@ build = "build.rs"
 name = "MyGame"
 identifier = "xogames.game"
 icon = ["icons/icon*.png"]
-category = "Utility"
+category = "Games"
 resources = ["resources"]
 short_description = "An example of a bundled application"
 long_description = """
@@ -26,23 +26,26 @@ cargo-bundle's support for bundling crate examples.
 members = ["lib/*"]
 
 [dependencies]
-winit = "0.22.2"
-glutin = "0.24.1"
+winit = "0.24.0"
+glutin = "0.26.0"
 thiserror = "1.0.19"
-flexi_logger = { version = "0.15", features = ["specfile"] }
+flexi_logger = { version = "0.17.1", features = ["specfile"] }
 log = "0.4"
 serde = { version = "1.0", features = [ "derive" ] }
-quick-xml = { version = "0.18.1", features = [ "serialize" ] }
-base64 = "0.12.1"
+quick-xml = { version = "0.22.0", features = [ "serialize" ] }
+base64 = "0.13.0"
+
+# Core components
+common = { path = 'lib/common' }
 
 # Game root component
-game = { path = 'lib/game' }
+#game = { path = 'lib/game' }
 
 # Internal modules
-render = { path = 'lib/render/' }
-editor = { path = 'lib/editor/' }
-diagnostic = { path = 'lib/diagnostic/' }
-logger = { path = 'lib/logger/' }
+#render = { path = 'lib/render/' }
+#editor = { path = 'lib/editor/' }
+#diagnostic = { path = 'lib/diagnostic/' }
+#logger = { path = 'lib/logger/' }
 window = { path = 'lib/window/' }
 
 [build-dependencies]

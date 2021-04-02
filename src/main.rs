@@ -1,54 +1,74 @@
-mod components;
-mod level;
+use common::Application;
+use window::WindowPlugin;
 
-use std::rc::Rc;
+// mod components;
+// mod level;
 
-use diagnostic;
+// use std::rc::Rc;
 
-use editor::Editor;
-use flexi_logger::Logger;
-use game::{self, State};
-use glutin::ContextBuilder;
-use render;
-use winit::dpi::LogicalSize;
-use winit::event::{Event, WindowEvent};
-use winit::event_loop::ControlFlow;
-use winit::window::WindowBuilder;
+// use diagnostic;
+
+// use editor::Editor;
+// use flexi_logger::Logger;
+// use game::{self, State};
+// use glutin::ContextBuilder;
+// use render;
+// use winit::dpi::LogicalSize;
+// use winit::event::{Event, WindowEvent};
+// use winit::event_loop::ControlFlow;
+// use winit::window::WindowBuilder;
 
 fn main() {
-  // Register logger
-  logger::init();
+  Application::build().add_plugin(WindowPlugin).run();
 
-  // Create game state and init component system
-  let state = Rc::new(State::new());
+  // // Register logger
+  // logger::init();
 
-  // Game render
-  ///render::create(&state, |symbol| context.get_proc_address(symbol));
+  // // Create game state and init component system
+  // let state = Rc::new(State::new());
+
   // Init modules
-  let event_loop = window::build(&state);
+  // let event_loop = window::create(&state);
 
-  //diagnostic::init(&state);
-  game::init(&state);
-  render::init(&state);
+  // //diagnostic::init(&state);
+  // game::init(&state);
+  // render::init(&state);
 
   //editor::init(&state);
 
-  // Batch all systems
-  state.build();
+  // Game event loop
+  // event_loop.run(move |event, _, control_flow| {
+  //   match event {
+  //     Event::LoopDestroyed => {}
+  //     Event::WindowEvent { event, .. } => {
 
-  window::run(&state, event_loop);
-
-  // Start game
-  //state.run_workload(game::stage::FIRST);
+  //     }
+  //     Event::NewEvents(_) => {
+  //       //state.update_time();
+  //       //editor.update();
+  //     }
+  //     Event::MainEventsCleared => {
+  //       //state.run_workload(game::stage::PRE_RENDER);
+  //     }
+  //     Event::RedrawRequested(_) => {
+  //       //state.run_workload(game::stage::RENDER);
+  //       //state.run_workload(game::stage::POST_RENDER);
+  //       //render::step(&state);
+  //       //editor.step(&state, &context.window());
+  //       //context.swap_buffers().unwrap();
+  //     }
+  //     Event::RedrawEventsCleared => {
+  //       //state.update_fps();
+  //     }
+  //     _ => (),
+  //   }
+  // });
 
   // // Start game
   // //log::info!("Game start");
   // level::load(&state, "maps/level_3.tmx", vec!["textures/winter.xml"]);
   // // Load textures on GPU
   // render::load_textures(&state);
-
-  // // Create editor UI render
-  // let mut editor = Editor::new(&context.window(), |symbol| context.get_proc_address(symbol));
 
   // // Game event loop
   // event_loop.run(move |event, _, control_flow| {
@@ -64,7 +84,7 @@ fn main() {
   //         _ => (),
   //       }
 
-  //       state.handle_window_events(&event);
+  //       //state.handle_window_events(&event);
   //     }
   //     Event::NewEvents(_) => {
   //       state.update_time();
@@ -79,7 +99,7 @@ fn main() {
   //       context.swap_buffers().unwrap();
   //     }
   //     Event::RedrawEventsCleared => {
-  //       state.update_fps();
+  //       //state.update_fps();
   //     }
   //     _ => (),
   //   }
