@@ -35,6 +35,7 @@ impl Application {
     info!("App Initialize");
     self.world.run_workload(stage::FIRST).unwrap();
     self.world.run_workload(stage::STARTUP).unwrap();
+    self.world.run_workload(stage::POST_STARTUP).unwrap();
   }
 
   pub fn exit(&self) {

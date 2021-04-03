@@ -83,6 +83,7 @@ impl Builder {
     // Startup systems, called once
     self.create_stage(stage::FIRST);
     self.create_stage(stage::STARTUP);
+    self.create_stage(stage::POST_STARTUP);
 
     // Events system stages, every frame
     self.create_stage(stage::PRE_EVENT);

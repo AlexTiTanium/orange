@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 egui = "0.10.0"
+
+# Core module
+common = { path = '../common/' }

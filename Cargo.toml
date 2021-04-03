@@ -35,5 +35,8 @@ editor = { path = 'lib/editor/' }
 # Window plugin
 window = { path = 'lib/window/' }
 
+# Internal render API
+opengl = { path = 'lib/opengl/' }
+
 [build-dependencies]
 fs_extra = "1.1.0"

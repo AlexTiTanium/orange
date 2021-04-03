@@ -1,5 +1,5 @@
 [package]
-name = "gl"
+name = "opengl"
 version = "0.1.0"
 authors = ["Alex Kucherenko <kucherenko.email@gmail.com>"]
 edition = "2018"
@@ -10,6 +10,12 @@ edition = "2018"
 [dependencies]
 thiserror = "1.0.19"
 nalgebra-glm = "0.11.0"
+
+# Core
+common = { path = '../common/'  }
+
+# Window api
+window = { path = '../window/' }
 
 [build-dependencies]
 gl_generator = "0.14.0"

@@ -31,9 +31,11 @@ pub fn window_runner(mut app: Application) {
 
   // It is essential to make the context current before calling `gl::load_with`.
   let context: WindowContext = unsafe { windowed_context.make_current().unwrap() };
+  //let gl = Gl::load_with(|symbol| context.get_proc_address(symbol));
 
   // Move context and event loop to window resource
   app.world.add_unique_non_send_sync(context).unwrap();
+  //app.world.add_unique_non_send_sync(gl).unwrap();
 
   // Prepare app for start
   app.initialize();
