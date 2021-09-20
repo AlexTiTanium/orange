@@ -1,6 +1,6 @@
 use crate::ConstVoid;
 use crate::RenderID;
-use crate::{Gl, GL};
+use crate::{Gl, GL, GLT};
 
 pub struct Texture {
   id: RenderID,
@@ -46,25 +46,34 @@ impl Texture {
     }
   }
 
-  pub fn set_param(&self) {
+  pub fn set_param(&self, param_one: GLT::GLenum, param_two: GLT::GLenum, param_three: GLT::GLenum) {
     unsafe {
-      self.gl.Enable(GL::BLEND);
-      self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
       #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::REPEAT as i32);
-      #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::REPEAT as i32);
-      #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST as i32);
-      #[rustfmt::skip]
-      self.gl.TexParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST as i32);
+      self.gl.TexParameteri(param_one, param_two, param_three as i32);
     }
   }
 
-  pub fn bind(&self, slot: i32) {
+  pub fn set_default_params(&self) {
+    unsafe {
+      self.gl.Enable(GL::BLEND);
+      self.gl.BlendFunc(GL::SRC_ALPHA, GL::ONE_MINUS_SRC_ALPHA);
+    }
+
+    self.set_param(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::REPEAT);
+    self.set_param(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::REPEAT);
+    self.set_param(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST);
+    self.set_param(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::NEAREST);
+  }
+
+  pub fn bind(&self) {
+    unsafe {
+      self.gl.BindTexture(GL::TEXTURE_2D, self.id);
+    }
+  }
+
+  pub fn activate(&self, slot: i32) {
     unsafe {
       self.gl.ActiveTexture(GL::TEXTURE0 + slot as u32);
-      self.gl.BindTexture(GL::TEXTURE_2D, self.id);
     }
   }
 

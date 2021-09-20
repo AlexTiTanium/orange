@@ -1,5 +1,5 @@
 [package]
-name = "editor"
+name = "math"
 version = "0.1.0"
 authors = ["Alex Kucherenko <kucherenko.email@gmail.com>"]
 edition = "2018"
@@ -7,16 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-egui = "0.10.0"
-
-# Core module
-common = { path = '../common/' }
-
-# Render
-opengl = { path = '../opengl/' }
-
-# Math
-math = { path = '../math/' }
-
-# Window
-window = { path = '../window/' }
+nalgebra-glm = "0.11.0"

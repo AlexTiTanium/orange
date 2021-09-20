@@ -6,9 +6,7 @@ pub struct RenderPlugin;
 
 impl Plugin for RenderPlugin {
   fn build(&self, app: &mut Builder) {
-    app
-      .add_to_stage(stage::PRE_RENDER, &clear)
-      .add_to_stage(stage::POST_STARTUP, &init_gl_context);
+    app.add_startup_system(&init_gl_context).add_to_stage(stage::PRE_RENDER, &clear);
   }
 }
 

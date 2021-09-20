@@ -31,11 +31,9 @@ pub fn window_runner(mut app: Application) {
 
   // It is essential to make the context current before calling `gl::load_with`.
   let context: WindowContext = unsafe { windowed_context.make_current().unwrap() };
-  //let gl = Gl::load_with(|symbol| context.get_proc_address(symbol));
 
   // Move context and event loop to window resource
   app.world.add_unique_non_send_sync(context).unwrap();
-  //app.world.add_unique_non_send_sync(gl).unwrap();
 
   // Prepare app for start
   app.initialize();
@@ -66,7 +64,6 @@ pub fn window_runner(mut app: Application) {
       }
       Event::MainEventsCleared => app.run_stage(stage::PRE_RENDER),
       Event::RedrawEventsCleared => {
-        //state.update_fps();
         app.update();
       }
       Event::RedrawRequested(_) => {
@@ -74,6 +71,7 @@ pub fn window_runner(mut app: Application) {
         //state.run_workload(game::stage::POST_RENDER);
         //render::step(&state);
         //editor.step(&state, &context.window());
+        app.run_stage(stage::RENDER);
         app.run_stage(stage::POST_RENDER);
       }
       _ => (),

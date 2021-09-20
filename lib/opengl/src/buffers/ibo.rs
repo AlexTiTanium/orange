@@ -10,6 +10,7 @@ pub struct IndexBuffer {
   id: RenderID,
   gl: Gl,
   indexes_type: GLT::GLenum,
+  pub size: usize, // Buffer size in bytes
   pub count: usize,
 }
 
@@ -25,6 +26,7 @@ impl IndexBuffer {
     Self {
       id,
       count: 0,
+      size: 0,
       gl,
       indexes_type: GL::UNSIGNED_SHORT,
     }
@@ -48,6 +50,27 @@ impl IndexBuffer {
         GL::STATIC_DRAW,
       );
     }
+  }
+
+  pub fn set_sub_data<T>(&self, data: &[T]) {
+    unsafe {
+      self.gl.BufferSubData(
+        GL::ELEMENT_ARRAY_BUFFER,
+        0,
+        mem::size_of_val(data) as SizeIntPtr,
+        data.as_ptr() as ConstVoid,
+      );
+    };
+  }
+
+  pub fn set_size(&mut self, size: usize) {
+    unsafe {
+      self
+        .gl
+        .BufferData(GL::ELEMENT_ARRAY_BUFFER, size as SizeIntPtr, 0 as ConstVoid, GL::DYNAMIC_DRAW);
+    };
+
+    self.size = size;
   }
 
   pub fn draw(&self) {

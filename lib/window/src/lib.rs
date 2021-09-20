@@ -9,6 +9,7 @@ use winit::window::Window;
 
 // Public
 pub use plugin::WindowPlugin;
+pub use resources::WindowSize;
 
 // Events
 pub struct WindowResizeEvent(PhysicalSize<u32>);

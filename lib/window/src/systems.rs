@@ -1,12 +1,23 @@
 use crate::{resources::WindowSize, WindowContext, WindowResizeEvent};
 use common::{events::Events, log, NonSendSync, UniqueView, UniqueViewMut};
 
-pub fn window_resize(context: NonSendSync<UniqueViewMut<WindowContext>>, events: UniqueView<Events<WindowResizeEvent>>) {
+pub fn window_resize(
+  context: NonSendSync<UniqueViewMut<WindowContext>>,
+  events: UniqueView<Events<WindowResizeEvent>>,
+  window_size: UniqueViewMut<WindowSize>,
+) {
   let mut reader = events.get_reader();
+  let mut changed_window_size = false;
+
   for event in reader.iter(&events) {
     let WindowResizeEvent(size) = event;
     log::info!("Window resize, new size: {:?}", size);
     context.resize(size.clone());
+    changed_window_size = true;
+  }
+
+  if changed_window_size {
+    update_window_size(context, window_size);
   }
 }
 
