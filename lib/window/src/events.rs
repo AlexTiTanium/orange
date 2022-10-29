@@ -1,3 +1,4 @@
+use glutin::event::{ElementState, MouseButton, WindowEvent};
 use math::Vec2;
 
 ///
@@ -37,19 +38,13 @@ pub enum WindowInputEvent {
   PointerMoved(f64, f64),
 
   /// A mouse button was pressed or released (or a touch started or stopped).
-  // PointerButton {
-  //   /// Where is the pointer?
-  //   pos: InputPosition,
+  PointerButton {
+    /// What mouse button? For touches, use [`PointerButton::Primary`].
+    button: PointerButton,
 
-  //   /// What mouse button? For touches, use [`PointerButton::Primary`].
-  //   button: PointerButton,
-
-  //   /// Was it the button/touch pressed this frame, or released?
-  //   pressed: bool,
-
-  //   /// The state of the modifier keys at the time of the event.
-  //   modifiers: Modifiers,
-  // },
+    /// Was it the button/touch pressed this frame, or released?
+    pressed: bool,
+  },
 
   /// The mouse left the screen, or the last/primary touch input disappeared.
   ///
@@ -78,4 +73,189 @@ pub enum WindowInputEvent {
   /// * `zoom < 1`: pinch together
   /// * `zoom > 1`: pinch spread
   Zoom(f32),
+
+  // No result
+  None,
+}
+
+///
+/// Position
+#[derive(Default, Clone, Copy, Debug, PartialEq)]
+pub struct InputPosition(pub f64, pub f64);
+
+// Keyboard keys.
+//
+// Includes all keys egui is interested in (such as `Home` and `End`)
+// plus a few that are useful for detecting keyboard shortcuts.
+//
+// Many keys are omitted because they are not always physical keys (depending on keyboard language), e.g. `;` and `§`,
+// and are therefore unsuitable as keyboard shortcuts if you want your app to be portable.
+// #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Hash)]
+pub enum Key {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+
+  Escape,
+  Tab,
+  Backspace,
+  Enter,
+  Space,
+
+  Insert,
+  Delete,
+  Home,
+  End,
+  PageUp,
+  PageDown,
+
+  /// Either from the main row or from the numpad.
+  Num0,
+  /// Either from the main row or from the numpad.
+  Num1,
+  /// Either from the main row or from the numpad.
+  Num2,
+  /// Either from the main row or from the numpad.
+  Num3,
+  /// Either from the main row or from the numpad.
+  Num4,
+  /// Either from the main row or from the numpad.
+  Num5,
+  /// Either from the main row or from the numpad.
+  Num6,
+  /// Either from the main row or from the numpad.
+  Num7,
+  /// Either from the main row or from the numpad.
+  Num8,
+  /// Either from the main row or from the numpad.
+  Num9,
+
+  A, // Used for cmd+A (select All)
+  B,
+  C, // |CMD COPY|
+  D, // |CMD BOOKMARK|
+  E, // |CMD SEARCH|
+  F, // |CMD FIND firefox & chrome|
+  G, // |CMD FIND chrome|
+  H, // |CMD History|
+  I, // italics
+  J, // |CMD SEARCH firefox/DOWNLOAD chrome|
+  K, // Used for ctrl+K (delete text after cursor)
+  L,
+  M,
+  N,
+  O, // |CMD OPEN|
+  P, // |CMD PRINT|
+  Q,
+  R, // |CMD REFRESH|
+  S, // |CMD SAVE|
+  T, // |CMD TAB|
+  U, // Used for ctrl+U (delete text before cursor)
+  V, // |CMD PASTE|
+  W, // Used for ctrl+W (delete previous word)
+  X, // |CMD CUT|
+  Y,
+  Z, // |CMD UNDO|
+
+  // The function keys:
+  F1,
+  F2,
+  F3,
+  F4,
+  F5, // |CMD REFRESH|
+  F6,
+  F7,
+  F8,
+  F9,
+  F10,
+  F11,
+  F12,
+  F13,
+  F14,
+  F15,
+  F16,
+  F17,
+  F18,
+  F19,
+  F20,
+}
+
+/// State of the modifier keys. These must be fed to egui.
+///
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Modifiers {
+  /// Either of the alt keys are down (option ⌥ on Mac).
+  pub alt: bool,
+
+  /// Either of the control keys are down.
+  /// When checking for keyboard shortcuts, consider using [`Self::command`] instead.
+  pub ctrl: bool,
+
+  /// Either of the shift keys are down.
+  pub shift: bool,
+
+  /// The Mac ⌘ Command key. Should always be set to `false` on other platforms.
+  pub mac_cmd: bool,
+
+  /// On Windows and Linux, set this to the same value as `ctrl`.
+  /// On Mac, this should be set whenever one of the ⌘ Command keys are down (same as `mac_cmd`).
+  /// This is so that egui can, for instance, select all text by checking for `command + A`
+  /// and it will work on both Mac and Windows.
+  pub command: bool,
+}
+
+/// Mouse button (or similar for touch input)
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PointerButton {
+  /// The primary mouse button is usually the left one.
+  Primary = 0,
+
+  /// The secondary mouse button is usually the right one,
+  /// and most often used for context menus or other optional things.
+  Secondary = 1,
+
+  /// The tertiary mouse button is usually the middle mouse button (e.g. clicking the scroll wheel).
+  Middle = 2,
+
+  /// The first extra mouse button on some mice. In web typically corresponds to the Browser back button.
+  Extra1 = 3,
+
+  /// The second extra mouse button on some mice. In web typically corresponds to the Browser forward button.
+  Extra2 = 4,
+}
+
+///
+/// Convet winit input events to module WindowInputEvent
+///
+pub fn process_input(event: WindowEvent) -> Option<WindowInputEvent> {
+  let result = match event {
+    // Window resize event
+    WindowEvent::Resized(size) => WindowInputEvent::Resized(size.width, size.height),
+
+    // Cursore move event
+    WindowEvent::CursorMoved { position, .. } => WindowInputEvent::PointerMoved(position.x, position.y),
+
+    // Mouse button pressed
+    WindowEvent::MouseInput { state, button, .. } => WindowInputEvent::PointerButton {
+      button: match button {
+        MouseButton::Left => PointerButton::Primary,
+        MouseButton::Right => PointerButton::Secondary,
+        MouseButton::Middle => PointerButton::Secondary,
+        _ => PointerButton::Extra1,
+      },
+      pressed: match state {
+        ElementState::Pressed => true,
+        ElementState::Released => false,
+      },
+    },
+    // Ignore Anyting else
+    _ => WindowInputEvent::None,
+  };
+
+  if result == WindowInputEvent::None {
+    return None;
+  } else {
+    return Some(result);
+  }
 }

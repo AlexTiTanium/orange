@@ -1,4 +1,4 @@
-use crate::events::WindowInputEvent;
+use crate::events::process_input;
 use crate::WindowContext;
 use common::{log::info, stage, Application};
 use glutin::{
@@ -49,14 +49,10 @@ pub fn window_runner(mut app: Application) {
           *control_flow = ControlFlow::Exit;
           app.exit();
         }
-        WindowEvent::Resized(size) => {
-          app.send(WindowInputEvent::Resized(size.width, size.height));
-        }
-
-        WindowEvent::CursorMoved { position, .. } => {
-          app.send(WindowInputEvent::PointerMoved(position.x, position.y));
-        }
-        _ => (),
+        _ => match process_input(event) {
+          Some(window_input_event) => app.send(window_input_event),
+          None => (),
+        },
       },
       Event::LoopDestroyed => {}
       Event::NewEvents(_) => app.run_stage(stage::PRE_UPDATE),
