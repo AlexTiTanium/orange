@@ -10,8 +10,8 @@ impl Plugin for EditorRenderPlugin {
       .add_startup_system(&EditorCamera::init)
       .add_resource(EditorCamera::default())
       .add_to_stage(stage::POST_STARTUP, &init_renderer)
-      .add_to_stage(stage::RENDER, &EditorRenderer::draw)
-      .add_system(&EditorCamera::update);
+      .add_to_stage(stage::RENDER, &EditorRenderer::draw);
+    //.add_system(&EditorCamera::update);
   }
 }
 

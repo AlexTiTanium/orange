@@ -53,6 +53,7 @@ impl Application {
   pub fn update(&mut self) {
     self.world.run_workload(stage::EVENT).unwrap();
     self.world.run_workload(stage::UPDATE).unwrap();
+    self.world.run_workload(stage::POST_UPDATE).unwrap();
   }
 
   pub fn run_stage(&mut self, stage: &'static str) {

@@ -40,6 +40,25 @@ impl Texture {
     self.height = height;
   }
 
+  pub fn set_srgb_data(&mut self, width: usize, height: usize, data: &[u8]) {
+    unsafe {
+      self.gl.TexImage2D(
+        GL::TEXTURE_2D,
+        0,
+        GL::RGBA as i32,
+        width as i32,
+        height as i32,
+        0,
+        GL::RGBA as u32,
+        GL::UNSIGNED_BYTE,
+        data.as_ptr() as ConstVoid,
+      );
+    }
+
+    self.width = width;
+    self.height = height;
+  }
+
   pub fn generate_mipmap(&self) {
     unsafe {
       self.gl.GenerateMipmap(GL::TEXTURE_2D);

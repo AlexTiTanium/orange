@@ -2,7 +2,7 @@ use crate::glm;
 use crate::glm::{Mat4, Vec3};
 use crate::{Gl, GL};
 use crate::{IndexBuffer, Layout, Program, ShaderType, Texture, VertexArray, VertexBuffer};
-use std::{borrow::BorrowMut, collections::HashMap};
+use std::collections::HashMap;
 
 pub struct Renderer {
   pub gl: Gl,
@@ -112,6 +112,12 @@ impl Renderer {
     texture.set_data(width, height, data);
   }
 
+  pub fn set_texture_data_for_slot_srgb(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) {
+    let texture = self.textures.get_mut(&slot).unwrap();
+    texture.bind();
+    texture.set_srgb_data(width, height, data);
+  }
+
   pub fn add_texture(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) -> &mut Self {
     let mut texture = self.create_texture();
 
@@ -170,7 +176,7 @@ impl Renderer {
     self.ibo.bind();
     self.program.bind();
 
-    self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
+    //self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
   }
 
   pub fn translate(&mut self, vec3: &Vec3) {
@@ -178,7 +184,7 @@ impl Renderer {
   }
 
   pub fn create_mvp(&mut self) -> &mut Self {
-    self.create_uniform("u_ViewProjection");
+    // self.create_uniform("u_ViewProjection");
     self
   }
 

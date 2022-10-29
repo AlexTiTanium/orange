@@ -52,7 +52,15 @@ impl IndexBuffer {
     }
   }
 
-  pub fn set_sub_data<T>(&self, data: &[T]) {
+  pub fn set_sub_data<T>(&mut self, data: &[T]) {
+    self.count = data.len();
+
+    self.indexes_type = match any::type_name::<T>() {
+      "u32" => GL::UNSIGNED_INT,
+      "u16" => GL::UNSIGNED_SHORT,
+      _ => panic!("Unsupported ibo type"),
+    };
+
     unsafe {
       self.gl.BufferSubData(
         GL::ELEMENT_ARRAY_BUFFER,

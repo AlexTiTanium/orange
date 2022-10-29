@@ -1,20 +1,29 @@
-use std::mem;
+use std::collections::HashMap;
 
 use egui::{
-  epaint::{Texture, Vertex},
-  ClippedMesh, Rect, TextureId,
+  epaint::{Primitive, Vertex},
+  ClippedPrimitive, Rect, TextureId, TexturesDelta,
 };
 
 #[derive(Default)]
+pub struct SrgTexture {
+  pub pixels: Vec<u8>,
+  pub width: usize,
+  pub height: usize,
+}
+
+#[derive(Default)]
 pub struct EditorBatchBuffer {
-  pub texture: Texture,
-  pub indexes: Vec<u32>,
+  pub textures_delta: TexturesDelta,
+  pub textures: HashMap<egui::TextureId, SrgTexture>,
   pub buffers: Vec<RenderBuffer>,
   pub cursor: usize,
 }
 
+#[derive(Debug)]
 pub struct RenderBuffer {
   pub vb: Vec<f32>,
+  pub indexes: Vec<u32>,
   pub texture_id: TextureId,
   pub cursor: usize,
   pub clip: Rect,
@@ -22,88 +31,84 @@ pub struct RenderBuffer {
 
 impl RenderBuffer {
   pub fn new(texture_id: TextureId, clip: Rect) -> Self {
-    let mut vb: Vec<f32> = Vec::new();
-    vb.resize(EditorBatchBuffer::MAX_VERTEXES * EditorBatchBuffer::ATTRIBUTES_PER_VERTEX, 0.0);
-
     Self {
-      vb,
+      vb: Vec::new(),
+      indexes: Vec::new(),
       texture_id,
       cursor: Default::default(),
       clip,
     }
   }
 
-  pub fn push(&mut self, vertex: &Vertex) {
-    self.vb[self.cursor] = vertex.pos.x;
-    self.vb[self.cursor + 1] = vertex.pos.y;
-
-    self.vb[self.cursor + 2] = vertex.color.r() as f32;
-    self.vb[self.cursor + 3] = vertex.color.g() as f32;
-    self.vb[self.cursor + 4] = vertex.color.b() as f32;
-    self.vb[self.cursor + 5] = vertex.color.a() as f32;
-
-    self.vb[self.cursor + 6] = vertex.uv.x;
-    self.vb[self.cursor + 7] = vertex.uv.y;
-
-    self.cursor += 8;
+  pub fn add_indexes(&mut self, indexes: Vec<u32>) {
+    self.indexes = indexes;
   }
 
-  pub fn clear(&mut self) {
-    self.cursor = 0;
+  pub fn add_vertex(&mut self, vertex: &Vertex) {
+    // Position
+    self.vb.push(vertex.pos.x);
+    self.vb.push(vertex.pos.y);
 
-    for i in &mut self.vb {
-      *i = 0.0
-    }
+    // RGBA
+    self.vb.push(vertex.color.r() as f32);
+    self.vb.push(vertex.color.g() as f32);
+    self.vb.push(vertex.color.b() as f32);
+    self.vb.push(vertex.color.a() as f32);
+
+    // UV
+    self.vb.push(vertex.uv.x);
+    self.vb.push(vertex.uv.y);
   }
 }
 
 impl EditorBatchBuffer {
-  const MAX_INDEXES: usize = 1000;
-  const ATTRIBUTES_PER_VERTEX: usize = 8;
-  const MAX_VERTEXES: usize = 1000;
+  pub fn set_data(&mut self, primitives: &Vec<ClippedPrimitive>, texture: &TexturesDelta) {
+    self.buffers.clear();
 
-  pub const MAX_INDEXES_SIZE: usize = mem::size_of::<u32>() * EditorBatchBuffer::MAX_INDEXES; // MAX_INDEXES
-  pub const MAX_VBO_SIZE: usize = (mem::size_of::<f32>() * EditorBatchBuffer::ATTRIBUTES_PER_VERTEX) * EditorBatchBuffer::MAX_VERTEXES; // MAX_VERTEXES
+    for (id, delta) in &texture.set {
+      let pixels: Vec<u8> = match &delta.image {
+        egui::ImageData::Color(image) => {
+          assert_eq!(
+            image.width() * image.height(),
+            image.pixels.len(),
+            "Mismatch between texture size and texel count"
+          );
+          image.pixels.iter().flat_map(|color| color.to_srgba_unmultiplied()).collect()
+        }
+        egui::ImageData::Font(image) => image.srgba_pixels(1.0).flat_map(|color| color.to_array()).collect(),
+      };
 
-  pub fn set_data(&mut self, meshes: &Vec<ClippedMesh>, texture: &Texture) {
-    self.clear();
+      let width = delta.image.width();
+      let height = delta.image.height();
 
-    self.texture = texture.clone();
+      self.textures.insert(*id, SrgTexture { pixels, width, height });
+    }
 
-    for ClippedMesh(rect, mesh) in meshes.iter() {
-      self.indexes.extend_from_slice(&mesh.indices);
+    self.textures_delta = texture.clone();
 
-      // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.chunks
+    for ClippedPrimitive { clip_rect, primitive } in primitives.iter() {
+      let mesh = match primitive {
+        Primitive::Mesh(mesh) => mesh,
+        Primitive::Callback(_) => {
+          unimplemented!("Paint callbacks aren't supported")
+        }
+      };
+
+      let mut buffer = RenderBuffer::new(mesh.texture_id, clip_rect.clone());
+
+      buffer.add_indexes(mesh.indices.to_vec());
+
       for vertex in &mesh.vertices {
-        self.push(vertex, mesh.texture_id, rect.clone());
+        buffer.add_vertex(vertex);
       }
 
-      // Start new buffer
+      self.buffers.push(buffer);
     }
   }
 
-  fn push(&mut self, vertex: &Vertex, texture_id: TextureId, clip: Rect) {
-    if self.buffers.is_empty() {
-      self.buffers.push(RenderBuffer::new(texture_id, clip));
+  pub fn free_texures_delta(&mut self) {
+    for &id in &self.textures_delta.free {
+      self.textures.remove(&id);
     }
-
-    let buffer = self.buffers.get_mut(self.cursor).unwrap();
-    buffer.push(vertex);
-
-    // if buffer.cursor >= Self::MAX_VERTEXES {
-    //   self.buffers.push(RenderBuffer::new(texture_id, clip));
-    //   self.cursor += 1;
-    //   self.push(vertex, texture_id, clip);
-    // } else {
-    //   buffer.push(vertex);
-    // }
-  }
-
-  fn clear(&mut self) {
-    for buffer in self.buffers.iter_mut() {
-      buffer.clear();
-    }
-
-    self.indexes.clear();
   }
 }
