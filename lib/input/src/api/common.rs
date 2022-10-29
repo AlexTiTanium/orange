@@ -30,21 +30,19 @@ pub enum InputEvent {
   // },
   /// The mouse or touch moved to a new place.
   PointerMoved(InputPosition),
-  // /// A mouse button was pressed or released (or a touch started or stopped).
-  // PointerButton {
-  //   /// Where is the pointer?
-  //   pos: InputPosition,
+  /// A mouse button was pressed or released (or a touch started or stopped).
+  PointerButton {
+    /// Where is the pointer?
+    pos: InputPosition,
 
-  //   /// What mouse button? For touches, use [`PointerButton::Primary`].
-  //   button: PointerButton,
+    /// What mouse button? For touches, use [`PointerButton::Primary`].
+    button: PointerButton,
 
-  //   /// Was it the button/touch pressed this frame, or released?
-  //   pressed: bool,
-
-  //   /// The state of the modifier keys at the time of the event.
-  //   modifiers: Modifiers,
-  // },
-
+    /// Was it the button/touch pressed this frame, or released?
+    pressed: bool,
+    // The state of the modifier keys at the time of the event.
+    //modifiers: Modifiers,
+  },
   // /// The mouse left the screen, or the last/primary touch input disappeared.
   // ///
   // /// This means there is no longer a cursor on the screen for hovering etc.
@@ -232,22 +230,22 @@ pub struct InputPosition(pub f64, pub f64);
 //   pub command: bool,
 // }
 
-// /// Mouse button (or similar for touch input)
-// #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-// pub enum PointerButton {
-//   /// The primary mouse button is usually the left one.
-//   Primary = 0,
+/// Mouse button (or similar for touch input)
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PointerButton {
+  /// The primary mouse button is usually the left one.
+  Primary = 0,
 
-//   /// The secondary mouse button is usually the right one,
-//   /// and most often used for context menus or other optional things.
-//   Secondary = 1,
+  /// The secondary mouse button is usually the right one,
+  /// and most often used for context menus or other optional things.
+  Secondary = 1,
 
-//   /// The tertiary mouse button is usually the middle mouse button (e.g. clicking the scroll wheel).
-//   Middle = 2,
+  /// The tertiary mouse button is usually the middle mouse button (e.g. clicking the scroll wheel).
+  Middle = 2,
 
-//   /// The first extra mouse button on some mice. In web typically corresponds to the Browser back button.
-//   Extra1 = 3,
+  /// The first extra mouse button on some mice. In web typically corresponds to the Browser back button.
+  Extra1 = 3,
 
-//   /// The second extra mouse button on some mice. In web typically corresponds to the Browser forward button.
-//   Extra2 = 4,
-// }
+  /// The second extra mouse button on some mice. In web typically corresponds to the Browser forward button.
+  Extra2 = 4,
+}

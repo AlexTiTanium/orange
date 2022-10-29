@@ -1,4 +1,4 @@
-use crate::api::common::{InputEvent, InputPosition};
+use crate::api::common::{InputEvent, InputPosition, PointerButton};
 use crate::resources::Input;
 use common::{events::Events, UniqueView, UniqueViewMut};
 use window::events::WindowInputEvent;
@@ -23,10 +23,26 @@ pub fn process_window_input(mut input: UniqueViewMut<Input>, window_input: Windo
       WindowInputEvent::PointerMoved(x, y) => {
         input.push_event(InputEvent::PointerMoved(InputPosition(*x / scale_factor, *y / scale_factor)));
       }
+      WindowInputEvent::PointerButton { button, pressed } => {
+        let pos = input.pointer.now.clone();
+
+        input.push_event(InputEvent::PointerButton {
+          pos,
+          button: match button {
+            window::events::PointerButton::Primary => PointerButton::Primary,
+            window::events::PointerButton::Secondary => PointerButton::Secondary,
+            window::events::PointerButton::Middle => PointerButton::Middle,
+            window::events::PointerButton::Extra1 => PointerButton::Extra1,
+            window::events::PointerButton::Extra2 => PointerButton::Extra2,
+          },
+          pressed: *pressed,
+        })
+      }
       WindowInputEvent::PointerGone => todo!(),
       WindowInputEvent::Scroll(_) => todo!(),
       WindowInputEvent::Zoom(_) => todo!(),
       WindowInputEvent::Resized(_, _) => todo!(),
+      WindowInputEvent::None => todo!(),
     }
   }
 }
