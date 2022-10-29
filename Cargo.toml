@@ -35,6 +35,9 @@ editor = { path = 'lib/editor/' }
 # Window plugin
 window = { path = 'lib/window/' }
 
+# Input collector
+input = { path = 'lib/input/' }
+
 # Internal render API
 opengl = { path = 'lib/opengl/' }
 

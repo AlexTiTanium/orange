@@ -1,15 +1,38 @@
-use crate::{resources::WindowSize, WindowContext, WindowResizeEvent};
+use crate::{events::WindowInputEvent, resources::WindowSize, WindowContext};
 use common::{events::Events, log, NonSendSync, UniqueView, UniqueViewMut};
+use glutin::dpi::PhysicalSize;
 
-pub fn window_resize(context: NonSendSync<UniqueViewMut<WindowContext>>, events: UniqueView<Events<WindowResizeEvent>>) {
-  let mut reader = events.get_reader();
-  for event in reader.iter(&events) {
-    let WindowResizeEvent(size) = event;
-    log::info!("Window resize, new size: {:?}", size);
-    context.resize(size.clone());
+///
+/// Update window context size
+///
+pub fn on_window_resize(
+  context: NonSendSync<UniqueViewMut<WindowContext>>,
+  events: UniqueView<Events<WindowInputEvent>>,
+  window_size: UniqueViewMut<WindowSize>,
+) {
+  let reader = events.get_reader().iter(&events);
+  let mut changed_window_size = false;
+
+  for event in reader {
+    if let WindowInputEvent::Resized(width, height) = event {
+      let new_size = PhysicalSize::<u32> {
+        width: *width,
+        height: *height,
+      };
+
+      context.resize(new_size.clone());
+      changed_window_size = true;
+    }
+  }
+
+  if changed_window_size {
+    update_window_size(context, window_size);
   }
 }
 
+///
+/// Update WindowSize resource on size change
+///
 pub fn update_window_size(context: NonSendSync<UniqueViewMut<WindowContext>>, mut window_size: UniqueViewMut<WindowSize>) {
   let window = context.window();
 
@@ -29,10 +52,16 @@ pub fn update_window_size(context: NonSendSync<UniqueViewMut<WindowContext>>, mu
   window_size.physical = physical_size;
 }
 
+///
+/// Swap buffers
+///
 pub fn swap_buffers(context: NonSendSync<UniqueViewMut<WindowContext>>) {
   context.swap_buffers().unwrap();
 }
 
+///
+/// Request redraw
+///
 pub fn request_redraw(context: NonSendSync<UniqueViewMut<WindowContext>>) {
   context.window().request_redraw();
 }

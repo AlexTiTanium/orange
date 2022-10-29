@@ -1,3 +1,5 @@
+use crate::events::WindowInputEvent;
+use crate::WindowContext;
 use common::{log::info, stage, Application};
 use glutin::{
   event::{Event, WindowEvent},
@@ -8,9 +10,9 @@ use winit::dpi::LogicalSize;
 use winit::event_loop::EventLoop;
 use winit::window::WindowBuilder;
 
-use crate::WindowContext;
-use crate::WindowResizeEvent;
-
+///
+/// Window event loop
+///
 pub fn window_runner(mut app: Application) {
   info!("Window runner start");
 
@@ -31,11 +33,9 @@ pub fn window_runner(mut app: Application) {
 
   // It is essential to make the context current before calling `gl::load_with`.
   let context: WindowContext = unsafe { windowed_context.make_current().unwrap() };
-  //let gl = Gl::load_with(|symbol| context.get_proc_address(symbol));
 
   // Move context and event loop to window resource
   app.world.add_unique_non_send_sync(context).unwrap();
-  //app.world.add_unique_non_send_sync(gl).unwrap();
 
   // Prepare app for start
   app.initialize();
@@ -44,36 +44,28 @@ pub fn window_runner(mut app: Application) {
     *control_flow = ControlFlow::Poll;
 
     match event {
-      Event::WindowEvent { event, .. } => {
-        match event {
-          WindowEvent::Resized(new_size) => {
-            app.send(WindowResizeEvent(new_size));
-          }
-          WindowEvent::CloseRequested => {
-            *control_flow = ControlFlow::Exit;
-            app.exit();
-          }
-          _ => (),
+      Event::WindowEvent { event, .. } => match event {
+        WindowEvent::CloseRequested => {
+          *control_flow = ControlFlow::Exit;
+          app.exit();
+        }
+        WindowEvent::Resized(size) => {
+          app.send(WindowInputEvent::Resized(size.width, size.height));
         }
 
-        //state.handle_window_events(&event);
-      }
+        WindowEvent::CursorMoved { position, .. } => {
+          app.send(WindowInputEvent::PointerMoved(position.x, position.y));
+        }
+        _ => (),
+      },
       Event::LoopDestroyed => {}
-      Event::NewEvents(_) => {
-        //state.update_time();
-        //editor.update();
-        app.run_stage(stage::PRE_UPDATE)
-      }
+      Event::NewEvents(_) => app.run_stage(stage::PRE_UPDATE),
       Event::MainEventsCleared => app.run_stage(stage::PRE_RENDER),
       Event::RedrawEventsCleared => {
-        //state.update_fps();
         app.update();
       }
       Event::RedrawRequested(_) => {
-        //state.run_workload(game::stage::RENDER);
-        //state.run_workload(game::stage::POST_RENDER);
-        //render::step(&state);
-        //editor.step(&state, &context.window());
+        app.run_stage(stage::RENDER);
         app.run_stage(stage::POST_RENDER);
       }
       _ => (),

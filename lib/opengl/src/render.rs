@@ -5,7 +5,7 @@ use crate::{IndexBuffer, Layout, Program, ShaderType, Texture, VertexArray, Vert
 use std::collections::HashMap;
 
 pub struct Renderer {
-  gl: Gl,
+  pub gl: Gl,
   vbo: VertexBuffer,
   ibo: IndexBuffer,
   vao: VertexArray,
@@ -33,7 +33,7 @@ impl Renderer {
     }
   }
 
-  pub fn set_data(&mut self, data: &[f32]) {
+  pub fn set_vertices(&mut self, data: &[f32]) {
     self.vbo.bind();
     self.vbo.set_sub_data::<f32>(&data);
     self.vbo.unbind();
@@ -50,6 +50,26 @@ impl Renderer {
     self.vbo.bind();
     self.vbo.set_size(size);
     self.vbo.unbind();
+    self
+  }
+
+  pub fn set_indexes_buffer_size(&mut self, size: usize) -> &mut Self {
+    self.ibo.bind();
+    self.ibo.set_size(size);
+    self.ibo.unbind();
+    self
+  }
+
+  pub fn set_indexes(&mut self, data: &[u32]) {
+    self.ibo.bind();
+    self.ibo.set_sub_data::<u32>(&data);
+    self.ibo.unbind();
+  }
+
+  pub fn add_indexes<T>(&mut self, indexes: &[T], count: usize) -> &mut Self {
+    self.ibo.bind();
+    self.ibo.set_data::<T>(&indexes, count);
+    self.ibo.unbind();
     self
   }
 
@@ -77,23 +97,38 @@ impl Renderer {
     self
   }
 
-  pub fn add_indexes<T>(&mut self, indexes: &[T], count: usize) -> &mut Self {
-    self.ibo.bind();
-    self.ibo.set_data::<T>(&indexes, count);
-    self.ibo.unbind();
+  pub fn create_texture(&mut self) -> Texture {
+    Texture::new(&self.gl)
+  }
+
+  pub fn bind_texture_slot(&mut self, slot: i32, texture: Texture) -> &mut Self {
+    self.textures.insert(slot, texture);
     self
   }
 
-  pub fn add_texture(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) -> &mut Self {
-    let mut texture = Texture::new(&self.gl);
+  pub fn set_texture_data_for_slot(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) {
+    let texture = self.textures.get_mut(&slot).unwrap();
+    texture.bind();
+    texture.set_data(width, height, data);
+  }
 
-    texture.bind(slot);
-    texture.set_param();
+  pub fn set_texture_data_for_slot_srgb(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) {
+    let texture = self.textures.get_mut(&slot).unwrap();
+    texture.bind();
+    texture.set_srgb_data(width, height, data);
+  }
+
+  pub fn add_texture(&mut self, slot: i32, width: usize, height: usize, data: &[u8]) -> &mut Self {
+    let mut texture = self.create_texture();
+
+    texture.bind();
+    texture.activate(slot);
+    texture.set_default_params();
     texture.generate_mipmap();
     texture.set_data(width, height, data);
     texture.unbind();
 
-    self.textures.insert(slot, texture);
+    self.bind_texture_slot(slot, texture);
 
     self
   }
@@ -126,12 +161,13 @@ impl Renderer {
     self.program.uniform4f(&name, &data);
   }
 
-  pub fn bind_texture(&self, slot: i32) {
-    self.textures[&slot].bind(slot);
+  pub fn activate_texture_slot(&self, slot: i32) {
+    self.textures[&slot].bind();
+    self.textures[&slot].activate(slot);
     self.set_uniform_i1("u_Texture", slot);
   }
 
-  pub fn unbind_texture(&self, slot: i32) {
+  pub fn deactivate_texture_slot(&self, slot: i32) {
     self.textures[&slot].unbind();
   }
 
@@ -140,7 +176,7 @@ impl Renderer {
     self.ibo.bind();
     self.program.bind();
 
-    self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
+    //self.set_uniform_mat4("u_ViewProjection", &self.view_projection);
   }
 
   pub fn translate(&mut self, vec3: &Vec3) {
@@ -148,7 +184,7 @@ impl Renderer {
   }
 
   pub fn create_mvp(&mut self) -> &mut Self {
-    self.create_uniform("u_ViewProjection");
+    // self.create_uniform("u_ViewProjection");
     self
   }
 
