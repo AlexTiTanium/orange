@@ -37,7 +37,7 @@ fn init_egui(mut input: UniqueViewMut<egui::RawInput>, window: UniqueViewMut<Win
 ///
 /// On each frame
 ///
-fn begin_frame(mut ctx: UniqueViewMut<egui::Context>, mut egui_input: UniqueViewMut<egui::RawInput>, input: UniqueView<Input>) {
+fn begin_frame(ctx: UniqueView<egui::Context>, mut egui_input: UniqueViewMut<egui::RawInput>, input: UniqueView<Input>) {
   egui_input.take();
 
   for event in &input.events {
