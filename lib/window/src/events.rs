@@ -1,4 +1,3 @@
-use glutin::event::{ElementState, MouseButton, WindowEvent};
 use math::Vec2;
 
 ///
@@ -223,39 +222,4 @@ pub enum PointerButton {
 
   /// The second extra mouse button on some mice. In web typically corresponds to the Browser forward button.
   Extra2 = 4,
-}
-
-///
-/// Convet winit input events to module WindowInputEvent
-///
-pub fn process_input(event: WindowEvent) -> Option<WindowInputEvent> {
-  let result = match event {
-    // Window resize event
-    WindowEvent::Resized(size) => WindowInputEvent::Resized(size.width, size.height),
-
-    // Cursore move event
-    WindowEvent::CursorMoved { position, .. } => WindowInputEvent::PointerMoved(position.x, position.y),
-
-    // Mouse button pressed
-    WindowEvent::MouseInput { state, button, .. } => WindowInputEvent::PointerButton {
-      button: match button {
-        MouseButton::Left => PointerButton::Primary,
-        MouseButton::Right => PointerButton::Secondary,
-        MouseButton::Middle => PointerButton::Secondary,
-        _ => PointerButton::Extra1,
-      },
-      pressed: match state {
-        ElementState::Pressed => true,
-        ElementState::Released => false,
-      },
-    },
-    // Ignore Anyting else
-    _ => WindowInputEvent::None,
-  };
-
-  if result == WindowInputEvent::None {
-    return None;
-  } else {
-    return Some(result);
-  }
 }

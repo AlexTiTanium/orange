@@ -1,6 +1,5 @@
 use crate::{events::WindowInputEvent, resources::WindowSize, WindowContext};
 use common::{events::Events, log, NonSendSync, UniqueView, UniqueViewMut};
-use glutin::dpi::PhysicalSize;
 
 ///
 /// Update window context size
@@ -15,12 +14,7 @@ pub fn on_window_resize(
 
   for event in reader {
     if let WindowInputEvent::Resized(width, height) = event {
-      let new_size = PhysicalSize::<u32> {
-        width: *width,
-        height: *height,
-      };
-
-      context.resize(new_size.clone());
+      context.resize(width, height);
       changed_window_size = true;
     }
   }
@@ -56,12 +50,5 @@ pub fn update_window_size(context: NonSendSync<UniqueViewMut<WindowContext>>, mu
 /// Swap buffers
 ///
 pub fn swap_buffers(context: NonSendSync<UniqueViewMut<WindowContext>>) {
-  context.swap_buffers().unwrap();
-}
-
-///
-/// Request redraw
-///
-pub fn request_redraw(context: NonSendSync<UniqueViewMut<WindowContext>>) {
-  context.window().request_redraw();
+  context.swap_buffers();
 }

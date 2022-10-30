@@ -1,9 +1,9 @@
-use crate::renderer::EditorRenderPlugin;
 use crate::resources::EditorBatchBuffer;
-use common::{stage, Builder, Plugin, UniqueView, UniqueViewMut};
+use crate::{convertors::translate_cursor, renderer::EditorRenderPlugin};
+use common::{stage, Builder, NonSendSync, Plugin, UniqueView, UniqueViewMut};
 use egui::{self, Modifiers, Pos2, Rect, Vec2};
 use input::{Input, InputEvent, InputPosition, PointerButton};
-use window::WindowSize;
+use window::{WindowContext, WindowSize};
 
 pub struct EditorPlugin;
 
@@ -78,9 +78,16 @@ fn begin_frame(mut ctx: UniqueViewMut<egui::Context>, mut egui_input: UniqueView
 ///
 /// Prepare mesh data for render
 ///
-fn end_frame(ctx: UniqueViewMut<egui::Context>, mut batch: UniqueViewMut<EditorBatchBuffer>) {
+fn end_frame(ctx: UniqueViewMut<egui::Context>, mut batch: UniqueViewMut<EditorBatchBuffer>, window: NonSendSync<UniqueViewMut<WindowContext>>) {
   let output = ctx.end_frame();
   let clipped_meshes = ctx.tessellate(output.shapes);
+  let egui_icon = output.platform_output.cursor_icon;
+  let window_icon = translate_cursor(egui_icon);
+
+  match window_icon {
+    Some(icon) => window.set_cursor(icon),
+    None => window.set_cursor(window::CursorIcon::Default),
+  }
 
   batch.set_data(&clipped_meshes, &output.textures_delta);
 }

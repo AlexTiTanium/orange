@@ -1,5 +1,4 @@
-use crate::events::process_input;
-use crate::WindowContext;
+use crate::{convertors::translate_input, resources::WindowContext};
 use common::{log::info, stage, Application};
 use glutin::{
   event::{Event, WindowEvent},
@@ -32,7 +31,8 @@ pub fn window_runner(mut app: Application) {
     .unwrap();
 
   // It is essential to make the context current before calling `gl::load_with`.
-  let context: WindowContext = unsafe { windowed_context.make_current().unwrap() };
+  let wraper = unsafe { windowed_context.make_current().unwrap() };
+  let context = WindowContext { wraper };
 
   // Move context and event loop to window resource
   app.world.add_unique_non_send_sync(context).unwrap();
@@ -49,18 +49,16 @@ pub fn window_runner(mut app: Application) {
           *control_flow = ControlFlow::Exit;
           app.exit();
         }
-        _ => match process_input(event) {
+        _ => match translate_input(event) {
           Some(window_input_event) => app.send(window_input_event),
           None => (),
         },
       },
       Event::LoopDestroyed => {}
       Event::NewEvents(_) => app.run_stage(stage::PRE_UPDATE),
-      Event::MainEventsCleared => app.run_stage(stage::PRE_RENDER),
-      Event::RedrawEventsCleared => {
+      Event::MainEventsCleared => {
         app.update();
-      }
-      Event::RedrawRequested(_) => {
+        app.run_stage(stage::PRE_RENDER);
         app.run_stage(stage::RENDER);
         app.run_stage(stage::POST_RENDER);
       }
