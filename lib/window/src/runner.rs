@@ -1,6 +1,7 @@
-use crate::{convertors::translate_input, resources::WindowContext};
+use crate::{convertors::translate_input, events::WindowInputEvent, resources::WindowContext};
 use common::{log::info, stage, Application};
 use glutin::{
+  dpi::PhysicalSize,
   event::{Event, WindowEvent},
   event_loop::ControlFlow,
   ContextBuilder,

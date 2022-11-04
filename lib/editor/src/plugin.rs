@@ -26,12 +26,11 @@ impl Plugin for EditorPlugin {
 /// Init egui
 ///
 fn init_egui(mut input: UniqueViewMut<egui::RawInput>, window: UniqueViewMut<WindowSize>) {
+  input.pixels_per_point = Some(window.scale as f32);
   input.screen_rect = Some(Rect::from_min_size(
     Default::default(),
-    Vec2::new(window.logical.width, window.logical.height),
+    Vec2::new(window.physical.width, window.physical.height),
   ));
-
-  input.pixels_per_point = Some(window.scale as f32);
 }
 
 ///
