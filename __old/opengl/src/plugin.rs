@@ -18,7 +18,7 @@ pub fn clear(gl: NonSendSync<UniqueView<Gl>>) {
 }
 
 pub fn init_gl_context(all_storages: AllStoragesViewMut) {
-  let context = all_storages.borrow::<NonSendSync<UniqueViewMut<WindowContext>>>().unwrap();
-  let gl = Gl::load_with(|symbol| context.get_proc_address(symbol));
-  all_storages.add_unique_non_send_sync(gl);
+  // let context = all_storages.borrow::<NonSendSync<UniqueViewMut<WindowContext>>>().unwrap();
+  // let gl = Gl::load_with(|symbol| context.get_proc_address(symbol));
+  // all_storages.add_unique_non_send_sync(gl);
 }

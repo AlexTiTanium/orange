@@ -4,6 +4,21 @@ use math::Vec2;
 /// An input event generated for window
 ///
 #[derive(Clone, Debug, PartialEq)]
+pub enum WindowInnerEvent {
+  /// Resize event
+  Resized(u32, u32),
+
+  /// Scale factor cahnge event
+  ScaleFactrorChange(u32, u32),
+
+  // No handlers
+  None,
+}
+
+///
+/// An input event generated for window
+///
+#[derive(Clone, Debug, PartialEq)]
 pub enum WindowInputEvent {
   /// The integration detected a "copy" event (e.g. Cmd+C).
   Copy,
@@ -29,9 +44,6 @@ pub enum WindowInputEvent {
   //   /// The state of the modifier keys at the time of the event.
   //   modifiers: Modifiers,
   // },
-
-  /// Resize event
-  Resized(u32, u32),
 
   /// The mouse or touch moved to a new place.
   PointerMoved(f64, f64),

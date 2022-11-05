@@ -1,17 +1,14 @@
 use crate::{
   cursor::CursorIcon,
-  events::{PointerButton, WindowInputEvent},
+  events::{PointerButton, WindowInnerEvent, WindowInputEvent},
 };
-use glutin::event::{ElementState, MouseButton, WindowEvent};
+use winit::event::{ElementState, MouseButton, WindowEvent};
 
 ///
 /// Convet winit input events to module WindowInputEvent
 ///
-pub fn translate_input(event: WindowEvent) -> Option<WindowInputEvent> {
+pub fn translate_input(event: &WindowEvent) -> Option<WindowInputEvent> {
   let result = match event {
-    // Window resize event
-    WindowEvent::Resized(size) => WindowInputEvent::Resized(size.width, size.height),
-
     // Cursore move event
     WindowEvent::CursorMoved { position, .. } => WindowInputEvent::PointerMoved(position.x, position.y),
 
@@ -33,6 +30,28 @@ pub fn translate_input(event: WindowEvent) -> Option<WindowInputEvent> {
   };
 
   if result == WindowInputEvent::None {
+    return None;
+  } else {
+    return Some(result);
+  }
+}
+
+///
+/// Convet winit window events to module WindowEvent
+///
+pub fn translate_window_events(event: &WindowEvent) -> Option<WindowInnerEvent> {
+  let result = match event {
+    // Window resize event
+    WindowEvent::Resized(size) => WindowInnerEvent::Resized(size.width, size.height),
+
+    // Window scale factor event
+    WindowEvent::ScaleFactorChanged { new_inner_size, .. } => WindowInnerEvent::ScaleFactrorChange(new_inner_size.width, new_inner_size.height),
+
+    // Ignore Anyting else
+    _ => WindowInnerEvent::None,
+  };
+
+  if result == WindowInnerEvent::None {
     return None;
   } else {
     return Some(result);

@@ -30,7 +30,7 @@ members = ["lib/*"]
 common = { path = 'lib/common' }
 
 # Game editor UI
-editor = { path = 'lib/editor/' }
+# editor = { path = 'lib/editor/' }
 
 # Window plugin
 window = { path = 'lib/window/' }
@@ -40,9 +40,6 @@ input = { path = 'lib/input/' }
 
 # Internal render API
 webgpu = { path = 'lib/webgpu/' }
-
-# Internal render API
-opengl = { path = 'lib/opengl/' }
 
 [build-dependencies]
 fs_extra = "1.1.0"

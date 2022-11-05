@@ -41,7 +41,6 @@ pub fn process_window_input(mut input: UniqueViewMut<Input>, window_input: Windo
       WindowInputEvent::PointerGone => todo!(),
       WindowInputEvent::Scroll(_) => todo!(),
       WindowInputEvent::Zoom(_) => todo!(),
-      WindowInputEvent::Resized(_, _) => {}
       WindowInputEvent::None => todo!(),
     }
   }
