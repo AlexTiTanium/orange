@@ -5,6 +5,7 @@ use opengl::RenderPlugin;
 use window::WindowPlugin;
 
 fn main() {
+  // Build and start app
   Application::build()
     .add_plugin(WindowPlugin)
     .add_plugin(InputPlugin)

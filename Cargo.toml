@@ -2,7 +2,7 @@
 name = "orange"
 version = "0.1.0"
 authors = ["Alex Kucherenko <kucherenko.email@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Game description"
 build = "build.rs"
 
@@ -37,6 +37,9 @@ window = { path = 'lib/window/' }
 
 # Input collector
 input = { path = 'lib/input/' }
+
+# Internal render API
+webgpu = { path = 'lib/webgpu/' }
 
 # Internal render API
 opengl = { path = 'lib/opengl/' }
