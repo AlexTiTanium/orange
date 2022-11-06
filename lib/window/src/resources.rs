@@ -4,20 +4,11 @@ use winit::dpi::LogicalSize;
 use winit::dpi::PhysicalSize;
 use winit::window::Window;
 
+#[derive(Default)]
 pub struct WindowSize {
   pub logical: LogicalSize<f32>,
   pub physical: PhysicalSize<f32>,
   pub scale: f64,
-}
-
-impl Default for WindowSize {
-  fn default() -> Self {
-    Self {
-      logical: LogicalSize { width: 0.0, height: 0.0 },
-      physical: PhysicalSize { width: 0.0, height: 0.0 },
-      scale: 0.0,
-    }
-  }
 }
 
 pub struct WindowContext {
@@ -25,7 +16,7 @@ pub struct WindowContext {
 }
 
 ///
-/// Context wraper for window module
+/// Context wrapper for window module
 ///
 impl WindowContext {
   ///
@@ -37,6 +28,25 @@ impl WindowContext {
     match icon {
       Some(icon) => self.window.set_cursor_icon(icon),
       None => self.window.set_cursor_icon(winit::window::CursorIcon::Default),
+    }
+  }
+
+  ///
+  /// Return window ref
+  ///
+  pub fn window(&self) -> &Window {
+    &self.window
+  }
+
+  ///
+  /// Get physical size
+  ///
+  pub fn physical_size(&self) -> crate::dpi::PhysicalSize<u32> {
+    let size = self.window.inner_size();
+
+    crate::dpi::PhysicalSize {
+      width: size.width,
+      height: size.height,
     }
   }
 }

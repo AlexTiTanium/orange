@@ -1,5 +1,6 @@
 use crate::{
   cursor::CursorIcon,
+  dpi::PhysicalSize,
   events::{PointerButton, WindowInnerEvent, WindowInputEvent},
 };
 use winit::event::{ElementState, MouseButton, WindowEvent};

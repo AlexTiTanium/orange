@@ -1,17 +1,20 @@
-use std::collections::HashMap;
-
-use log::info;
-use shipyard::{IntoWorkloadSystem, Workload, WorkloadBuilder};
-
 use crate::{application::AppExit, events::Events, logger::init_logger, Application};
 use crate::{stage, Plugin};
+use log::info;
+use shipyard::{IntoWorkloadSystem, Workload, WorkloadBuilder, World};
+use std::collections::HashMap;
 
-/// Configure [App]s using the builder pattern
+///
+/// Configure App using the builder pattern
+///
 pub struct Builder {
   pub app: Application,
   stages: HashMap<&'static str, WorkloadBuilder>,
 }
 
+///
+/// Impl default
+///
 impl Default for Builder {
   fn default() -> Self {
     let mut app_builder = Builder {
@@ -29,7 +32,13 @@ impl Default for Builder {
   }
 }
 
+///
+/// Build each module resources systems etc.
+///
 impl Builder {
+  ///
+  /// Add plugin
+  ///
   pub fn add_plugin<T>(&mut self, plugin: T) -> &mut Self
   where
     T: Plugin,
@@ -39,21 +48,33 @@ impl Builder {
     self
   }
 
+  ///
+  /// Add resource
+  ///
   pub fn add_resource<T: 'static + Send + Sync>(&mut self, resource: T) -> &mut Self {
     self.app.world.add_unique(resource).unwrap();
     self
   }
 
+  ///
+  /// Set app runner
+  ///
   pub fn set_runner(&mut self, run_fn: impl Fn(Application) + 'static) -> &mut Self {
     self.app.runner = Box::new(run_fn);
     self
   }
 
+  ///
+  /// Create app stage
+  ///
   pub fn create_stage(&mut self, name: &'static str) -> &mut Self {
     self.stages.insert(name, Workload::builder(name));
     self
   }
 
+  ///
+  /// Subscribe system on stage
+  ///
   pub fn add_to_stage<S, B, R>(&mut self, stage_name: &'static str, system: S) -> &mut Self
   where
     S: IntoWorkloadSystem<B, R>,
@@ -63,6 +84,9 @@ impl Builder {
     self
   }
 
+  ///
+  /// Add system to update stage
+  ///
   pub fn add_system<S, B, R>(&mut self, system: S) -> &mut Self
   where
     S: IntoWorkloadSystem<B, R>,
@@ -71,6 +95,9 @@ impl Builder {
     self
   }
 
+  ///
+  /// Add system to startup stage, it will be executed once per session
+  ///
   pub fn add_startup_system<S, B, R>(&mut self, system: S) -> &mut Self
   where
     S: IntoWorkloadSystem<B, R>,
@@ -79,7 +106,17 @@ impl Builder {
     self
   }
 
-  pub fn create_default_stages(&mut self) {
+  ///
+  /// Get world
+  ///
+  pub fn world(&self) -> &World {
+    &self.app.world
+  }
+
+  ///
+  /// Init default stages
+  ///
+  fn create_default_stages(&mut self) {
     // Startup systems, called once
     self.create_stage(stage::FIRST);
     self.create_stage(stage::STARTUP);
@@ -100,6 +137,9 @@ impl Builder {
     self.create_stage(stage::POST_RENDER);
   }
 
+  ///
+  /// Register new event type
+  ///
   pub fn add_event<T>(&mut self) -> &mut Self
   where
     T: Send + Sync + 'static,
@@ -109,6 +149,9 @@ impl Builder {
       .add_to_stage(stage::EVENT, &Events::<T>::update_system)
   }
 
+  ///
+  /// Build and run all systems
+  ///
   pub fn run(&mut self) {
     // Add all workloads to the world
     for (_, workload) in self.stages.iter_mut() {

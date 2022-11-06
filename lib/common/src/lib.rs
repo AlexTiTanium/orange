@@ -12,6 +12,7 @@ pub mod stage;
 pub use application::AppExit;
 pub use application::Application;
 pub use builder::Builder;
+pub use futures_lite;
 pub use logger::log;
 pub use plugin::Plugin;
 pub use shipyard::*;

@@ -2,12 +2,9 @@ use crate::convertors::{translate_input, translate_window_events};
 use crate::WindowContext;
 use common::{log::info, stage, Application};
 use winit::dpi::LogicalSize;
+use winit::event::{Event, WindowEvent};
 use winit::event_loop::EventLoop;
 use winit::window::WindowBuilder;
-use winit::{
-  event::{Event, WindowEvent},
-  event_loop::ControlFlow,
-};
 
 ///
 /// Window event loop
@@ -26,7 +23,7 @@ pub fn window_runner(mut app: Application) {
     .unwrap();
 
   // It is essential to make the context current before calling `gl::load_with`.
-  // let wraper = unsafe { windowed_context.make_current().unwrap() };
+  // let wrapper = unsafe { windowed_context.make_current().unwrap() };
   let context = WindowContext { window };
 
   // Move context and event loop to window resource
@@ -35,13 +32,15 @@ pub fn window_runner(mut app: Application) {
   // Prepare app for start
   app.initialize();
 
+  // Window loop
   event_loop.run(move |event, _, control_flow| {
-    *control_flow = ControlFlow::Poll;
+    // Continuos update
+    control_flow.set_poll();
 
     match event {
       Event::WindowEvent { event, .. } => match event {
         WindowEvent::CloseRequested => {
-          *control_flow = ControlFlow::Exit;
+          control_flow.set_exit();
           app.exit();
         }
         _ => {

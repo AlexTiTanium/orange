@@ -10,3 +10,4 @@ edition = "2021"
 shipyard = { version = "0.5.0", features = ["thread_local"] }
 flexi_logger = { version = "0.24", features = ["specfile"] }
 log = "0.4"
+futures-lite = "1.12.0"
