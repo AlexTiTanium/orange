@@ -1,6 +1,6 @@
-use common::{futures_lite, AllStoragesViewMut, UniqueView, World};
+use common::{events::Events, futures_lite, log::warn, AllStoragesViewMut, UniqueView, UniqueViewMut};
 use wgpu::*;
-use window::{PhysicalSize, WindowContext};
+use window::{events::WindowInnerEvent, PhysicalSize, WindowContext};
 
 pub struct WebGpuState {
   surface: Surface,
@@ -12,12 +12,35 @@ pub struct WebGpuState {
 
 impl WebGpuState {
   ///
-  /// Create startup resource
+  /// Startup system. create startup resource
   ///
   pub fn init(all_storages: AllStoragesViewMut) {
     let context = all_storages.borrow::<UniqueView<WindowContext>>().unwrap();
     let state = Self::new(&context);
     all_storages.add_unique::<WebGpuState>(state);
+  }
+
+  ///
+  /// Resize system
+  ///
+  pub fn on_resize_event(
+    window_event: UniqueView<Events<WindowInnerEvent>>,
+    context: UniqueView<WindowContext>,
+    mut state: UniqueViewMut<WebGpuState>,
+  ) {
+    let events = window_event.get_reader().iter(&window_event);
+
+    for event in events {
+      match event {
+        WindowInnerEvent::Resized(_, _) => {
+          state.resize(context.physical_size());
+        }
+        WindowInnerEvent::ScaleFactorChange(_, _) => {
+          state.resize(context.physical_size());
+        }
+        _ => (),
+      }
+    }
   }
 
   ///
@@ -86,6 +109,18 @@ impl WebGpuState {
       .unwrap();
 
     return (adapter, device, queue);
+  }
+
+  ///
+  /// Surface resize
+  ///
+  pub fn resize(&mut self, new_size: window::PhysicalSize<u32>) {
+    if new_size.width > 0 && new_size.height > 0 {
+      self.size = new_size;
+      self.config.width = new_size.width;
+      self.config.height = new_size.height;
+      self.surface.configure(&self.device, &self.config);
+    }
   }
 
   fn update(&mut self) {
