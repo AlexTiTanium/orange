@@ -1,15 +1,6 @@
-use crate::convertors::translate_cursor;
-use crate::cursor::CursorIcon;
-use winit::dpi::LogicalSize;
-use winit::dpi::PhysicalSize;
+use crate::api::translate_cursor;
+use crate::api::CursorIcon;
 use winit::window::Window;
-
-#[derive(Default)]
-pub struct WindowSize {
-  pub logical: LogicalSize<f32>,
-  pub physical: PhysicalSize<f32>,
-  pub scale: f64,
-}
 
 pub struct WindowContext {
   pub(crate) window: Window,
@@ -19,6 +10,13 @@ pub struct WindowContext {
 /// Context wrapper for window module
 ///
 impl WindowContext {
+  ///
+  /// Return window ref
+  ///
+  pub fn window(&self) -> &Window {
+    &self.window
+  }
+
   ///
   /// Change cursor
   ///
@@ -32,21 +30,34 @@ impl WindowContext {
   }
 
   ///
-  /// Return window ref
-  ///
-  pub fn window(&self) -> &Window {
-    &self.window
-  }
-
-  ///
   /// Get physical size
   ///
-  pub fn physical_size(&self) -> crate::dpi::PhysicalSize<u32> {
+  pub fn physical_size(&self) -> crate::api::PhysicalSize<u32> {
     let size = self.window.inner_size();
 
-    crate::dpi::PhysicalSize {
+    crate::api::PhysicalSize {
       width: size.width,
       height: size.height,
     }
+  }
+
+  ///
+  /// Get logical size
+  ///
+  pub fn logical_size(&self) -> crate::api::LogicalSize<u32> {
+    let scale_factor = self.window.scale_factor();
+    let size = self.window.inner_size().to_logical(scale_factor);
+
+    crate::api::LogicalSize {
+      width: size.width,
+      height: size.height,
+    }
+  }
+
+  ///
+  /// Get scale factor
+  ///
+  pub fn scale_factor(&self) -> f64 {
+    return self.window.scale_factor();
   }
 }

@@ -1,8 +1,11 @@
-use crate::state::WebGpuState;
+use crate::api::WebGpuState;
 use common::{Builder, Plugin};
 
 pub struct WebGpuPlugin;
 
+///
+/// Web gpu render API plugin
+///
 impl Plugin for WebGpuPlugin {
   ///
   /// Build phase

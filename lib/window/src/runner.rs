@@ -1,6 +1,6 @@
-use crate::convertors::{translate_input, translate_window_events};
+use crate::api::{translate_input, translate_window_events};
 use crate::WindowContext;
-use common::{log::info, stage, Application};
+use common::{log::info, Application};
 use winit::dpi::LogicalSize;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::EventLoop;
@@ -57,13 +57,9 @@ pub fn window_runner(mut app: Application) {
           };
         }
       },
-      Event::LoopDestroyed => {}
-      Event::NewEvents(_) => app.run_stage(stage::PRE_UPDATE),
       Event::MainEventsCleared => {
         app.update();
-        app.run_stage(stage::PRE_RENDER);
-        app.run_stage(stage::RENDER);
-        app.run_stage(stage::POST_RENDER);
+        app.render();
       }
       _ => (),
     }

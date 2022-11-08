@@ -8,8 +8,8 @@ pub enum WindowInnerEvent {
   /// Resize event
   Resized(u32, u32),
 
-  /// Scale factor cahnge event
-  ScaleFactrorChange(u32, u32),
+  /// Scale factor change event
+  ScaleFactorChange(u32, u32),
 
   // No handlers
   None,

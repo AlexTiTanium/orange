@@ -1,16 +1,15 @@
 use crate::{
-  cursor::CursorIcon,
-  dpi::PhysicalSize,
+  api::cursor::CursorIcon,
   events::{PointerButton, WindowInnerEvent, WindowInputEvent},
 };
 use winit::event::{ElementState, MouseButton, WindowEvent};
 
 ///
-/// Convet winit input events to module WindowInputEvent
+/// Convert winit input events to module WindowInputEvent
 ///
 pub fn translate_input(event: &WindowEvent) -> Option<WindowInputEvent> {
   let result = match event {
-    // Cursore move event
+    // Cursor move event
     WindowEvent::CursorMoved { position, .. } => WindowInputEvent::PointerMoved(position.x, position.y),
 
     // Mouse button pressed
@@ -26,7 +25,7 @@ pub fn translate_input(event: &WindowEvent) -> Option<WindowInputEvent> {
         ElementState::Released => false,
       },
     },
-    // Ignore Anyting else
+    // Ignore anything else
     _ => WindowInputEvent::None,
   };
 
@@ -38,7 +37,7 @@ pub fn translate_input(event: &WindowEvent) -> Option<WindowInputEvent> {
 }
 
 ///
-/// Convet winit window events to module WindowEvent
+/// Convert winit window events to module WindowEvent
 ///
 pub fn translate_window_events(event: &WindowEvent) -> Option<WindowInnerEvent> {
   let result = match event {
@@ -46,9 +45,11 @@ pub fn translate_window_events(event: &WindowEvent) -> Option<WindowInnerEvent> 
     WindowEvent::Resized(size) => WindowInnerEvent::Resized(size.width, size.height),
 
     // Window scale factor event
-    WindowEvent::ScaleFactorChanged { new_inner_size, .. } => WindowInnerEvent::ScaleFactrorChange(new_inner_size.width, new_inner_size.height),
+    WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
+      WindowInnerEvent::ScaleFactorChange(new_inner_size.width, new_inner_size.height)
+    }
 
-    // Ignore Anyting else
+    // Ignore anything else
     _ => WindowInnerEvent::None,
   };
 

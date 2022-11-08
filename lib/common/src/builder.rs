@@ -73,6 +73,15 @@ impl Builder {
   }
 
   ///
+  /// Run specific stage after other stage
+  ///
+  pub fn run_on_stage(&mut self, stage_name: &'static str, run_after: &'static str) -> &mut Self {
+    let stage = self.stages.get_mut(stage_name).unwrap();
+    stage.with_workload(run_after);
+    self
+  }
+
+  ///
   /// Subscribe system on stage
   ///
   pub fn add_to_stage<S, B, R>(&mut self, stage_name: &'static str, system: S) -> &mut Self
@@ -104,13 +113,6 @@ impl Builder {
   {
     self.add_to_stage(stage::STARTUP, system);
     self
-  }
-
-  ///
-  /// Get world
-  ///
-  pub fn world(&self) -> &World {
-    &self.app.world
   }
 
   ///
