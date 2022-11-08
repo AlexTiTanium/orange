@@ -1,4 +1,4 @@
-use common::{events::Events, futures_lite, log::warn, AllStoragesViewMut, UniqueView, UniqueViewMut};
+use common::{events::Events, futures_lite, AllStoragesViewMut, UniqueView, UniqueViewMut};
 use wgpu::*;
 use window::{events::WindowInnerEvent, PhysicalSize, WindowContext};
 
@@ -7,7 +7,7 @@ pub struct WebGpuState {
   device: Device,
   queue: Queue,
   config: SurfaceConfiguration,
-  size: PhysicalSize<u32>,
+  pub size: PhysicalSize<u32>,
 }
 
 impl WebGpuState {
@@ -40,6 +40,21 @@ impl WebGpuState {
         }
         _ => (),
       }
+    }
+  }
+
+  ///
+  /// Render system
+  ///
+  pub fn on_render_stage(mut state: UniqueViewMut<WebGpuState>, context: UniqueView<WindowContext>) {
+    match state.render() {
+      Ok(_) => {}
+      // Reconfigure the surface if lost
+      Err(wgpu::SurfaceError::Lost) => state.resize(context.physical_size()),
+      // The system is out of memory, we should probably quit
+      Err(wgpu::SurfaceError::OutOfMemory) => panic!("Out of memory exit"),
+      // All other errors (Outdated, Timeout) should be resolved by the next frame
+      Err(e) => eprintln!("{:?}", e),
     }
   }
 
@@ -114,7 +129,7 @@ impl WebGpuState {
   ///
   /// Surface resize
   ///
-  pub fn resize(&mut self, new_size: window::PhysicalSize<u32>) {
+  pub fn resize(&mut self, new_size: PhysicalSize<u32>) {
     if new_size.width > 0 && new_size.height > 0 {
       self.size = new_size;
       self.config.width = new_size.width;
@@ -123,11 +138,40 @@ impl WebGpuState {
     }
   }
 
-  fn update(&mut self) {
-    todo!()
-  }
+  ///
+  /// Render experiments
+  ///
+  pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
+    let output = self.surface.get_current_texture()?;
+    let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+    let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+      label: Some("Render Encoder"),
+    });
 
-  fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
-    todo!()
+    {
+      let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+        label: Some("Render Pass"),
+        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+          view: &view,
+          resolve_target: None,
+          ops: wgpu::Operations {
+            load: wgpu::LoadOp::Clear(wgpu::Color {
+              r: 0.1,
+              g: 0.1,
+              b: 0.1,
+              a: 1.0,
+            }),
+            store: true,
+          },
+        })],
+        depth_stencil_attachment: None,
+      });
+    }
+
+    // submit will accept anything that implements IntoIter
+    self.queue.submit(std::iter::once(encoder.finish()));
+    output.present();
+
+    Ok(())
   }
 }
