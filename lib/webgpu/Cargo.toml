@@ -6,7 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-wgpu = "0.14"
+# Rust webgpu API
+wgpu = "0.15.1"
 
 # Core module
 common = { path = '../common/' }

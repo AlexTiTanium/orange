@@ -30,7 +30,7 @@ members = ["lib/*"]
 common = { path = 'lib/common' }
 
 # Game editor UI
-# editor = { path = 'lib/editor/' }
+editor = { path = 'lib/editor/' }
 
 # Window plugin
 window = { path = 'lib/window/' }

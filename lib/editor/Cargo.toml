@@ -1,0 +1,29 @@
+[package]
+name = "editor"
+version = "0.1.0"
+authors = ["Alex Kucherenko <kucherenko.email@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Highly portable immediate mode GUI library
+egui = "0.21.0"
+
+# Core module
+common = { path = '../common/' }
+
+# Math module dependency
+math = { path = '../math/' }
+
+# Window module dependency
+window = { path = '../window/' }
+
+# Input module dependency
+input = { path = '../input/' }
+
+# Rendering module dependency
+webgpu = { path = '../webgpu/' }
+
+# This crate gives small utilities for casting between plain data types.
+bytemuck = { version = "1.13.1", features = ["derive"] }

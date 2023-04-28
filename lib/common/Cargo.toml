@@ -7,7 +7,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Shipyard is an Entity Component System focused on usability and speed.
 shipyard = { version = "0.5.0", features = ["thread_local"] }
-flexi_logger = { version = "0.24", features = ["specfile"] }
-log = "0.4"
+
+# A simple, fast, safe, and extensible logging framework for Rust
+flexi_logger = { version = "0.25.3", features = ["specfile"] }
+
+# A Rust library providing a lightweight logging facade.
+log = "0.4.17"
+
+# This crate is a subset of futures that compiles an order of magnitude faster, fixes minor warts in its API, fills in some obvious gaps, and removes almost all unsafe code from it.
 futures-lite = "1.12.0"
+
+# This crate gives small utilities for casting between plain data types.
+bytemuck = { version = "1.13.1", features = ["derive"] }
