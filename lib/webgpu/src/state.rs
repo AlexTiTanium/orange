@@ -210,7 +210,7 @@ impl WebGpuState {
       for pipeline in pipelines.get_all() {
         render_pass.set_pipeline(&pipeline.render_pipeline);
         render_pass.set_vertex_buffer(0, pipeline.vertex_buffer.slice(..));
-        render_pass.set_index_buffer(pipeline.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
+        render_pass.set_index_buffer(pipeline.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
         render_pass.draw_indexed(0..pipeline.num_indices, 0, 0..1);
       }
     }
